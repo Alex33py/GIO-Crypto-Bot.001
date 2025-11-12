@@ -1,0 +1,59 @@
+{
+  "test_params": {
+    "symbol": "BTC/USDT",
+    "timeframe": "1h",
+    "period_days": 30,
+    "initial_capital": 10000
+  },
+  "risk": {
+    "position_size_pct": 0.02,
+    "max_positions": 1,
+    "stop_loss_pct": 0.03,
+    "take_profit_pct": 0.06
+  },
+  "filters": {
+    "min_confidence": 60,
+    "min_adx": 20,
+    "mtf_alignment_threshold": 0.65
+  },
+  "scenarios": {
+    "v2_baseline": [
+      "MM_BREAKOUT_TRAP",
+      "DISTRIBUTION_SHORT",
+      "ACCUMULATION_LONG",
+      "LIQUIDITY_GRAB_LONG",
+      "LIQUIDITY_GRAB_SHORT",
+      "WYCKOFF_SPRING_LONG",
+      "UPTHRUST_SHORT",
+      "CONSOLIDATION_BREAKOUT",
+      "FALSE_BREAKOUT_REVERSAL",
+      "VOLUME_CLIMAX_REVERSAL",
+      "RANGE_BOUND_FADE",
+      "TREND_CONTINUATION"
+    ],
+    "v3_batches": {
+      "batch1_breakout": [
+        "// Первые 20 сценариев v3 (BREAKOUT группа)",
+        "// Будут добавлены после успешного Stage 1"
+      ],
+      "batch2_reversal": [
+        "// Следующие 20 сценариев v3 (REVERSAL группа)"
+      ],
+      "batch3_continuation": [
+        "// Следующие 20 сценариев v3 (CONTINUATION группа)"
+      ],
+      "batch4_range": [
+        "// Следующие 20 сценариев v3 (RANGE группа)"
+      ],
+      "batch5_complex": [
+        "// Последние 20 сценариев v3 (COMPLEX группа)"
+      ]
+    }
+  },
+  "output": {
+    "results_dir": "tests/results",
+    "save_trades": true,
+    "save_equity_curve": true,
+    "generate_charts": false
+  }
+}

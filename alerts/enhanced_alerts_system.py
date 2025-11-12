@@ -57,7 +57,7 @@ class EnhancedAlertsSystem:
             self.tracked_symbols = bot_instance.config["tracked_symbols"]
         else:
             # По умолчанию
-            self.tracked_symbols = ["BTCUSDT", "ETHUSDT", "XRPUSDT"]
+            self.tracked_symbols = ["BTCUSDT", "ETHUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT", "DOGEUSDT", "ADAUSDT", "AVAXUSDT" ]
 
         # ========== ПАРАМЕТРЫ АЛЕРТОВ (АДАПТИВНЫЕ ДЛЯ КРИПТО) ==========
         self.config = {

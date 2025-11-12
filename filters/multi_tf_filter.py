@@ -4,10 +4,32 @@
 Multi-Timeframe Filter - согласование тренда по нескольким таймфреймам
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple  # ← ДОБАВЬТЕ СРАЗУ!
 from datetime import datetime, timedelta
 import numpy as np
 from config.settings import logger
+
+
+# ✅ ГИБКИЙ MTF (не требует всех совпадений)
+def validate_mtf_flexible(mtf_data: Dict) -> float:
+    """MTF score: 0-3 (0=BEARISH, 3=STRONG, гибкий фильтр)"""
+    score = 0
+
+    h1_trend = mtf_data.get('1H', {}).get('trend', 'neutral')
+    h4_trend = mtf_data.get('4H', {}).get('trend', 'neutral')
+    d1_trend = mtf_data.get('1D', {}).get('trend', 'neutral')
+
+    # 1H + 4H должны совпадать (+1.5 балла)
+    if h1_trend == h4_trend and h1_trend in ['bullish', 'bearish']:
+        score += 1.5
+
+    # 1D может быть same или neutral (+1.5 балла)
+    if d1_trend in [h1_trend, 'neutral']:
+        score += 1.5
+    elif d1_trend == 'opposite':
+        score *= 0.9  # Штраф -10%
+
+    return min(score, 3.0)  # Max 3.0
 
 
 class MultiTimeframeFilter:

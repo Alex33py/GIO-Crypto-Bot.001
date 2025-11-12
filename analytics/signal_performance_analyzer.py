@@ -66,11 +66,12 @@ class SignalPerformanceAnalyzer:
                     COUNT(*) as total,
                     SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
                     SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active
-                FROM signals
+                FROM unified_signals
                 WHERE timestamp >= ?
             """,
                 (cutoff_str,),
             )
+
 
             row = cursor.fetchone()
             total_signals = row[0] if row else 0
@@ -83,16 +84,17 @@ class SignalPerformanceAnalyzer:
                 SELECT
                     symbol,
                     direction,
-                    roi,
+                    current_roi,
                     timestamp,
-                    close_time
-                FROM signals
+                    closed_at
+                FROM unified_signals
                 WHERE status = 'closed'
-                  AND timestamp >= ?
-                  AND roi IS NOT NULL
+                AND timestamp >= ?
+                AND current_roi IS NOT NULL
             """,
                 (cutoff_str,),
             )
+
 
             closed_trades = cursor.fetchall()
             conn.close()
@@ -151,10 +153,10 @@ class SignalPerformanceAnalyzer:
                 "losses": losses,
                 "avg_roi": round(avg_roi, 2),
                 "total_roi": round(total_roi, 2),
-                "best_trade": {"symbol": best_trade[0], "roi": round(best_trade[2], 2)},
+                "best_trade": {"symbol": best_trade[0], "current_roi": round(best_trade[2], 2)},
                 "worst_trade": {
                     "symbol": worst_trade[0],
-                    "roi": round(worst_trade[2], 2),
+                    "current_roi": round(worst_trade[2], 2),
                 },
                 "sharpe_ratio": round(sharpe_ratio, 2),
                 "avg_hold_time_minutes": round(avg_hold_time_minutes, 0),
@@ -260,10 +262,10 @@ class SignalPerformanceAnalyzer:
             lines.append(f"├─ Total ROI: {stats['total_roi']:+.2f}%")
             lines.append(f"├─ Avg ROI per Trade: {stats['avg_roi']:+.2f}%")
             lines.append(
-                f"├─ Best Trade: {stats['best_trade']['roi']:+.2f}% ({stats['best_trade']['symbol']})"
+                f"├─ Best Trade: {stats['best_trade']["current_roi"]:+.2f}% ({stats['best_trade']['symbol']})"
             )
             lines.append(
-                f"├─ Worst Trade: {stats['worst_trade']['roi']:+.2f}% ({stats['worst_trade']['symbol']})"
+                f"├─ Worst Trade: {stats['worst_trade']["current_roi"]:+.2f}% ({stats['worst_trade']['symbol']})"
             )
             lines.append(f"└─ Sharpe Ratio: {stats['sharpe_ratio']}")
             lines.append("")
@@ -307,8 +309,8 @@ class SignalPerformanceAnalyzer:
             "losses": 0,
             "avg_roi": 0,
             "total_roi": 0,
-            "best_trade": {"symbol": "N/A", "roi": 0},
-            "worst_trade": {"symbol": "N/A", "roi": 0},
+            "best_trade": {"symbol": "N/A", "current_roi": 0},
+            "worst_trade": {"symbol": "N/A", "current_roi": 0},
             "sharpe_ratio": 0,
             "avg_hold_time_minutes": 0,
             "by_symbol": {},

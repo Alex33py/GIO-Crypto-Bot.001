@@ -9,7 +9,7 @@ import numpy as np
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, field
 from collections import defaultdict
-from database.signal_manager import save_signal_to_unified
+from database.unified_signals_manager import save_signal_to_unified
 
 
 from config.settings import (

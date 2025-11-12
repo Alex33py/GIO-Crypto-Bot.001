@@ -85,7 +85,7 @@ class PerformanceHandler:
 
             for i, signal in enumerate(top_signals, 1):
                 symbol = signal["symbol"]
-                roi = signal["roi"]
+                roi = signal["current_roi"]
                 direction = signal["direction"] or "UNKNOWN"
                 entry_time = (
                     signal["entry_time"][:10] if signal["entry_time"] else "N/A"
@@ -132,7 +132,7 @@ class PerformanceHandler:
 
             for i, signal in enumerate(worst_signals, 1):
                 symbol = signal["symbol"]
-                roi = signal["roi"]
+                roi = signal["current_roi"]
                 direction = signal["direction"] or "UNKNOWN"
                 entry_time = (
                     signal["entry_time"][:10] if signal["entry_time"] else "N/A"
@@ -172,10 +172,10 @@ class PerformanceHandler:
 
             cursor.execute(
                 f"""
-                SELECT symbol, roi, direction, entry_time
+                SELECT symbol, current_roi, direction, entry_time
                 FROM signals
                 WHERE status = 'closed'
-                  AND roi IS NOT NULL
+                  AND current_roi IS NOT NULL
                 ORDER BY roi {order}
                 LIMIT ?
             """,
@@ -191,7 +191,7 @@ class PerformanceHandler:
             return [
                 {
                     "symbol": row[0],
-                    "roi": row[1],
+                    "current_roi": row[1],
                     "direction": row[2],
                     "entry_time": row[3],
                 }

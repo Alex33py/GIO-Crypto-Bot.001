@@ -85,7 +85,7 @@ class EnhancedBybitConnector:
         """Инициализация коннектора"""
         try:
             # Создаём HTTP сессию
-            timeout = aiohttp.ClientTimeout(total=30, connect=10)
+            timeout = aiohttp.ClientTimeout(total=60, connect=20)
             self.session = aiohttp.ClientSession(timeout=timeout)
 
             # Тестируем подключение

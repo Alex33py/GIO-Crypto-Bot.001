@@ -678,7 +678,7 @@ class UnifiedDashboardHandler:
                 """
                 SELECT
                     COUNT(*) as total,
-                    SUM(CASE WHEN status = 'closed' AND roi > 0 THEN 1 ELSE 0 END) as wins
+                    SUM(CASE WHEN status = 'closed' AND current_roi > 0 THEN 1 ELSE 0 END) as wins
                 FROM signals
                 WHERE status = 'closed'
             """
@@ -690,7 +690,7 @@ class UnifiedDashboardHandler:
             # Avg ROI
             cursor.execute(
                 """
-                SELECT AVG(roi) FROM signals WHERE status = 'closed' AND roi > 0
+                SELECT AVG(current_roi) FROM signals WHERE status = 'closed' AND current_roi > 0
             """
             )
 

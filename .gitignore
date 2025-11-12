@@ -43,6 +43,7 @@ logs/
 *.sqlite
 *.sqlite3
 data/gio_bot.db
+data/gio_crypto_bot.db
 
 # Config (СЕКРЕТНЫЕ ДАННЫЕ!)
 config/.env

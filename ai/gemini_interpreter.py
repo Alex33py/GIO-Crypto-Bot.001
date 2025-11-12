@@ -5,9 +5,47 @@ Google Gemini 2.0 Flash AI Interpreter
 """
 
 import aiohttp
+import asyncio
+import time
+from collections import deque
 import json
+import hashlib
 from typing import Dict, Optional
 from config.settings import logger
+
+class RateLimiter:
+    """Rate Limiter для API запросов"""
+
+    def __init__(self, max_requests: int = 50, time_window: int = 60):
+        """
+        Args:
+            max_requests: Максимум запросов (по умолчанию 50)
+            time_window: Временное окно в секундах (по умолчанию 60)
+        """
+        self.max_requests = max_requests
+        self.time_window = time_window
+        self.requests = deque()
+
+    async def acquire(self):
+        """Получить разрешение на запрос"""
+        now = time.time()
+
+        # Удалить старые запросы за пределами временного окна
+        while self.requests and self.requests[0] < now - self.time_window:
+            self.requests.popleft()
+
+        # Проверить лимит
+        if len(self.requests) >= self.max_requests:
+            oldest_request = self.requests[0]
+            wait_time = oldest_request + self.time_window - now + 1
+
+            if wait_time > 0:
+                logger.warning(f"⏳ Rate limit: ожидание {wait_time:.1f}s")
+                await asyncio.sleep(wait_time)
+                return await self.acquire()
+
+        # Записать новый запрос
+        self.requests.append(now)
 
 
 class GeminiInterpreter:
@@ -21,6 +59,11 @@ class GeminiInterpreter:
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent"
         self.session = None
         self.request_count = 0
+
+        # Rate Limiter и кэш
+        self.rate_limiter = RateLimiter(max_requests=50, time_window=60)
+        self.cache = {}
+        self.cache_ttl = 300  # 5 минут
 
         print("✅ GeminiInterpreter инициализирован (Gemini 2.0 Flash)")
         logger.info("✅ GeminiInterpreter инициализирован (Gemini 2.0 Flash)")
@@ -41,20 +84,45 @@ class GeminiInterpreter:
             self.session = aiohttp.ClientSession(timeout=timeout)
         return self.session
 
+    # ✅ ДОБАВИТЬ: Методы кэширования
+    def _get_cache_key(self, data: Dict) -> str:
+        """Создать ключ кэша из словаря"""
+        json_str = json.dumps(data, sort_keys=True)
+        return hashlib.md5(json_str.encode()).hexdigest()
+
+    def _get_from_cache(self, key: str) -> Optional[str]:
+        """Получить значение из кэша"""
+        if key in self.cache:
+            result, timestamp = self.cache[key]
+            if time.time() - timestamp < self.cache_ttl:
+                logger.debug(f"💾 Cache HIT: {key[:8]}...")
+                return result
+            else:
+                del self.cache[key]
+        return None
+
+    def _save_to_cache(self, key: str, value: str):
+        """Сохранить значение в кэш"""
+        self.cache[key] = (value, time.time())
+        logger.debug(f"💾 Cache SAVE: {key[:8]}...")
+
     async def interpret_metrics(self, metrics: Dict) -> Optional[str]:
         """
-        Интерпретация метрик через Gemini 2.0 Flash
-
-        Args:
-            metrics: Словарь с метриками (scenario, cvd, funding_rate, oi, ls_ratio, etc)
-
-        Returns:
-            Интерпретация (2-3 строки) или fallback при ошибке
+        Интерпретация метрик через Gemini 2.0 Flash с rate limiting и кэшированием
         """
         try:
+            # ✅ Проверить кэш
+            cache_key = self._get_cache_key(metrics)
+            cached_result = self._get_from_cache(cache_key)
+            if cached_result:
+                return cached_result
+
             if not self.api_key:
                 logger.warning("⚠️ Gemini API key не найден, возврат fallback")
                 return self._get_fallback_interpretation(metrics)
+
+            # ✅ Rate limiting
+            await self.rate_limiter.acquire()
 
             # Создаём prompt
             prompt = self._create_prompt(metrics)
@@ -66,8 +134,8 @@ class GeminiInterpreter:
             payload = {
                 "contents": [{"parts": [{"text": prompt}]}],
                 "generationConfig": {
-                    "temperature": 0.3,  # Меньше креатива, больше точности
-                    "maxOutputTokens": 150,  # Ограничение для краткости
+                    "temperature": 0.3,
+                    "maxOutputTokens": 150,
                     "topK": 40,
                     "topP": 0.95,
                 },
@@ -78,7 +146,6 @@ class GeminiInterpreter:
                 if response.status == 200:
                     data = await response.json()
 
-                    # Извлекаем текст из ответа
                     if "candidates" in data and len(data["candidates"]) > 0:
                         text = data["candidates"][0]["content"]["parts"][0]["text"]
                         interpretation = text.strip()
@@ -87,6 +154,9 @@ class GeminiInterpreter:
                         logger.debug(
                             f"✅ Gemini интерпретация получена ({len(interpretation)} символов, запрос #{self.request_count})"
                         )
+
+                        # ✅ Сохранить в кэш
+                        self._save_to_cache(cache_key, interpretation)
 
                         return interpretation
                     else:
@@ -114,6 +184,7 @@ class GeminiInterpreter:
             logger.error(f"❌ Gemini interpretation error: {e}, возврат fallback")
             return self._get_fallback_interpretation(metrics)
 
+
     async def interpret_text(self, prompt: str) -> Optional[str]:
         """
         Интерпретация текстового prompt через Gemini 2.0 Flash
@@ -128,6 +199,9 @@ class GeminiInterpreter:
             if not self.api_key:
                 logger.warning("⚠️ Gemini API key не найден")
                 return None
+
+            # Rate limiting
+            await self.rate_limiter.acquire()
 
             # Подготавливаем запрос
             session = await self.get_session()
@@ -191,6 +265,8 @@ class GeminiInterpreter:
             if not self.api_key:
                 logger.warning("⚠️ Gemini API key не найден")
                 return ""
+
+            await self.rate_limiter.acquire()
 
             # Подготавливаем запрос
             session = await self.get_session()

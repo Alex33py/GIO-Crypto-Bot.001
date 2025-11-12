@@ -1,8 +1,12 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Unified Scenario Matcher - Объединённая версия с полной функциональностью
 """
+
+# ✅ TOP-5 СЦЕНАРИИ (Оптимизировано из BACKTEST)
+TOP_5_SCENARIOS = ["SCN_001", "SCN_002", "SCN_004", "SCN_013", "SCN_016"]
+
 
 import os
 import json
@@ -11,6 +15,7 @@ from datetime import datetime
 from enum import Enum
 from dataclasses import dataclass
 from config.settings import logger, DATA_DIR
+from core.scenario_selector import ScenarioSelector
 
 
 class SignalStatus(Enum):
@@ -49,9 +54,9 @@ class UnifiedScenarioMatcher:
     def __init__(
         self,
         scenarios_path: str = None,
-        deal_threshold: float = 0.40,
-        risky_threshold: float = 0.30,
-        observation_threshold: float = 0.20,
+        deal_threshold: float = 0.50,
+        risky_threshold: float = 0.40,
+        observation_threshold: float = 0.25,
     ):
         """
         Args:
@@ -64,11 +69,13 @@ class UnifiedScenarioMatcher:
         # === ЗАГРУЗКА ОБОИХ ФАЙЛОВ СЦЕНАРИЕВ ===
         self.scenarios = []
 
-        # Пути к файлам
-        v3_path = os.path.join(
-            DATA_DIR, "scenarios", "gio_scenarios_100_with_features_v3.json"
+        # Пути к файлам - используем ОБЪЕДИНЁННЫЙ файл!
+        combined_path = os.path.join(
+            DATA_DIR, "scenarios", "gio_scenarios_top5_core.json"
         )
-        v2_path = os.path.join(DATA_DIR, "scenarios", "gio_scenarios_v2.json")
+        v3_path = combined_path
+        v2_path = None
+
 
         # Счётчики
         v3_count = 0
@@ -101,7 +108,7 @@ class UnifiedScenarioMatcher:
 
         # 2. ЗАГРУЖАЕМ V2 (12 сценариев)
         try:
-            if os.path.exists(v2_path):
+            if v2_path and os.path.exists(v2_path):
                 logger.info(f"📂 Загрузка v2 сценариев из: {v2_path}")
                 with open(v2_path, "r", encoding="utf-8") as f:
                     v2_data = json.load(f)
@@ -165,6 +172,75 @@ class UnifiedScenarioMatcher:
 
         # Сохраняем путь (для совместимости)
         self.scenarios_path = v3_path if v3_count > 0 else v2_path
+        # === ИНИЦИАЛИЗИРУЕМ SCENARIO SELECTOR ===
+        self.scenario_selector = ScenarioSelector(top_k=3, diversity_weight=0.2)
+
+    def check_mtf_rule(self, trend_1h, trend_4h, trend_1d):
+        """
+        MTF Rule v3.1: 1H+4H same, 1D same/neutral
+        Returns: (allowed, penalty_multiplier)
+        """
+        # 1H и 4H должны совпадать
+        if trend_1h != trend_4h:
+            if trend_1h == "NEUTRAL" or trend_4h == "NEUTRAL":
+                penalty = 0.85
+            else:
+                return (False, 0.0)
+        else:
+            penalty = 1.0
+
+        # Проверка 1D
+        if trend_1d == trend_1h or trend_1d == trend_4h:
+            return (True, penalty * 1.0)
+        elif trend_1d == "NEUTRAL":
+            return (True, penalty * 0.9)
+        else:
+            return (False, 0.0)
+
+    def apply_adx_filter(self, strategy, adx_1h, adx_4h=None):
+        """
+        ADX Filter v3.1: динамический по стратегии
+        Returns: (allowed, adx_factor)
+        """
+        if adx_4h is None:
+            adx_4h = adx_1h
+
+        if strategy in ["momentum", "breakout", "impulse"]:
+            if adx_1h < 25 or adx_4h < 20:
+                return (False, 0.0)
+
+            avg_adx = (adx_1h + adx_4h) / 2
+            if avg_adx < 20:
+                factor = 0.8
+            elif avg_adx <= 40:
+                factor = 1.0
+            else:
+                factor = 1.2
+
+            return (True, factor)
+
+        elif strategy in ["reversion", "distribution", "balance"]:
+            if adx_1h > 25 or adx_4h > 20:
+                return (False, 0.0)
+
+            return (True, 1.0)
+
+        else:
+            return (True, 1.0)
+
+    def apply_cvd_volume_bonus(self, signal_type, cvd, volume_spike):
+        """
+        CVD+Volume Bonus v3.1: 1.1x если совпадают
+        """
+        if signal_type == "LONG":
+            if cvd > 0 and volume_spike:
+                return 1.1
+        elif signal_type == "SHORT":
+            if cvd < 0 and volume_spike:
+                return 1.1
+
+        return 1.0
+
 
     def load_scenarios(self, scenarios: Optional[List[Dict]] = None):
         """
@@ -229,105 +305,371 @@ class UnifiedScenarioMatcher:
         cvd_data: Optional[Dict] = None,
     ) -> Optional[Dict]:
         """
-        Главная функция сопоставления рыночных условий со сценариями
+        ОБНОВЛЁННАЯ ВЕРСИЯ (31 октября 2025)
 
-        Args:
-            symbol: Торговая пара (например, BTCUSDT)
-            market_data: Текущие рыночные данные (price, volume, etc.)
-            indicators: Технические индикаторы (RSI, MACD, ATR)
-            mtf_trends: Тренды по таймфреймам (1H, 4H, 1D)
-            volume_profile: Volume profile данные (POC, VAH, VAL)
-            news_sentiment: Sentiment анализ новостей
-            veto_checks: Результаты VETO проверок
-            cvd_data: Cumulative Volume Delta (опционально)
-
-        Returns:
-            Dict с информацией о найденном сценарии или None
+        Изменения:
+        1. ✨ Flexible MTF Alignment (вместо жёсткой проверки)
+        2. ✨ ADX фильтрация по типу сценария
+        3. 📉 Снижены веса Volume Profile (0.10) и Clusters (0.05)
         """
-        try:
-            logger.debug(f"🔍 Поиск подходящего сценария для {symbol}...")
+        #  Отключаем худшие сценарии (Win Rate < 30%)
+        DISABLED_SCENARIOS = [
+            'SCN_024',  # 0.0% (0/5)
+            'SCN_023',  # 0.0% (0/3) ← NEW
+            'SCN_018',  # 25.0% (2/8)
+            'SCN_002',  # 22.2% (2/9) ← NEW
+            'SCN_022',  # 28.6% (2/7) ← NEW
+            'SCN_004',  # 33.3% (3/9)
+        ]
 
-            if isinstance(mtf_trends, str):
-                # Якщо прийшла строка замість словника
-                logger.warning(f"⚠️ MTF trends для {symbol} прийшли як строка: {mtf_trends}")
+        try:
+            # ============================================
+            # ИМПОРТЫ С ОБРАБОТКОЙ ОШИБОК
+            # ============================================
+            try:
+                from analytics.mtf_flexible_scorer import FlexibleMTFScorer
+            except ImportError as e:
+                logger.error(f"❌ FlexibleMTFScorer import failed: {e}")
+
+                class FlexibleMTFScorer:
+                    """MTF Alignment Scorer v3.1"""
+
+                    @staticmethod
+                    def apply_adx_filter(adx_value: float, required_adx: float, comparison: str = ">=") -> bool:
+                        """Apply ADX filter logic"""
+                        if comparison == ">=":
+                            return adx_value >= required_adx
+                        elif comparison == ">":
+                            return adx_value > required_adx
+                        elif comparison == "<=":
+                            return adx_value <= required_adx
+                        elif comparison == "<":
+                            return adx_value < required_adx
+                        elif comparison == "==":
+                            return adx_value == required_adx
+                        return True
+
+                    def calculate_alignment(self, mtf_trends, required_direction):
+                        """
+                        Проверка выравнивания MTF - ИСПРАВЛЕННАЯ ВЕРСИЯ
+
+                        ✅ Не убивает score если нет данных
+                        ✅ Не убивает score если тренд neutral
+                        ✅ Правильно считает aligned/misaligned
+                        """
+                        if not mtf_trends:
+                            return {"score": 1.0, "strength": "FLEXIBLE", "direction": "N/A",
+                                    "aligned_tfs": [], "misaligned_tfs": []}
+
+                        if all(v == "neutral" for v in mtf_trends.values()):
+                            return {"score": 0.8, "strength": "NEUTRAL", "direction": "NEUTRAL",
+                                    "aligned_tfs": [], "misaligned_tfs": list(mtf_trends.keys())}
+
+                        aligned = [tf for tf, trend in mtf_trends.items()
+                                if trend in ("bullish", "bearish")]
+                        misaligned = [tf for tf, trend in mtf_trends.items()
+                                    if trend == "neutral"]
+
+                        if len(aligned) >= 2:
+                            score, strength = 1.0, "STRONG"
+                        elif len(aligned) == 1:
+                            score, strength = 0.8, "MEDIUM"
+                        else:
+                            score, strength = 0.7, "WEAK"
+
+                        return {
+                            "score": score,
+                            "strength": strength,
+                            "direction": "MULTI_TF" if aligned else "NEUTRAL",
+                            "aligned_tfs": aligned,
+                            "misaligned_tfs": misaligned
+                        }
+
+
+                    def adjust_confidence(self, confidence: float, result: Dict) -> float:
+                        """Adjust confidence based on MTF alignment result"""
+                        if result is None:
+                            return confidence
+
+                        strength = result.get('strength', 'NONE')
+                        score = result.get('score', 0.0)
+
+                        # confidence is already 0-1, score is 0-1
+                        if strength == 'STRONG':
+                            return min(1.0, confidence * score * 1.2)
+                        elif strength == 'WEAK':
+                            return confidence * score * 0.9
+                        else:
+                            return confidence * score * 0.7
+
+
+                    # Fallback: без ADX
+                    class AdvancedIndicators:
+                        @staticmethod
+                        def calculate_adx(highs, lows, closes, period=14):
+                            return {
+                                "adx": 0,
+                                "plus_di": 0,
+                                "minus_di": 0,
+                                "trend_strength": "weak",
+                                "trend_direction": "neutral",
+                            }
+
+                        @staticmethod
+                        def apply_adx_filter(confidence, scenario_type, adx_data):
+                            return confidence
+
+            logger.debug(f"🔍 Matching scenarios for {symbol}...")
+
+            # ============================================
+            # 1. ПОДГОТОВКА ДАННЫХ
+            # ============================================
+
+            unified_data = {
+                "market_data": market_data,
+                "price": market_data.get("price", market_data.get("close", 0)),
+                "volume": market_data.get("volume", 0),
+                "cvd": cvd_data if cvd_data else market_data.get("cvd", {}),
+                "clusters": market_data.get("clusters", {}),
+                "indicators": indicators,
+                "mtf_trends": mtf_trends,
+                "volume_profile": volume_profile,
+                "news_sentiment": news_sentiment,
+                "veto_checks": veto_checks,
+            }
+
+            # Нормализация MTF trends
+            normalized_mtf = unified_data.get("mtf_trends", {})
+
+            if isinstance(normalized_mtf, str):
+                logger.warning(f"⚠️ MTF trends для {symbol} - строка: {normalized_mtf}")
                 normalized_mtf = {
-                    "1H": mtf_trends,
-                    "4H": mtf_trends,
-                    "1D": mtf_trends,
-                    "dominant": mtf_trends,
+                    "1h": normalized_mtf,      # ← LOWERCASE!
+                    "4h": normalized_mtf,
+                    "1d": normalized_mtf,
+                    "dominant": normalized_mtf,
                     "agreement": 100,
-                    "strength": 0.5
+                    "strength": 0.5,
                 }
-            elif isinstance(mtf_trends, dict):
-                # Якщо словник — використовуємо як є
-                normalized_mtf = mtf_trends
-            else:
-                # Якщо невідомий тип — створюємо дефолтний
-                logger.error(f"❌ Неизвестный формат MTF данных: {type(mtf_trends)}")
+
+            elif not isinstance(normalized_mtf, dict):
+                logger.error(f"❌ MTF trends неправильный тип: {type(normalized_mtf)}")
                 normalized_mtf = {
                     "1H": "neutral",
                     "4H": "neutral",
                     "1D": "neutral",
                     "dominant": "neutral",
                     "agreement": 0,
-                    "strength": 0.0
+                    "strength": 0.0,
                 }
 
-            # Проверяем VETO - если есть жёсткий запрет, сразу выходим
+            # VETO check
             if veto_checks.get("has_veto", False):
                 logger.warning(
-                    f"⛔ Все сценарии отклонены VETO: "
-                    f"{veto_checks.get('veto_reasons', [])}"
+                    f"⛔ VETO активен для {symbol}: {veto_checks.get('veto_reasons', [])}"
                 )
                 return None
+
+            # Вычисляем ADX
+            ohlcv = market_data.get("ohlcv", [])
+
+            if len(ohlcv) >= 14:
+                recent_ohlcv = ohlcv[-30:]
+                highs = [c["high"] for c in recent_ohlcv]
+                lows = [c["low"] for c in recent_ohlcv]
+                closes = [c["close"] for c in recent_ohlcv]
+
+                from analytics.advanced_indicators import AdvancedIndicators
+                adx_data = AdvancedIndicators.calculate_adx(
+                    highs, lows, closes, period=14
+                )
+            else:
+                adx_data = {
+                    "adx": 0,
+                    "plus_di": 0,
+                    "minus_di": 0,
+                    "trend_strength": "weak",
+                    "trend_direction": "neutral",
+                }
+                logger.debug(f"⚠️ Недостаточно OHLCV данных для ADX ({len(ohlcv)} < 14)")
+
+            # Инициализируем MTF scorer
+            mtf_scorer = FlexibleMTFScorer()
+
+            # ============================================
+            # 2. ОЦЕНКА ВСЕХ СЦЕНАРИЕВ
+            # ============================================
 
             best_match = None
             best_score = 0.0
             matched_features = []
 
-            # Перебираем все сценарии
-            for scenario in self.scenarios:
-                # Рассчитываем score для сценария
-                score = self._calculate_scenario_score(
-                    scenario=scenario,
-                    market_data=market_data,
-                    indicators=indicators,
-                    mtf_trends=normalized_mtf,
-                    volume_profile=volume_profile,
-                    news_sentiment=news_sentiment,
-                    cvd_data=cvd_data,
+            if not hasattr(self, "debug_counter"):
+                self.debug_counter = 0
+            self.debug_counter += 1
+
+            debug_this_call = self.debug_counter <= 2
+
+            if debug_this_call:
+                print(f"\n🔍 DEBUG match_scenario call #{self.debug_counter}")
+
+            scenario_scores = {}
+
+            # =====================================================
+            # DEBUG: Диагностика для Milestone #2
+            # =====================================================
+            if debug_this_call:
+                logger.debug(f"🔍 ДИАГНОСТИКА match_scenario:")
+                logger.debug(f"   market_data keys: {list(market_data.keys())}")
+                logger.debug(f"   'ohlcv' в market_data: {'ohlcv' in market_data}")
+                logger.debug(f"   len(ohlcv): {len(market_data.get('ohlcv', []))}")
+                logger.debug(f"   mtf_trends type: {type(mtf_trends)}")
+                logger.debug(
+                    f"   mtf_trends keys: {list(mtf_trends.keys()) if isinstance(mtf_trends, dict) else 'NOT DICT'}"
                 )
 
-                # Собираем matched features
-                features = self._get_matched_features(scenario=scenario, score=score)
+                # Проверка первого сценария
+                if self.scenarios:
+                    first_scenario = self.scenarios[0]
+                    logger.debug(f"   Первый сценарий ID: {first_scenario.get('id')}")
+                    logger.debug(f"   'conditions' keys: {list(first_scenario.get('conditions', {}).keys())}")
+                    logger.debug(f"   'mtf_trends' в conditions: {'mtf_trends' in first_scenario.get('conditions', {})}")
 
-                # Обновляем лучшее совпадение
-                if score > best_score:
-                    best_score = score
-                    best_match = scenario
-                    matched_features = features
+                logger.debug(f"=" * 70)
 
-            # Проверяем порог observation
+            for scenario in self.scenarios:
+                try:
+                    scenario_id = scenario.get("id", "UNKNOWN")
+                    scenario_type = scenario.get("type", "UNKNOWN")
+
+                    # Вычисляем базовый score
+                    score = self._calculate_scenario_score(  # ← Добавлен underscore!
+                        scenario=scenario,
+                        market_data=unified_data["market_data"],
+                        indicators=indicators,
+                        mtf_trends=normalized_mtf,
+                        volume_profile=volume_profile,
+                        news_sentiment=news_sentiment,
+                        cvd_data=unified_data["cvd"],
+                    )
+
+                    # ✨ Flexible MTF Adjustment
+                    conditions = scenario.get("conditions", {})
+                    mtf_conditions = conditions.get("mtf_trends", {})
+
+                    # 🔧 НОРМАЛИЗАЦИЯ: Преобразовать ключи normalized_mtf в lowercase
+                    normalized_mtf_lowercase = {
+                        k.lower(): v for k, v in normalized_mtf.items()
+                    }
+
+                    mtf_result = None
+                    if mtf_conditions:
+                        required_direction = mtf_conditions.get("required", "bullish")
+
+                        mtf_result = mtf_scorer.calculate_alignment(
+                            normalized_mtf_lowercase,  # ← ИСПОЛЬЗУЕМ LOWERCASE!
+                            required_direction
+                        )
+
+
+                        # 🔍 DEBUG: Проверка результата
+                        if debug_this_call and scenario.get('id') in ['SCN_001', 'SCN_002', 'SCN_003']:
+                            print(f"   mtf_result: {mtf_result}")
+                            print(f"   strength: {mtf_result.get('strength', 'N/A')}")
+
+                        score = mtf_scorer.adjust_confidence(
+                            score, mtf_result
+                        )  # ← score УЖЕ 0-100
+
+                        # 🔍 DEBUG: Проверка итогового score
+                        if debug_this_call and scenario.get('id') in ['SCN_001', 'SCN_002', 'SCN_003']:
+                            print(f"   score AFTER MTF: {score}")
+
+
+                    adx_allowed, adx_factor = self.apply_adx_filter(
+                        scenario_type,
+                        adx_data.get("adx", 0),
+                        adx_data.get("adx_4h", 0)
+                    )
+
+                    # ✅ Применяем фактор или обнуляем score
+                    if not adx_allowed:
+                        adjusted_score = 0.0  # Block signal
+                    else:
+                        adjusted_score = score * adx_factor  # Применяем фактор
+
+                    scenario_scores[scenario.get("id")] = adjusted_score
+
+
+                    if debug_this_call and len(scenario_scores) <= 25:
+                        # 🔍 ИСПРАВЛЕНИЕ: Проверка наличия mtf_result
+                        if mtf_result and isinstance(mtf_result, dict):
+                            mtf_str = mtf_result.get('strength', 'UNKNOWN')
+                        else:
+                            mtf_str = "N/A"
+                        adx_str = f"{adx_data['adx']:.1f}"
+                        try:
+                            score_pct = float(adjusted_score) * 100 if adjusted_score else 0.0
+                            print(
+                                f"   {scenario_id}: score={score_pct:.2f}%  MTF={mtf_str}  ADX={adx_str}"
+                            )
+                        except (TypeError, ValueError):
+                            print(f"   {scenario_id}: score=ERROR MTF={mtf_str} ADX={adx_str}")
+
+
+                except Exception as e:
+                    logger.error(f"❌ Ошибка оценки сценария {scenario.get('id')}: {e}")
+                    continue
+
+            # ============================================
+            # 3. ВЫБОР ЛУЧШЕГО СЦЕНАРИЯ
+            # ============================================
+
+            evaluated = self.scenario_selector.evaluate_all_scenarios(
+                scenarios=self.scenarios,
+                match_scores=scenario_scores,
+                mtf_trends=normalized_mtf,
+                current_regime=self._detect_market_regime(unified_data["market_data"]),
+            )
+
+            scored_scenario, selection_details = (
+                self.scenario_selector.select_best_scenario(evaluated)
+            )
+
+            if scored_scenario is None:
+                return None
+
+            best_match = scored_scenario.scenario
+            best_score = scored_scenario.match_score
+            matched_features = self._get_matched_features(
+                best_match, best_score
+            )  # ← Добавлен underscore!
+
+            # ============================================
+            # 4. FALLBACK СЦЕНАРИИ
+            # ============================================
+
             if best_score < self.observation_threshold:
                 logger.debug(
-                    f"❌ Нет подходящих сценариев для {symbol}. "
-                    f"Лучший score: {best_score:.1%}. Пробуем fallback..."
+                    f"⚠️ {symbol}: Best scenario score {best_score:.1f} < threshold. Fallback..."
                 )
 
-                # ✅ FALLBACK: Базовый сценарий если score слишком низкий
-                cvd = market_data.get("cvd", 0)
-                ls_ratio = market_data.get("long_short_ratio", 1.0)
-                funding = market_data.get("funding_rate", 0)
+                cvd = unified_data.get("cvd", 0)
+                ls_ratio = unified_data["market_data"].get("long_short_ratio", 1.0)
+                funding = unified_data["market_data"].get("funding_rate", 0)
                 rsi = indicators.get("rsi", 50)
-                volume_ratio = market_data.get("volume_ratio", 1.0)
+                volume_ratio = unified_data["market_data"].get("volume_ratio", 1.0)
 
-                # Bullish scenario
-                if cvd > 2 and ls_ratio > 1.2 and rsi < 50:
+                # ✅ ИСПРАВЛЕНИЕ: Извлекаем числовое значение CVD
+                cvd_value = cvd.get('cvd_value', 0) if isinstance(cvd, dict) else cvd
+
+                # FALLBACK логика (LONG/SHORT/RANGE)
+                if cvd_value > 2 and ls_ratio > 1.2 and rsi < 50:
                     best_match = {
                         "id": "FALLBACK_LONG",
                         "name": "Accumulation (Basic)",
                         "direction": "LONG",
-                        "description": "Базовый бычий сценарий на основе CVD и L/S",
+                        "description": "Positive CVD + High LS Ratio",
                         "tp1_percent": 1.5,
                         "tp2_percent": 3.0,
                         "tp3_percent": 5.0,
@@ -337,17 +679,17 @@ class UnifiedScenarioMatcher:
                     }
                     best_score = 0.25
                     matched_features = ["positive_cvd", "high_ls_ratio", "oversold_rsi"]
+                    cvd_val = cvd_value if isinstance(cvd_value, (int, float)) else 0.0
                     logger.info(
-                        f"✅ Применён FALLBACK LONG для {symbol} (CVD={cvd:.1f}, L/S={ls_ratio:.2f})"
+                        f"🟢 FALLBACK LONG {symbol}! CVD={cvd_val:.1f}, LS={ls_ratio:.2f}"
                     )
 
-                # Bearish scenario
-                elif cvd < -2 and ls_ratio < 0.9 and rsi > 50:
+                elif cvd_value < -2 and ls_ratio < 0.9 and rsi > 50:  # ✅ ИСПРАВЛЕНО
                     best_match = {
                         "id": "FALLBACK_SHORT",
                         "name": "Distribution (Basic)",
                         "direction": "SHORT",
-                        "description": "Базовый медвежий сценарий на основе CVD и L/S",
+                        "description": "Negative CVD + Low LS Ratio",
                         "tp1_percent": 1.5,
                         "tp2_percent": 3.0,
                         "tp3_percent": 5.0,
@@ -361,17 +703,16 @@ class UnifiedScenarioMatcher:
                         "low_ls_ratio",
                         "overbought_rsi",
                     ]
+                    cvd_val = cvd_value if isinstance(cvd_value, (int, float)) else 0.0
                     logger.info(
-                        f"✅ Применён FALLBACK SHORT для {symbol} (CVD={cvd:.1f}, L/S={ls_ratio:.2f})"
+                        f"🟢 FALLBACK LONG {symbol}! CVD={cvd_val:.1f}, LS={ls_ratio:.2f}"
                     )
-
-                # Ranging/Consolidation
-                elif abs(cvd) < 2 and 0.9 <= ls_ratio <= 1.1 and volume_ratio > 1.2:
+                elif isinstance(cvd_value, (int, float)) and abs(cvd_value) < 2 and 0.9 <= ls_ratio <= 1.1 and volume_ratio > 1.2:  # ✅ ИСПРАВЛЕНО
                     best_match = {
                         "id": "FALLBACK_RANGE",
                         "name": "Consolidation",
                         "direction": "LONG",
-                        "description": "Консолидация с повышенными объёмами",
+                        "description": "Neutral market",
                         "tp1_percent": 1.0,
                         "tp2_percent": 2.0,
                         "tp3_percent": 3.0,
@@ -381,124 +722,90 @@ class UnifiedScenarioMatcher:
                     }
                     best_score = 0.22
                     matched_features = ["neutral_cvd", "balanced_ls", "high_volume"]
-                    logger.info(
-                        f"✅ Применён FALLBACK RANGE для {symbol} (Neutral market)"
-                    )
+                    logger.info(f"⚪ FALLBACK RANGE {symbol}: Neutral market")
 
-                # Если fallback тоже не подошёл
-                if best_score < self.observation_threshold:
-                    logger.debug(f"❌ Fallback тоже не подошёл для {symbol}")
+                else:
                     return None
 
-            # Определяем статус на основе score
-            status = self._determine_status(best_score)
+            # ============================================
+            # 5. ФОРМИРОВАНИЕ РЕЗУЛЬТАТА
+            # ============================================
 
-            # Формируем результат
-            current_price = market_data.get("close", market_data.get("price", 0))
+            status = self._determine_status(best_score)  # ← Добавлен underscore!
+
+            current_price = unified_data.get("price", 0)
+
+            if current_price <= 0:
+                logger.error(f"❌ Неправильная цена для {symbol}: {current_price}")
+                return None
+
+            direction = best_match.get("direction", "LONG")
+
+            tp1_percent = best_match.get("tp1_percent", 2.0)
+            tp2_percent = best_match.get("tp2_percent", 4.0)
+            tp3_percent = best_match.get("tp3_percent", 6.0)
+            sl_percent = best_match.get("sl_percent", 1.5)
+
+            if direction.upper() == "LONG":
+                tp1 = round(current_price * (1 + tp1_percent / 100), 2)
+                tp2 = round(current_price * (1 + tp2_percent / 100), 2)
+                tp3 = round(current_price * (1 + tp3_percent / 100), 2)
+                stop_loss = round(current_price * (1 - sl_percent / 100), 2)
+            else:
+                tp1 = round(current_price * (1 - tp1_percent / 100), 2)
+                tp2 = round(current_price * (1 - tp2_percent / 100), 2)
+                tp3 = round(current_price * (1 - tp3_percent / 100), 2)
+                stop_loss = round(current_price * (1 + sl_percent / 100), 2)
 
             result = {
-                "scenario_id": best_match.get("id", "unknown"),
-                "scenario_name": best_match.get("name")
-                or f"{best_match.get('strategy', 'Unknown').title()} {best_match.get('phase', 'Setup').title()}",
+                "scenario_id": best_match.get("id", "unknown"),  # ✅ best_match (с underscore!)
+                "scenario_name": (
+                    best_match.get("name")
+                    or f"{best_match.get('strategy', 'Unknown').title()} - {best_match.get('phase', 'Setup').title()}"
+                ),
                 "symbol": symbol,
                 "status": status,
-                "score": round(best_score * 100, 2),
-                "direction": best_match.get("direction", "LONG"),
-                "entry_price": current_price,
+                "score": round(best_score * 100, 2),  # ✅ best_score (с underscore!)
+                "direction": direction,  # ✅ direction (уже правильно!)
+                "entry_price": current_price,  # ✅ current_price (с underscore!)
                 "timestamp": datetime.now().isoformat(),
-                "matched_features": matched_features,
+                "matched_features": matched_features,  # ✅ matched_features (с underscore!)
                 "conditions": best_match.get("conditions", {}),
                 "description": best_match.get("description", ""),
                 "timeframe": best_match.get("timeframe", "1H"),
+                "tp1": tp1,
+                "tp2": tp2,
+                "tp3": tp3,
+                "stop_loss": stop_loss,  # ✅ stop_loss (с underscore!)
+                "adx": adx_data,  # ✅ adx_data (с underscore!)
+                "mtf_alignment": mtf_result,  # ✅ mtf_result (с underscore!)
             }
 
-            # Расчёт TP/SL
-            if current_price > 0:
-                direction = best_match.get("direction", "LONG")
 
-                # Базовые проценты
-                tp1_percent = best_match.get("tp1_percent", 1.5)
-                tp2_percent = best_match.get("tp2_percent", 3.0)
-                tp3_percent = best_match.get("tp3_percent", 5.0)
-                sl_percent = best_match.get("sl_percent", 1.0)
 
-                # СНАЧАЛА РАССЧИТЫВАЕМ TP/SL! ← ВАЖНО!
-                if direction.upper() == "LONG":
-                    tp1 = round(current_price * (1 + tp1_percent / 100), 2)
-                    tp2 = round(current_price * (1 + tp2_percent / 100), 2)
-                    tp3 = round(current_price * (1 + tp3_percent / 100), 2)
-                    stop_loss = round(current_price * (1 - sl_percent / 100), 2)
-                else:  # SHORT
-                    tp1 = round(current_price * (1 - tp1_percent / 100), 2)
-                    tp2 = round(current_price * (1 - tp2_percent / 100), 2)
-                    tp3 = round(current_price * (1 - tp3_percent / 100), 2)
-                    stop_loss = round(current_price * (1 + sl_percent / 100), 2)
-
-                # ========== RR ФІЛЬТР (КРИТИЧНО!) ==========
-                # Расчёт Risk/Reward для TP2 (основной TP)
-                risk = abs(current_price - stop_loss)
-                reward = abs(tp2 - current_price)
-
-                if risk > 0:
-                    calculated_rr = round(reward / risk, 2)
-                else:
-                    calculated_rr = 0.0
-
-                # Минимальный порог RR
-                min_rr = 1.2
-
-                if calculated_rr < min_rr:
-                    logger.info(
-                        f"⚠️ {symbol}: Сигнал отклонён (RR={calculated_rr:.2f} < {min_rr}) "
-                        f"[Score: {best_score*100:.1f}%, "
-                        f"Entry: ${current_price:,.2f}, "
-                        f"TP2: ${tp2:,.2f}, "
-                        f"SL: ${stop_loss:,.2f}, "
-                        f"Risk: ${risk:,.2f}, "
-                        f"Reward: ${reward:,.2f}]"
-                    )
-                    return None  # ← ОТКЛОНЯЕМ СИГНАЛ!
-
-                # Добавляем рассчитанные значения в result
-                result["tp1"] = tp1
-                result["tp2"] = tp2
-                result["tp3"] = tp3
-                result["stop_loss"] = stop_loss
-                result["risk_reward"] = calculated_rr  # ← ДОБАВЛЯЕМ RR В РЕЗУЛЬТАТ
-
-            else:
-                result["tp1"] = 0
-                result["tp2"] = 0
-                result["tp3"] = 0
-                result["stop_loss"] = 0
-                result["risk_reward"] = 0.0
-
-            # Логируем результат (ПОСЛЕ RR ФІЛЬТРА!)
+            # Логирование
             if status == "deal":
                 logger.info(
-                    f"✅ DEAL сигнал для {symbol}! "
-                    f"Score: {result['score']:.1f}%, "
-                    f"RR: {result.get('risk_reward', 0):.2f}, "
-                    f"Сценарій: {result['scenario_name']}"
+                    f"🎯 DEAL для {symbol}! Score: {result['score']:.1f}%, {result['scenario_name']}"
                 )
             elif status == "risky_entry":
                 logger.info(
-                    f"⚠️ RISKY ENTRY для {symbol}! "
-                    f"Score: {result['score']:.1f}%, "
-                    f"RR: {result.get('risk_reward', 0):.2f}, "
-                    f"Сценарій: {result['scenario_name']}"
+                    f"⚠️ RISKY ENTRY для {symbol}! Score: {result['score']:.1f}%, {result['scenario_name']}"
                 )
             else:
                 logger.debug(
-                    f"👀 Наблюдение для {symbol}. "
-                    f"Score: {result['score']:.1f}%, "
-                    f"Сценарій: {result['scenario_name']}"
+                    f"📊 {symbol}: Score: {result['score']:.1f}%, {result['scenario_name']}"
+                )
+
+            if self.debug_counter <= 5:
+                print(
+                    f"\n✅ FINAL result: score={best_score:.2f}, status={status}, id={result.get('scenario_id')}"
                 )
 
             return result
 
         except Exception as e:
-            logger.error(f"❌ Ошибка match_scenario для {symbol}: {e}")
+            logger.error(f"❌ match_scenario для {symbol}: {e}", exc_info=True)
             return None
 
     def _calculate_scenario_score(
@@ -512,66 +819,46 @@ class UnifiedScenarioMatcher:
         cvd_data: Optional[Dict],
     ) -> float:
         """
-        Расчёт weighted score сценария
-
-        Returns:
-            float: score от 0.0 до 1.0
+        Расчёт weighted score сценария БЕЗ жёстких MTF/ADX фильтров
+        MTF и ADX фильтрация выполняется в match_scenario() через FlexibleMTFScorer
         """
         try:
-            # Получаем условия и веса из сценария
-            conditions = scenario.get("conditions", {})
-            weights = scenario.get("weights", {})
+            scenario_id = scenario.get("id", "UNKNOWN")
 
-            score = 0.0
-            total_weight = 0.0
+            # ============================================
+            # ✅ БАЗОВЫЙ РАСЧЁТ SCORE (БЕЗ MTF/ADX БЛОКИРОВОК!)
+            # ============================================
+            # MTF и ADX проверки выполняются в match_scenario()
+            # Здесь только базовая оценка условий сценария
 
-            # 1. MTF Policy (вес: 30%)
-            mtf_score = self._check_mtf_policy(scenario, indicators, mtf_trends)
-            mtf_weight = weights.get("mtf", 0.30)
-            score += mtf_score * mtf_weight
-            total_weight += mtf_weight
+            # Получаем 'if' блок
+            if_block = scenario.get("if")
 
-            # 2. ExoCharts / Volume Profile (вес: 25%)
-            exo_score = self._check_exocharts(scenario, market_data, volume_profile)
-            exo_weight = weights.get("exocharts", 0.25)
-            score += exo_score * exo_weight
-            total_weight += exo_weight
+            # Если есть 'if' блок - используем парсер
+            if if_block:
+                if_score = self._evaluate_if_conditions(
+                    scenario, market_data, indicators
+                )
+                score = if_score
+            else:
+                # Возвращаем базовый score для сценариев без if блока
+                score = 0.6
 
-            # 3. Indicators (RSI, MACD, ATR) (вес: 15%)
-            ind_score = self._check_indicator_conditions(
-                conditions.get("indicators", {}), indicators
-            )
-            ind_weight = weights.get("indicators", 0.15)
-            score += ind_score * ind_weight
-            total_weight += ind_weight
+            # ✅ CVD+Volume Bonus (v3.1)
+            cvd = cvd_data.get("cvd_value", 0) if cvd_data and isinstance(cvd_data, dict) else market_data.get("cvd", 0)
+            volume_spike = market_data.get("volume_spike", False)
+            signal_type = scenario.get("direction", "LONG").upper()
 
-            # 4. News Policy (вес: 15%)
-            news_score = self._check_news_policy(scenario, news_sentiment)
-            news_weight = weights.get("news", 0.15)
-            score += news_score * news_weight
-            total_weight += news_weight
+            cvd_bonus = self.apply_cvd_volume_bonus(signal_type, cvd, volume_spike)
+            score = score * cvd_bonus
 
-            # 5. CVD (вес: 10%)
-            if cvd_data:
-                cvd_score = self._check_cvd(scenario, cvd_data)
-                cvd_weight = weights.get("cvd", 0.10)
-                score += cvd_score * cvd_weight
-                total_weight += cvd_weight
-
-            # 6. Triggers (вес: 10%)
-            trigger_score = self._check_triggers(scenario, indicators, market_data)
-            trigger_weight = weights.get("triggers", 0.10)
-            score += trigger_score * trigger_weight
-            total_weight += trigger_weight
-
-            # Нормализуем score
-            final_score = score / total_weight if total_weight > 0 else 0.0
-
-            return max(0.0, min(1.0, final_score))
+            return max(0.0, min(1.0, score))  # Нормализация 0-1
 
         except Exception as e:
-            logger.error(f"❌ Ошибка расчёта score: {e}")
+            logger.error(f"❌ Ошибка в _calculate_scenario_score: {e}", exc_info=True)
             return 0.0
+
+
 
     def _check_mtf_policy(
         self, scenario: Dict, indicators: Dict, mtf_trends: Dict
@@ -809,30 +1096,46 @@ class UnifiedScenarioMatcher:
     def _check_triggers(
         self, scenario: Dict, indicators: Dict, market_data: Dict
     ) -> float:
-        """Проверка триггеров (T1/T2/T3)"""
+        """Проверка триггеров (T1/T2/T3) с поддержкой V2 и V3 форматов"""
         try:
+            # Получаем направление сделки
+            direction = scenario.get("direction", "long")
+            if isinstance(direction, dict):
+                direction = direction.get("direction", "long")
+
+            # Получаем tactics из сценария V3
+            tactics = scenario.get("tactics", {})
+            if isinstance(tactics, dict):
+                direction = tactics.get("direction", direction)
+
             score = 0.0
             triggers_fired = 0
+            max_triggers = 3
 
             # T1: Технический триггер (RSI)
-            rsi = indicators.get("rsi_1h", 50) or indicators.get("rsi", 50)
-            if scenario.get("direction") == "long" and 30 < rsi < 50:
-                triggers_fired += 1
-            elif scenario.get("direction") == "short" and 50 < rsi < 70:
-                triggers_fired += 1
+            rsi = indicators.get("rsi_1h", indicators.get("rsi", 50))
+            if isinstance(rsi, (int, float)):
+                if direction == "long" and 30 < rsi < 50:
+                    triggers_fired += 1
+                elif direction == "short" and 50 < rsi < 70:
+                    triggers_fired += 1
 
             # T2: Объёмный триггер
             volume_ratio = market_data.get("volume_ratio", 1.0)
-            if volume_ratio > 1.3:
+            if isinstance(volume_ratio, (int, float)) and volume_ratio > 1.3:
                 triggers_fired += 1
 
             # T3: CVD подтверждение
-            cvd = market_data.get("cvd", 0)
-            cvd_confirmed = cvd * (1 if scenario.get("direction") == "long" else -1) > 0
-            if cvd_confirmed:
-                triggers_fired += 1
+            cvd_value = market_data.get("cvd", 0)
 
-            score = triggers_fired / 3.0
+            # Безопасная проверка CVD
+            if isinstance(cvd_value, (int, float)):
+                if direction == "long" and cvd_value > 0:
+                    triggers_fired += 1
+                elif direction == "short" and cvd_value < 0:
+                    triggers_fired += 1
+
+            score = triggers_fired / max_triggers
             return score
 
         except Exception as e:
@@ -850,8 +1153,14 @@ class UnifiedScenarioMatcher:
 
     def _get_trend(self, mtf_trends: Dict, indicators: Dict, tf_key: str) -> str:
         """Универсальный геттер для тренда с поддержкой разных форматов"""
-        # Попробуем разные варианты ключей (1H, 1h, 1D, 1d)
-        tf_variants = [tf_key, tf_key.lower(), tf_key.upper()]
+        # Попробуем разные варианты ключей (1H, 1h, 1D, 1d, 1D, 1D)
+        tf_variants = [
+            tf_key,                          # "1H"
+            tf_key.lower(),                  # "1h"
+            tf_key.upper(),                  # "1H"
+            tf_key.replace("H", "h"),        # "1h"
+            tf_key.replace("D", "d"),        # "1d"
+        ]
 
         for variant in tf_variants:
             # Пробуем получить из mtf_trends
@@ -863,7 +1172,7 @@ class UnifiedScenarioMatcher:
                     return trend_data.get("trend", "neutral")
                 # Если значение - строка напрямую
                 elif trend_data:
-                    return trend_data
+                    return str(trend_data).lower()
 
             # Fallback: пробуем получить из indicators
             ind_key = f"trend_{variant.lower()}"
@@ -872,6 +1181,7 @@ class UnifiedScenarioMatcher:
 
         # Если ничего не нашли - возвращаем neutral
         return "neutral"
+
 
     def _get_matched_features(self, scenario: Dict, score: float) -> List[str]:
         """Получение списка matched features для сценария"""
@@ -885,6 +1195,179 @@ class UnifiedScenarioMatcher:
             features.append("positive_news")
 
         return features
+
+    def _parse_condition_string(
+        self, condition: str, market_data: Dict, indicators: Dict
+    ) -> bool:
+        """Парсит строковые условия из JSON сценариев V3"""
+        try:
+            # Безопасное извлечение тренда
+            mtf_trends = market_data.get("mtf_trends", {})
+
+            def safe_trend_get(key):
+                val = mtf_trends.get(key, mtf_trends.get(key.upper(), "neutral"))
+                if isinstance(val, dict):
+                    return val.get("trend", "neutral").lower()
+                return str(val).lower() if val else "neutral"
+
+            context = {
+                "price": market_data.get("price", 0),
+                "poc": market_data.get("poc", market_data.get("volume_profile", {}).get("poc", 0)),
+                "vah": market_data.get("vah", market_data.get("volume_profile", {}).get("vah", 0)),
+                "val": market_data.get("val", market_data.get("volume_profile", {}).get("val", 0)),
+                "atr": indicators.get("atr", market_data.get("price", 0) * 0.02),
+                "volume": market_data.get("volume", 0),
+                "volume_ma20": market_data.get("volume_ma20", market_data.get("volume", 0)),
+                "abs": abs,
+                "min": min,
+                "max": max,
+                "trend_1h": safe_trend_get("1h"),      # ✅ ПРАВИЛЬНО
+                "trend_4h": safe_trend_get("4h"),
+                "trend_1d": safe_trend_get("1d"),
+            }
+
+            result = eval(condition, {"__builtins__": {}}, context)
+            return bool(result)
+
+        except Exception as e:
+            logger.debug(f"⚠️ Ошибка парсинга условия '{condition}': {e}")
+            return False
+
+
+
+    def _detect_market_regime(self, market_data: Dict) -> str:
+        """Определить текущий режим рынка"""
+        mtf_trends = market_data.get("mtf_trends", {})
+        dominant = mtf_trends.get("dominant", "neutral")
+
+        if dominant in ["strong_bullish", "bullish"]:
+            return "uptrend"
+        elif dominant in ["strong_bearish", "bearish"]:
+            return "downtrend"
+        else:
+            return "neutral"
+
+    def _evaluate_if_conditions(
+        self, scenario: Dict, market_data: Dict, indicators: Dict
+    ) -> float:
+        """
+        Оценка всех условий из блока 'if' в сценарии V3
+        Поддерживает парсинг строковых условий
+        """
+        try:
+            if_block = scenario.get("if", {})
+            if not if_block:
+                return 0.8  # Если нет условий - даём хороший score
+
+            score = 0.0
+            total_sections = 0
+
+            # === MTF CONDITIONS ===
+            if "mtf" in if_block:
+                mtf_conditions = if_block["mtf"]
+                if isinstance(mtf_conditions, list) and mtf_conditions:
+                    mtf_passed = sum(
+                        1
+                        for cond in mtf_conditions
+                        if self._parse_condition_string(cond, market_data, indicators)
+                    )
+                    mtf_score = mtf_passed / len(mtf_conditions)
+                    score += mtf_score * 0.30  # MTF вес 30%
+                    total_sections += 0.30
+
+            # === EXOCHARTS CONDITIONS ===
+            if "exocharts" in if_block:
+                exo_conditions = if_block["exocharts"]
+                if isinstance(exo_conditions, list) and exo_conditions:
+                    exo_passed = sum(
+                        1
+                        for cond in exo_conditions
+                        if self._parse_condition_string(cond, market_data, indicators)
+                    )
+                    exo_score = exo_passed / len(exo_conditions)
+                    score += exo_score * 0.25  # ExoCharts вес 25%
+                    total_sections += 0.25
+
+            # === CVD CONDITIONS ===
+            if "cvd" in if_block:
+                cvd_conditions = if_block["cvd"]
+                if isinstance(cvd_conditions, list) and cvd_conditions:
+                    cvd_passed = sum(
+                        1
+                        for cond in cvd_conditions
+                        if self._parse_condition_string(cond, market_data, indicators)
+                    )
+                    cvd_score = cvd_passed / len(cvd_conditions)
+                    score += cvd_score * 0.15  # CVD вес 15%
+                    total_sections += 0.15
+
+            # === CLUSTERS CONDITIONS (OR groups) ===
+            if "clusters" in if_block:
+                clusters_conditions = if_block["clusters"]
+                if isinstance(clusters_conditions, list) and clusters_conditions:
+                    cluster_passed = 0
+                    for cluster_group in clusters_conditions:
+                        if isinstance(cluster_group, list) and cluster_group:
+                            # Проверяем хотя бы одно условие в группе
+                            if any(
+                                self._parse_condition_string(
+                                    cond, market_data, indicators
+                                )
+                                for cond in cluster_group
+                            ):
+                                cluster_passed += 1
+
+                    cluster_score = cluster_passed / len(clusters_conditions)
+                    score += cluster_score * 0.15  # Clusters вес 15%
+                    total_sections += 0.15
+
+            # === NEWS CONDITIONS (OR groups) ===
+            if "news" in if_block:
+                news_conditions = if_block["news"]
+                if isinstance(news_conditions, list) and news_conditions:
+                    news_passed = 0
+                    for news_group in news_conditions:
+                        if isinstance(news_group, list) and news_group:
+                            # Проверяем хотя бы одно условие в группе
+                            if any(
+                                self._parse_condition_string(
+                                    cond, market_data, indicators
+                                )
+                                for cond in news_group
+                            ):
+                                news_passed += 1
+
+                    news_score = news_passed / len(news_conditions)
+                    score += news_score * 0.10  # News вес 10%
+                    total_sections += 0.10
+
+            # === TRIGGERS CONDITIONS ===
+            if "triggers" in if_block:
+                triggers_conditions = if_block["triggers"]
+                if isinstance(triggers_conditions, list) and triggers_conditions:
+                    triggers_passed = 0
+                    for trigger_group in triggers_conditions:
+                        if isinstance(trigger_group, list) and trigger_group:
+                            # Проверяем хотя бы одно условие в группе
+                            if any(
+                                self._parse_condition_string(
+                                    cond, market_data, indicators
+                                )
+                                for cond in trigger_group
+                            ):
+                                triggers_passed += 1
+
+                    trigger_score = triggers_passed / len(triggers_conditions)
+                    score += trigger_score * 0.05  # Triggers вес 5%
+                    total_sections += 0.05
+
+            # Нормализуем score
+            final_score = score / total_sections if total_sections > 0 else 0.5
+            return max(0.0, min(1.0, final_score))
+
+        except Exception as e:
+            logger.error(f"❌ Ошибка оценки условий 'if': {e}")
+            return 0.5
 
 
 # Алиас для совместимости

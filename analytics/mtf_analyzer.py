@@ -86,8 +86,15 @@ class MultiTimeframeAnalyzer:
                 "ema_50": ema_50,
                 "macd": macd_data,
                 "price": current_price,
-                "timestamp": datetime.now()
+                "timestamp": datetime.now(),
+                # ✅ ДОБАВЛЕНО: OHLCV данные для кэша
+                "close": float(candles[-1]["close"]),
+                "open": float(candles[-1]["open"]),
+                "high": float(candles[-1]["high"]),
+                "low": float(candles[-1]["low"]),
+                "volume": float(candles[-1]["volume"])
             }
+
 
         except Exception as e:
             ErrorLogger.log_calculation_error(
@@ -154,20 +161,22 @@ class MultiTimeframeAnalyzer:
 
             # ОПРЕДЕЛЕНИЕ ТРЕНДА
             if bullish_score > bearish_score:
-                trend = "BULLISH"
+                trend = "bullish"  # ← LOWERCASE!
                 strength = min(bullish_score * strong_modifier, 1.0)
             elif bearish_score > bullish_score:
-                trend = "BEARISH"
+                trend = "bearish"  # ← LOWERCASE!
                 strength = min(bearish_score * strong_modifier, 1.0)
             else:
-                trend = "NEUTRAL"
+                trend = "neutral"  # ← LOWERCASE!
                 strength = 0.5
+
 
             return trend, strength
 
         except Exception as e:
             logger.error(f"❌ Ошибка определения тренда: {e}")
-            return "UNKNOWN", 0.0
+            return "neutral", 0.5  # ← LOWERCASE + НОРМАЛЬНЫЙ STRENGTH!
+
 
     def calculate_rsi(self, candles, period: int = 14) -> float:
         """Расчёт RSI"""

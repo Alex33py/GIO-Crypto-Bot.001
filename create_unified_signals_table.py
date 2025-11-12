@@ -87,3 +87,6 @@ except Exception as e:
     raise
 
 print("\n🎉 Готово! Теперь можно запустить бота.")
+
+
+# create_unified_signals_table.py

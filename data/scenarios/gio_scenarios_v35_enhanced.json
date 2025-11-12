@@ -1,0 +1,4041 @@
+{
+  "meta": {
+    "version": "3.5-enhanced",
+    "changes": [
+      "added ADX trend strength filter",
+      "added CVD+Volume bonus confidence",
+      "improved MTF flexibility (1D neutral/confirming)",
+      "kept priority system / UTF-8 / RR rules"
+    ],
+    "build": "GIO v3.5 — Enhanced Core for backtest/live validation"
+  },
+  "priority_system": {
+    "high_confidence": "score >= 0.80",
+    "medium_confidence": "0.65 <= score < 0.80",
+    "avoid_multiple_entries_same_direction": true
+  },
+  "scenarios": [
+    {
+      "id": "SCN_001_LONG_MOMENTUM_CORE",
+      "strategy": "momentum",
+      "phase": "impulse",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ],
+        "confidence_threshold": [
+          "score >= 0.75"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.17,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_002_LONG_MOMENTUM_HIGH_VOL",
+      "strategy": "momentum",
+      "phase": "impulse",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > 1.5 * atr_ma20",
+          "volatility_regime == 'high'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.15,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_003_LONG_MOMENTUM_CLUSTER",
+      "strategy": "momentum",
+      "phase": "impulse",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0",
+          "breakout_hh_or_ll == true"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false",
+          "cluster.poc_shift_up == true"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ],
+        "confidence_threshold": [
+          "score >= 0.75"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.13,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.5*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_004_LONG_PULLBACK_CORE",
+      "strategy": "pullback",
+      "phase": "impulse_retest",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.5*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_005_LONG_PULLBACK_LOW_VOLUME",
+      "strategy": "pullback",
+      "phase": "impulse_retest",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.0 * atr",
+          "volume < volume_ma20",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.13,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_006_LONG_BREAKOUT_CORE",
+      "strategy": "breakout",
+      "phase": "expansion",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.15,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_007_LONG_BREAKOUT_NEWS",
+      "strategy": "breakout",
+      "phase": "expansion",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0",
+          "breakout_hh_or_ll == true"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score > 0.3",
+          "major_news_impact == 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.07,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_008_LONG_TRAP_RECLAIM_CORE",
+      "strategy": "distribution_trap_reclaim",
+      "phase": "accumulation",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.11,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_009_LONG_MEANREV_BALANCE",
+      "strategy": "mean_reversion",
+      "phase": "flat_balance",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.09,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.5*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_010_LONG_MOMENTUM_VAL_RETEST",
+      "strategy": "pullback",
+      "phase": "impulse_retest",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.125,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.145,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_011_LONG_BREAKOUT_VAH",
+      "strategy": "breakout",
+      "phase": "expansion",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0",
+          "breakout_hh_or_ll == true"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false",
+          "cluster.poc_shift_up == true"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.145,
+        "cluster_analysis": 0.13,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_012_LONG_ACCUM_POC_BOUNCE",
+      "strategy": "mean_reversion",
+      "phase": "flat_balance",
+      "opinion": "bullish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bullish'",
+          "trend_4h != 'bearish'",
+          "(trend_1d == 'bullish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp < 8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio between 0.8 and 1.3",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index < 0.7"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned' or oi_vs_price == 'diverging_bullish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope > -1000",
+          "cvd_confirms == true",
+          "delta_5m_avg > 0",
+          "cvd_microtrend == 'bullish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h > 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_up == true",
+          "cluster.stacked_imbalance_up >= 2",
+          "cluster.absorption_high == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h > 0",
+          "price > ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score >= -0.2",
+          "major_news_impact != 'negative'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.145,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "long",
+        "sl_rules": [
+          "val - 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc + 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "vah + 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Impulse continuation after POC/VAL retest; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 100.1,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 27,
+        "adx_4h": 29,
+        "adx_slope": 1.2,
+        "volume": 1150000,
+        "volume_ma20": 1000000,
+        "cvd_slope": 2000,
+        "cvd_microtrend": "bullish",
+        "cvd_confirms": true,
+        "macd_hist_1h": 0.015,
+        "rsi_1h": 55,
+        "funding_rate_bp": 0.5,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.05,
+        "crowding_index": 0.55,
+        "oi_vs_price": "aligned",
+        "open_interest_delta_pct": 0.3,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 4.0,
+        "delta_5m_avg": 250,
+        "volatility_regime": "normal",
+        "news_score": 0.05,
+        "trend_1h": "bullish",
+        "trend_4h": "bullish",
+        "trend_1d": "confirming",
+        "volume_delta_1h": 0.12,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.05
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_013_SHORT_MOMENTUM_CORE",
+      "strategy": "momentum",
+      "phase": "impulse",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.17,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_014_SHORT_MOMENTUM_HIGH_VOL",
+      "strategy": "momentum",
+      "phase": "impulse",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > 1.5 * atr_ma20",
+          "volatility_regime == 'high'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.15,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_015_SHORT_MOMENTUM_CLUSTER",
+      "strategy": "momentum",
+      "phase": "impulse",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0",
+          "breakout_hh_or_ll == true"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false",
+          "cluster.poc_shift_down == true"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.13,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_016_SHORT_PULLBACK_CORE",
+      "strategy": "pullback",
+      "phase": "impulse_retest",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 30",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_017_SHORT_PULLBACK_LOW_VOLUME",
+      "strategy": "pullback",
+      "phase": "impulse_retest",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.0 * atr",
+          "volume < volume_ma20",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.13,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_018_SHORT_BREAKOUT_CORE",
+      "strategy": "breakout",
+      "phase": "expansion",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.15,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.5*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_019_SHORT_BREAKOUT_NEWS",
+      "strategy": "breakout",
+      "phase": "expansion",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0",
+          "breakout_hh_or_ll == true"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score > 0.3",
+          "major_news_impact == 'positive'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.07,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_020_SHORT_DISTRIBUTION_EXHAUST",
+      "strategy": "distribution_exhaustion",
+      "phase": "distribution",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.11,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.7*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_021_SHORT_MEANREV_BALANCE",
+      "strategy": "mean_reversion",
+      "phase": "flat_balance",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 32",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.14,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.09,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.5*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_022_SHORT_MOMENTUM_VAH_REJECT",
+      "strategy": "pullback",
+      "phase": "impulse_retest",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.125,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.145,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.3*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_023_SHORT_BREAKDOWN_VAL",
+      "strategy": "breakout",
+      "phase": "expansion",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0",
+          "breakout_hh_or_ll == true"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false",
+          "cluster.poc_shift_down == true"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.145,
+        "cluster_analysis": 0.13,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.7*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    },
+    {
+      "id": "SCN_024_SHORT_DISTRIBUTION_POC_FAIL",
+      "strategy": "mean_reversion",
+      "phase": "flat_balance",
+      "opinion": "bearish",
+      "status": "deal",
+      "if": {
+        "mtf_alignment": [
+          "trend_1h == 'bearish'",
+          "trend_4h != 'bullish'",
+          "(trend_1d == 'bearish' or trend_1d == 'neutral' or trend_1d == 'confirming')"
+        ],
+        "trend_strength": [
+          "adx_1h > 35",
+          "adx_4h > 30",
+          "adx_slope >= 0"
+        ],
+        "funding_conditions": [
+          "funding_rate_bp > -8",
+          "funding_trend_24h != 'spiking'"
+        ],
+        "positioning_metrics": [
+          "long_short_ratio > 1.2",
+          "lsr_trend_24h != 'extreme'",
+          "crowding_index > 0.65"
+        ],
+        "oi_analysis": [
+          "open_interest_delta_pct > -1.0",
+          "oi_24h_change > -15",
+          "(oi_vs_price == 'aligned_bearish' or oi_vs_price == 'diverging_bearish')"
+        ],
+        "cvd_orderflow": [
+          "cvd_slope < 1000",
+          "cvd_confirms == true",
+          "delta_5m_avg < 0",
+          "cvd_microtrend == 'bearish'"
+        ],
+        "volume_profile": [
+          "abs(price - poc) <= 1.2 * atr",
+          "volume > volume_ma20 * 0.7",
+          "volume_delta_1h < 0"
+        ],
+        "cluster_analysis": [
+          "cluster.poc_shift_down == true",
+          "cluster.stacked_imbalance_down >= 2",
+          "cluster.absorption_low == false"
+        ],
+        "momentum_confirm": [
+          "macd_hist_1h < 0",
+          "price < ema_20_1h",
+          "rsi_1h between 40 and 70"
+        ],
+        "volatility_context": [
+          "atr > atr_ma20 * 0.6",
+          "atr_pct < 3.0",
+          "volatility_regime != 'low'"
+        ],
+        "news_sentiment": [
+          "news_score <= 0.2",
+          "major_news_impact != 'positive'"
+        ],
+        "volume_analysis": [
+          "volume > avg_volume * 0.7"
+        ]
+      },
+      "weights": {
+        "mtf_alignment": 0.12,
+        "funding_conditions": 0.07,
+        "positioning_metrics": 0.07,
+        "oi_analysis": 0.1,
+        "cvd_orderflow": 0.16,
+        "volume_profile": 0.145,
+        "cluster_analysis": 0.12,
+        "momentum_confirm": 0.1,
+        "volatility_context": 0.06,
+        "news_sentiment": 0.06,
+        "trend_strength_adx": 0.08
+      },
+      "scoring_system": {
+        "deal_threshold": 0.65,
+        "high_confidence_threshold": 0.8,
+        "risky_threshold": 0.45,
+        "neutral_range": [
+          0.45,
+          0.65
+        ],
+        "min_metrics_required": 4,
+        "required_categories": [
+          "mtf_alignment",
+          "cvd_orderflow",
+          "volume_profile"
+        ],
+        "rr_minimum": 1.8,
+        "bonus_confidence_rules": {
+          "cvd_and_volume_in_sync": {
+            "condition": "(cvd_confirms == true and volume_delta_1h > 0)",
+            "bonus": 0.05
+          }
+        }
+      },
+      "tactics": {
+        "direction": "short",
+        "sl_rules": [
+          "vah + 0.7*atr",
+          "max_risk_pct: 2.0"
+        ],
+        "tp": [
+          {
+            "name": "tp1",
+            "target": "poc - 0.8*atr",
+            "position_pct": 0.3
+          },
+          {
+            "name": "tp2",
+            "target": "val - 0.3*atr",
+            "position_pct": 0.5
+          },
+          {
+            "name": "tp3",
+            "target": "trail_atr_1.5",
+            "position_pct": 0.2
+          }
+        ],
+        "sl_adaptive": "tighten_after_tp1",
+        "position_size_multiplier": "dynamic_0.8_to_1.2x_based_on_confidence",
+        "notes": "Distribution/exhaustion or impulse continuation down; confirmed by CVD + OI."
+      },
+      "risk_management": {
+        "risk_per_trade": 0.01,
+        "max_daily_loss": 0.02,
+        "max_consecutive_losses": 4
+      },
+      "features_example": {
+        "price": 99.9,
+        "poc": 100.0,
+        "vah": 101.0,
+        "val": 99.0,
+        "atr": 1.2,
+        "atr_ma20": 1.0,
+        "adx_1h": 26,
+        "adx_4h": 28,
+        "adx_slope": 0.8,
+        "volume": 1180000,
+        "volume_ma20": 1000000,
+        "cvd_slope": -1800,
+        "cvd_microtrend": "bearish",
+        "cvd_confirms": true,
+        "macd_hist_1h": -0.016,
+        "rsi_1h": 45,
+        "funding_rate_bp": 6.0,
+        "funding_trend_24h": "stable",
+        "long_short_ratio": 1.35,
+        "crowding_index": 0.78,
+        "oi_vs_price": "aligned_bearish",
+        "open_interest_delta_pct": 0.2,
+        "oi_trend_1h": "rising",
+        "oi_24h_change": 3.0,
+        "delta_5m_avg": -220,
+        "volatility_regime": "normal",
+        "news_score": -0.03,
+        "trend_1h": "bearish",
+        "trend_4h": "bearish",
+        "trend_1d": "neutral",
+        "volume_delta_1h": -0.1,
+        "breakout_hh_or_ll": false,
+        "ema_20_1h": 100.95
+      },
+      "meta_confidence_bonus_applied": false
+    }
+  ]
+}

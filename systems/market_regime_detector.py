@@ -1,257 +1,215 @@
 # -*- coding: utf-8 -*-
 """
-Market Regime Detector - определение текущего рыночного режима
-Профессиональная терминология согласно КРИТЕРИЙ 2
+Детектор рыночного режима
+Предотвращает curve fitting через адаптивные параметры
 """
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from typing import Dict, Optional
-from config.settings import logger
-
+import pandas as pd
+import numpy as np
+import ta
 
 class MarketRegimeDetector:
-    """
-    Определяет текущий рыночный режим на основе технических индикаторов
-
-    Режимы (Market Regimes):
-    - TRENDING: сильное направленное движение
-    - RANGING: боковое движение в диапазоне
-    - SQUEEZING: сжатие волатильности (перед прорывом)
-    - EXPANDING: расширение волатильности (активный рынок)
-    - NEUTRAL: смешанные сигналы
-    """
+    """Определение рыночного режима (High Vol, Ranging, Strong Trend, Choppy)"""
 
     def __init__(self):
-        self.current_regime = "NEUTRAL"
-        self.regime_confidence = 0.0
+        self.regime_history = []
 
-        logger.info("✅ MarketRegimeDetector инициализирован")
+    def calculate_features(self, df):
+        """Вычислить features для определения режима"""
 
-    def detect(self, market_data: Dict) -> str:
+        # ATR percentage (волатильность)
+        atr_ind = ta.volatility.AverageTrueRange(df['high'], df['low'], df['close'])
+        df['atr'] = atr_ind.average_true_range()
+        df['atr_pct'] = (df['atr'] / df['close']) * 100
+        df['atr_pct_ma_20'] = df['atr_pct'].rolling(20).mean()
+
+        # ADX (тренд)
+        adx_ind = ta.trend.ADXIndicator(df['high'], df['low'], df['close'])
+        df['adx'] = adx_ind.adx()
+        df['adx_ma_20'] = df['adx'].rolling(20).mean()
+
+        # EMA для определения направления
+        df['ema_20'] = df['close'].ewm(span=20).mean()
+        df['ema_50'] = df['close'].ewm(span=50).mean()
+
+        # RSI для определения перекупленности/перепроданности
+        df['rsi'] = ta.momentum.RSIIndicator(df['close'], 14).rsi()
+
+        return df
+
+    def detect_regime(self, df):
         """
-        Определить текущий режим рынка (простой метод - возвращает только строку)
+        Определить текущий рыночный режим
+        ОБНОВЛЕНО: смягчённые пороги для реального рынка
+        """
+
+        if len(df) < 20:
+            return 'UNKNOWN'
+
+        row = df.iloc[-1]
+
+        atr_pct = row['atr_pct_ma_20']
+        adx_ma = row['adx_ma_20']
+        current_adx = row['adx']
+
+        # LOGIC
+        if pd.isna(atr_pct) or pd.isna(adx_ma):
+            return 'UNKNOWN'
+
+        # HIGH VOLATILITY (опасно)
+        if atr_pct > 2.5:  # Было 2.0, стало 2.5 (меньше исключений)
+            return 'HIGH_VOL'
+
+        # RANGING (скучно)
+        if atr_pct < 0.5 and adx_ma < 18:  # Было < 20, стало < 18
+            return 'RANGING'
+
+        # STRONG TREND (идеально!) - СМЯГЧЕНО ⭐
+        if adx_ma > 22 and current_adx > 20:
+            return 'STRONG_TREND'
+
+        # MEDIUM TREND (новый режим!) ⭐
+        if adx_ma > 18 and current_adx > 16:
+            return 'MEDIUM_TREND'
+
+        # CHOPPY (неопределённо)
+        return 'CHOPPY'
+
+    def detect(self, metrics: dict) -> str:
+        """
+        Wrapper для совместимости с unified_scenario_matcher
+        Принимает dict metrics вместо DataFrame
 
         Args:
-            market_data: Словарь с рыночными данными и индикаторами
+            metrics: Словарь с рыночными данными
 
         Returns:
-            Название режима: TRENDING, RANGING, SQUEEZING, EXPANDING, NEUTRAL
+            Строка с режимом рынка (STRONG_TREND, RANGING, и т.д.)
         """
         try:
-            # Извлекаем ключевые метрики
-            adx = market_data.get("adx", 0)
-            volume_ratio = market_data.get("volume", 1) / max(
-                market_data.get("volume_ma20", 1), 1
-            )
-            bb_width_percentile = market_data.get("bb_width_percentile", 50)
-            atr_percentile = market_data.get("atr_percentile", 50)
+            from config.settings import logger
 
-            # Детекция режима
-            regime = self._detect_regime_logic(
-                adx, volume_ratio, bb_width_percentile, atr_percentile
-            )
+            # Проверяем наличие необходимых данных
+            if 'candles' not in metrics or len(metrics.get('candles', [])) < 20:
+                logger.warning(f"⚠️ Недостаточно данных для detect_regime: {len(metrics.get('candles', []))} свечей")
+                return 'UNKNOWN'
 
-            # Обновляем состояние
-            self.current_regime = regime
+            # Создаём DataFrame из свечей
+            candles_data = metrics['candles']
+            df = pd.DataFrame(candles_data)
 
+            # Убеждаемся что есть нужные колонки
+            required_cols = ['high', 'low', 'close', 'volume']
+            if not all(col in df.columns for col in required_cols):
+                logger.warning(f"⚠️ Отсутствуют необходимые колонки: {required_cols}")
+                return 'UNKNOWN'
+
+            # Рассчитываем features
+            df = self.calculate_features(df)
+
+            # Определяем режим
+            regime = self.detect_regime(df)
+
+            logger.debug(f"🔍 Режим рынка определён: {regime}")
             return regime
 
         except Exception as e:
-            logger.error(f"❌ Ошибка определения режима рынка: {e}")
-            return "NEUTRAL"
+            from config.settings import logger
+            logger.error(f"❌ Ошибка detect(): {e}", exc_info=True)
+            return 'UNKNOWN'
 
-    def detect_regime(self, market_data: Dict) -> Dict:
+
+    def get_adaptive_config(self, regime):
         """
-        Определить текущий режим рынка (расширенный метод - возвращает Dict)
+        Получить адаптивный конфиг в зависимости от режима
+        """
 
-        Этот метод используется в market_dashboard.py
+        configs = {
+            'STRONG_TREND': {
+                'min_adx': 22,
+                'tp_multiplier': 2.5,
+                'sl_multiplier': 1.0,
+                'volume_requirement': 0.8,
+                'trade': True,
+                'description': '✅ STRONG TREND - идеально для торговли'
+            },
 
-        Args:
-            market_data: Словарь с рыночными данными
+            'MEDIUM_TREND': {
+                'min_adx': 18,
+                'tp_multiplier': 2.0,
+                'sl_multiplier': 1.0,
+                'volume_requirement': 0.9,
+                'trade': True,
+                'description': '✅ MEDIUM TREND - торгуем осторожно'
+            },
 
-        Returns:
-            Dict с полной информацией о режиме:
-            {
-                "regime": "RANGING",        # Текущий режим (UPPERCASE)
-                "confidence": 0.75,         # Уверенность (0.0-1.0)
-                "description": "..."        # Описание режима
+            'HIGH_VOL': {
+                'min_adx': 40,              # Жестче - нужен очень сильный сигнал
+                'tp_multiplier': 1.2,       # Меньше - быстро выходим
+                'sl_multiplier': 1.5,       # Шире - больше места
+                'volume_requirement': 1.2,
+                'trade': True,
+                'description': '⚠️ HIGH VOL - торгуем осторожно'
+            },
+
+            'RANGING': {
+                'min_adx': 100,             # Невозможно - не торгуем
+                'tp_multiplier': 1.0,
+                'sl_multiplier': 1.0,
+                'volume_requirement': 100,
+                'trade': False,
+                'description': '❌ RANGING - избегаем'
+            },
+
+            'CHOPPY': {
+                'min_adx': 100,             # Невозможно - не торгуем
+                'tp_multiplier': 1.0,
+                'sl_multiplier': 1.0,
+                'volume_requirement': 100,
+                'trade': False,
+                'description': '❌ CHOPPY - избегаем'
+            },
+
+            'UNKNOWN': {
+                'min_adx': 100,
+                'tp_multiplier': 1.0,
+                'sl_multiplier': 1.0,
+                'volume_requirement': 100,
+                'trade': False,
+                'description': '❓ UNKNOWN - избегаем'
             }
-        """
-        try:
-            # Получаем базовые метрики
-            price = market_data.get("price", 0)
-            volume = market_data.get("volume", 0)
-            high_24h = market_data.get("high_24h", price)
-            low_24h = market_data.get("low_24h", price)
-
-            # Рассчитываем дополнительные метрики
-            price_range = high_24h - low_24h if high_24h > low_24h else 0
-            price_position = (price - low_24h) / price_range if price_range > 0 else 0.5
-
-            # Определяем режим на основе имеющихся данных
-            regime = self._detect_regime_simple(
-                price, volume, high_24h, low_24h, price_position
-            )
-
-            # Рассчитываем confidence
-            confidence = self._calculate_confidence(regime, market_data)
-
-            # Получаем описание
-            description = self.get_regime_description(regime)
-
-            result = {
-                "regime": regime,
-                "confidence": confidence,
-                "description": description,
-            }
-
-            # Обновляем состояние
-            self.current_regime = regime
-            self.regime_confidence = confidence
-
-            logger.debug(f"✅ Режим определён: {regime} (confidence={confidence:.2f})")
-
-            return result
-
-        except Exception as e:
-            logger.error(f"❌ Ошибка detect_regime: {e}", exc_info=True)
-            return {
-                "regime": "NEUTRAL",
-                "confidence": 0.5,
-                "description": "Смешанные сигналы, нет чёткого направления",
-            }
-
-    def _detect_regime_logic(
-        self,
-        adx: float,
-        volume_ratio: float,
-        bb_width_percentile: float,
-        atr_percentile: float,
-    ) -> str:
-        """Логика определения режима (полная версия с индикаторами)"""
-
-        # 1. TRENDING: сильный ADX + высокий объём
-        if adx > 30 and volume_ratio > 1.5:
-            return "TRENDING"
-
-        # 2. SQUEEZING: низкий ADX + узкие полосы + низкий объём
-        elif adx < 20 and bb_width_percentile < 30 and volume_ratio < 0.8:
-            return "SQUEEZING"
-
-        # 3. EXPANDING: широкие полосы + высокий объём
-        elif bb_width_percentile > 60 and volume_ratio > 1.8:
-            return "EXPANDING"
-
-        # 4. RANGING: низкий ADX + средние полосы + низкий объём
-        elif adx < 20 and 30 <= bb_width_percentile <= 60 and volume_ratio < 0.9:
-            return "RANGING"
-
-        # 5. NEUTRAL: всё остальное
-        else:
-            return "NEUTRAL"
-
-    def _detect_regime_simple(
-        self,
-        price: float,
-        volume: float,
-        high_24h: float,
-        low_24h: float,
-        price_position: float,
-    ) -> str:
-        """
-        Упрощённая логика определения режима (без сложных индикаторов)
-        Используется когда нет ADX/BB данных
-        """
-
-        # Рассчитываем волатильность
-        price_range = high_24h - low_24h
-        volatility_pct = (price_range / price) * 100 if price > 0 else 0
-
-        # 1. TRENDING: высокая волатильность + цена у границ
-        if volatility_pct > 5 and (price_position > 0.7 or price_position < 0.3):
-            return "TRENDING"
-
-        # 2. RANGING: низкая волатильность + цена в середине
-        elif volatility_pct < 3 and 0.4 <= price_position <= 0.6:
-            return "RANGING"
-
-        # 3. EXPANDING: высокая волатильность + цена в середине
-        elif volatility_pct > 4 and 0.3 <= price_position <= 0.7:
-            return "EXPANDING"
-
-        # 4. SQUEEZING: очень низкая волатильность
-        elif volatility_pct < 2:
-            return "SQUEEZING"
-
-        # 5. NEUTRAL: всё остальное
-        else:
-            return "NEUTRAL"
-
-    def _calculate_confidence(self, regime: str, market_data: Dict) -> float:
-        """
-        Рассчитать уверенность в определении режима
-
-        Returns:
-            float от 0.0 до 1.0
-        """
-        try:
-            # Базовая confidence в зависимости от режима
-            base_confidence = {
-                "TRENDING": 0.7,
-                "RANGING": 0.65,
-                "SQUEEZING": 0.6,
-                "EXPANDING": 0.65,
-                "NEUTRAL": 0.5,
-            }
-
-            confidence = base_confidence.get(regime, 0.5)
-
-            # Увеличиваем confidence если есть подтверждающие данные
-            volume = market_data.get("volume", 0)
-            if volume > 0:
-                confidence += 0.1  # Есть объём данных
-
-            # Ограничиваем диапазон
-            confidence = max(0.0, min(1.0, confidence))
-
-            return confidence
-
-        except Exception as e:
-            logger.debug(f"⚠️ Ошибка расчёта confidence: {e}")
-            return 0.5
-
-    def get_regime_description(self, regime: Optional[str] = None) -> str:
-        """Получить описание режима"""
-
-        if regime is None:
-            regime = self.current_regime
-
-        descriptions = {
-            "TRENDING": "Сильное направленное движение с высоким объёмом",
-            "RANGING": "Боковое движение в определённом диапазоне",
-            "SQUEEZING": "Сжатие волатильности, возможен скорый прорыв",
-            "EXPANDING": "Расширение волатильности, активное движение",
-            "NEUTRAL": "Смешанные сигналы, нет чёткого направления",
         }
 
-        return descriptions.get(regime, "Неизвестный режим")
+        return configs.get(regime, configs['UNKNOWN'])
 
-    def get_recommended_strategies(self, regime: Optional[str] = None) -> list:
-        """Получить рекомендуемые стратегии для режима"""
+    def get_regime_stats(self, regimes_history):
+        """Статистика по режимам за последнее время"""
 
-        if regime is None:
-            regime = self.current_regime
+        if not regimes_history:
+            return {}
 
-        strategy_map = {
-            "TRENDING": ["momentum", "breakout"],
-            "RANGING": ["mean_reversion", "counter_trend"],
-            "SQUEEZING": ["squeeze", "breakout"],
-            "EXPANDING": ["momentum", "squeeze"],
-            "NEUTRAL": ["mean_reversion", "counter_trend", "squeeze"],
-        }
+        df = pd.DataFrame(regimes_history)
+        return df['regime'].value_counts().to_dict()
 
-        return strategy_map.get(regime, ["mean_reversion"])
+def main():
+    """Test"""
+    df = pd.read_csv("data/ml_training/BTCUSDT_5min_180d.csv")
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
 
+    detector = MarketRegimeDetector()
+    df = detector.calculate_features(df)
 
-# Экспорт
-__all__ = ["MarketRegimeDetector"]
+    # Последние 100 свечей
+    for i in range(-100, 0):
+        regime = detector.detect_regime(df.iloc[:len(df)+i])
+        config = detector.get_adaptive_config(regime)
+
+        if i % 20 == 0:
+            print(f"{df.iloc[len(df)+i]['timestamp']}: {regime} - {config['description']}")
+
+if __name__ == "__main__":
+    main()

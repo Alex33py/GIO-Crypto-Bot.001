@@ -7,12 +7,14 @@ REST API + WebSocket orderbook через BinanceOrderbookWebSocket
 
 import asyncio
 import aiohttp
+import traceback
 from typing import Dict, List, Optional
 from collections import deque
 from config.settings import logger
 from utils.validators import DataValidator
 from connectors.binance_orderbook_websocket import BinanceOrderbookWebSocket
 from connectors.binance_trade_websocket import BinanceTradeWebSocket
+
 
 class BinanceConnector:
     """
@@ -70,7 +72,7 @@ class BinanceConnector:
         try:
             # 1. Инициализация REST API
             self.session = aiohttp.ClientSession(
-                timeout=aiohttp.ClientTimeout(total=30)
+                timeout=aiohttp.ClientTimeout(total=60)
             )
 
             # Проверка подключения
@@ -194,8 +196,28 @@ class BinanceConnector:
                     return None
 
         except Exception as e:
-            logger.error(f"❌ Ошибка get_ticker: {e}")
+            logger.error(f"❌ Ошибка get_ticker: {e}\n{traceback.format_exc()}")
             self.stats["rest_errors"] += 1
+            return None
+
+
+    async def getcurrentpricesymbol(self, symbol: str) -> Optional[float]:
+        """
+        Получить текущую цену символа (для совместимости с get_current_prices)
+
+        Args:
+            symbol: Торговая пара (BTCUSDT)
+
+        Returns:
+            float: Текущая цена или None
+        """
+        try:
+            ticker = await self.get_ticker(symbol)
+            if ticker and "last_price" in ticker:
+                return ticker["last_price"]
+            return None
+        except Exception as e:
+            logger.error(f"❌ Ошибка getcurrentpricesymbol для {symbol}: {e}")
             return None
 
     async def get_orderbook(self, symbol: str, limit: int = 100) -> Optional[Dict]:
@@ -252,7 +274,7 @@ class BinanceConnector:
                             "quantity": float(trade["qty"]),
                             "timestamp": trade["time"],
                             "is_buyer_maker": trade["isBuyerMaker"],
-                            "symbol": symbol  # ← ДОБАВЬ!
+                            "symbol": symbol,  # ← ДОБАВЬ!
                         }
 
                         trades.append(trade_obj)
@@ -261,7 +283,9 @@ class BinanceConnector:
                         usd_value = trade_obj["price"] * trade_obj["quantity"]
                         if usd_value >= 100000:  # $100k threshold
                             self.large_trades.append(trade_obj)
-                            logger.debug(f"💰 Binance Large trade: {symbol} ${usd_value:,.0f}")
+                            logger.debug(
+                                f"💰 Binance Large trade: {symbol} ${usd_value:,.0f}"
+                            )
 
                     return trades
                 else:
@@ -293,15 +317,12 @@ class BinanceConnector:
             asyncio.create_task(self.orderbook_ws.start())
 
             # ✅ Trade WebSocket (НОВОЕ!)
-            self.trade_ws = BinanceTradeWebSocket(
-                symbols=self.symbols, connector=self
-            )
+            self.trade_ws = BinanceTradeWebSocket(symbols=self.symbols, connector=self)
             asyncio.create_task(self.trade_ws.start())
 
             logger.info("✅ Binance WebSocket (Orderbook + Trades) запущен")
         except Exception as e:
             logger.error(f"❌ Ошибка запуска Binance WebSocket: {e}")
-
 
     # ===========================================
     # HELPER METHODS
@@ -325,7 +346,6 @@ class BinanceConnector:
             "ws_orderbook_stats": ws_orderbook_stats,
             "ws_trade_stats": ws_trade_stats,
         }
-
 
     # ===========================================
     # SHUTDOWN
@@ -355,7 +375,6 @@ class BinanceConnector:
 
         except Exception as e:
             logger.error(f"❌ Error closing Binance connector: {e}")
-
 
 
 # Экспорт

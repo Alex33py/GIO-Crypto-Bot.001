@@ -1,0 +1,27 @@
+{
+  "version": "v3.5-DAY5-OPTIMIZED",
+  "timestamp": "20251104_222339",
+  "best_params": {
+    "sl_multiplier": 1.0,
+    "tp_multiplier": 3.5,
+    "min_adx": 20,
+    "rsi_min": 35,
+    "rsi_max": 65,
+    "volume_mult": 0.8,
+    "disabled_scenarios": [
+      "SCN_024",
+      "SCN_023"
+    ]
+  },
+  "metrics": {
+    "profit_factor": 2.590167532664586,
+    "win_rate": 42.5531914893617,
+    "total_trades": 94,
+    "roi": 0.15564541011750407,
+    "sharpe": 0.4085974459449309,
+    "avg_win": 0.6338132297593062,
+    "avg_loss": 0.18125904034485732,
+    "total_pnl": 15.564541011749954
+  },
+  "score": 1.0128975305274521
+}

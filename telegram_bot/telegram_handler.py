@@ -33,6 +33,8 @@ from ai.gemini_interpreter import GeminiInterpreter
 
 from analytics.news_sentiment import NewsSentimentAnalyzer
 
+from database import unified_signals_manager as signals_db
+
 
 class TelegramBotHandler:
     """Обработчик Telegram бота с полным функционалом"""
@@ -145,13 +147,10 @@ class TelegramBotHandler:
             self.application.add_handler(CommandHandler("analyze", self.cmd_analyze))
             self.application.add_handler(CommandHandler("stats", self.cmd_stats))
             self.application.add_handler(CommandHandler("signals", self.cmd_signals))
-            self.application.add_handler(
-                CommandHandler("autosignals", self.cmd_autosignals)
-            )
+            self.application.add_handler(CommandHandler("generate", self.cmd_generate))
+            self.application.add_handler(CommandHandler("autosignals", self.cmd_autosignals))
             self.application.add_handler(CommandHandler("export", self.cmd_export))
-            self.application.add_handler(
-                CommandHandler("analyzebatching", self.cmd_analyze_batching)
-            )
+            self.application.add_handler(CommandHandler("analyzebatching", self.cmd_analyze_batching))
             self.application.add_handler(CommandHandler("pairs", self.cmd_pairs))
             self.application.add_handler(CommandHandler("add", self.cmd_add))
             self.application.add_handler(CommandHandler("remove", self.cmd_remove))
@@ -395,13 +394,17 @@ class TelegramBotHandler:
     <b>📈 Обзор Рынка:</b>
     • /overview — Multi-Symbol Overview (8 активов + корреляции)
 
+    🎯 СИГНАЛЫ (ГЛАВНОЕ!):
+    • /signals  — ВСЕ ТЕКУЩИЕ СИГНАЛЫ (главная команда!)
+    • /generate  — РУЧНАЯ ГЕНЕРАЦИЯ СИГНАЛОВ
+    • /bestsignals — Топ-10 лучших сигналов
+    • /worstsignals — Топ-10 худших сигналов
+
     <b>💧 Ликвидность:</b>
     • /liquidity SYMBOL — Анализ глубины ликвидности
 
     <b>📊 Статистика:</b>
     • /performance [days] — Статистика сигналов
-    • /bestsignals — Топ-10 лучших сигналов
-    • /worstsignals — Топ-10 худших сигналов
 
     <b>🔧 Вспомогательные:</b>
     • /status — Статус системы
@@ -1129,46 +1132,421 @@ class TelegramBotHandler:
             await update.message.reply_text(f"❌ Ошибка: {str(e)}")
 
     async def cmd_signals(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Команда /signals [N] - Последние N сигналов"""
+        """
+        /signals [limit] - Последние сигналы с продвинутым AI анализом
+        """
         try:
+            user_id = update.effective_user.id
+            username = update.effective_user.username or "Unknown"
+            logger.info(f"📊 cmd_signals called by user_id={user_id}, username={username}")
+
+            # Лимит сигналов (по умолчанию 5)
             limit = int(context.args[0]) if context.args else 5
 
-            db_path = os.path.join(DATA_DIR, "gio_crypto_bot.db")
-            conn = self._get_db_connection()
+            # Получить сигналы из БД
+            signals = signals_db.get_latest_signals(limit=limit)
 
-            query = f"""
-                SELECT
-                    id, symbol, direction, entry_price,
-                    tp1, tp2, tp3, stop_loss, timestamp
-                FROM signals
-                ORDER BY timestamp DESC
-                LIMIT {limit}
-            """
-
-            df = pd.read_sql_query(query, conn)
-            conn.close()
-
-            if df.empty:
+            if not signals:
                 await update.message.reply_text(
-                    "📊 Пока нет сигналов.\n\nБот анализирует рынок..."
+                    "🔍 Нет доступных сигналов.\n\n💡 Используй /generate для создания новых сигналов.",
+                    parse_mode=ParseMode.MARKDOWN
                 )
                 return
 
-            text = f"🎯 *ПОСЛЕДНИЕ СИГНАЛЫ ({limit})*\n\n"
+            # ========== ФОРМИРОВАНИЕ СПИСКА СИГНАЛОВ ==========
+            text = f"🎯 **ПОСЛЕДНИЕ СИГНАЛЫ ({len(signals)})**\n\n"
 
-            for _, row in df.iterrows():
-                emoji = "🟢" if row["direction"] == "LONG" else "🔴"
-                text += (
-                    f"{emoji} *#{row['id']} {row['symbol']} {row['direction']}*\n"
-                    f"💰 Entry: ${row['entry_price']:,.2f}\n"
-                    f"🎯 TP1: ${row['tp1']:,.2f} | TP2: ${row['tp2']:,.2f} | TP3: ${row['tp3']:,.2f}\n"
-                    f"🛑 SL: ${row['stop_loss']:,.2f}\n"
-                    f"📅 {row['timestamp']}\n\n"
-                )
+            for sig in signals:
+                # ID сигнала
+                if "id" in sig and sig["id"]:
+                    sig_id = sig["id"]
+                elif "signal_id" in sig:
+                    sig_id = sig["signal_id"][:8] if len(sig["signal_id"]) > 8 else sig["signal_id"]
+                else:
+                    sig_id = "NA"
+
+                direction_emoji = "🟢" if sig["direction"] == "LONG" else "🔴"
+
+                text += f"{direction_emoji} **#{sig_id} {sig['symbol']} {sig['direction']}**\n"
+                text += f"💰 Entry: ${sig['entry_price']:.2f}\n"
+
+                # TP levels
+                tp1 = sig.get("tp1_price", 0)
+                tp2 = sig.get("tp2_price", 0)
+                tp3 = sig.get("tp3_price", 0)
+                text += f"🎯 TP1: ${tp1:.2f} | TP2: ${tp2:.2f} | TP3: ${tp3:.2f}\n"
+
+                # Stop Loss
+                sl = sig.get("stop_loss", 0)
+                text += f"🛑 SL: ${sl:.2f}\n"
+
+                # Timestamp
+                timestamp = sig.get("timestamp", "N/A")
+                text += f"📅 {timestamp}\n\n"
+
+                # Свежесть сигнала
+                if "timestamp" in sig:
+                    try:
+                        signal_time = datetime.fromisoformat(sig["timestamp"])
+                        time_diff = (datetime.now() - signal_time).total_seconds() / 60
+                        if time_diff < 60:
+                            text += "✅ **СВЕЖИЙ СИГНАЛ 🚀**\n\n"
+                    except:
+                        pass
+
+                text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+
+            # ========== AI АНАЛИЗ ==========
+            text += "🤖 **AI АНАЛИЗ**\n"
+            text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+
+            # Генерируем продвинутый AI анализ
+            ai_analysis = await self._generate_advanced_signals_ai_analysis(signals)
+            text += ai_analysis
 
             await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+            logger.info(f"✅ cmd_signals completed for username={username}")
+
         except Exception as e:
+            logger.error(f"❌ cmd_signals error: {e}", exc_info=True)
             await update.message.reply_text(f"❌ Ошибка: {str(e)}")
+
+
+    async def _generate_advanced_signals_ai_analysis(self, signals: List[Dict]) -> str:
+        """
+        Продвинутая генерация AI анализа для набора сигналов
+        """
+        try:
+            # ========== 1. БАЗОВАЯ СТАТИСТИКА ==========
+            total = len(signals)
+            longs = sum(1 for s in signals if s.get("direction") == "LONG")
+            shorts = sum(1 for s in signals if s.get("direction") == "SHORT")
+
+            # Группировка по символам
+            symbols_data = {}
+            for sig in signals:
+                symbol = sig.get("symbol", "UNKNOWN")
+                if symbol not in symbols_data:
+                    symbols_data[symbol] = {
+                        "count": 0,
+                        "direction": sig.get("direction"),
+                        "entry": sig.get("entry_price", 0),
+                        "tp3": sig.get("tp3_price", 0),
+                        "sl": sig.get("stop_loss", 0)
+                    }
+                symbols_data[symbol]["count"] += 1
+
+            # ========== 2. АНАЛИЗ РИСКОВ ==========
+            avg_risk_reward = []
+            for sig in signals:
+                entry = sig.get("entry_price", 0)
+                tp3 = sig.get("tp3_price", 0)
+                sl = sig.get("stop_loss", 0)
+
+                if entry > 0 and sl > 0:
+                    risk = abs(entry - sl)
+                    reward = abs(tp3 - entry)
+                    if risk > 0:
+                        rr_ratio = reward / risk
+                        avg_risk_reward.append(rr_ratio)
+
+            avg_rr = sum(avg_risk_reward) / len(avg_risk_reward) if avg_risk_reward else 0
+
+            # ========== 3. ПОЛУЧЕНИЕ РЫНОЧНЫХ ДАННЫХ ==========
+            market_metrics = {}
+            for symbol in list(symbols_data.keys())[:5]:  # Ограничиваем 5 символами
+                try:
+                    ticker = await self.bot_instance.bybit_connector.get_ticker(symbol)
+                    if ticker:
+                        current_price = float(ticker.get("lastPrice", 0))
+                        price_change_pct = float(ticker.get("price24hPcnt", 0)) * 100
+                        volume_24h = float(ticker.get("volume24h", 0))
+
+                        market_metrics[symbol] = {
+                            "price": current_price,
+                            "change_24h": price_change_pct,
+                            "volume": volume_24h
+                        }
+                except Exception as e:
+                    logger.debug(f"Could not get market data for {symbol}: {e}")
+
+            # ========== 4. ФОРМИРОВАНИЕ АНАЛИЗА ==========
+            analysis = f"📊 **Статистика:**\n"
+            analysis += f"├─ Всего: {total}\n"
+            analysis += f"├─ 🟢 LONG: {longs} ({longs/total*100:.1f}%)\n"
+            analysis += f"└─ 🔴 SHORT: {shorts} ({shorts/total*100:.1f}%)\n\n"
+
+            # Risk/Reward
+            if avg_rr > 0:
+                rr_emoji = "🟢" if avg_rr >= 2.0 else "🟡" if avg_rr >= 1.5 else "🔴"
+                analysis += f"⚖️ **Risk/Reward:** {rr_emoji} {avg_rr:.2f}:1\n"
+                if avg_rr >= 2.0:
+                    analysis += "└─ Отличное соотношение\n\n"
+                elif avg_rr >= 1.5:
+                    analysis += "└─ Приемлемое\n\n"
+                else:
+                    analysis += "└─ ⚠️ Высокий риск\n\n"
+
+            # ========== 5. РЫНОЧНАЯ СИТУАЦИЯ ==========
+            analysis += "📈 **Рынок:**\n"
+
+            # Определение тренда
+            if longs > shorts * 1.8:
+                trend = "BULLISH"
+                trend_emoji = "🚀"
+                trend_desc = "Сильный бычий"
+            elif longs > shorts * 1.3:
+                trend = "MODERATELY_BULLISH"
+                trend_emoji = "📈"
+                trend_desc = "Умеренно бычий"
+            elif shorts > longs * 1.8:
+                trend = "BEARISH"
+                trend_emoji = "🐻"
+                trend_desc = "Сильный медвежий"
+            elif shorts > longs * 1.3:
+                trend = "MODERATELY_BEARISH"
+                trend_emoji = "📉"
+                trend_desc = "Умеренно медвежий"
+            else:
+                trend = "NEUTRAL"
+                trend_emoji = "⚖️"
+                trend_desc = "В балансе"
+
+            analysis += f"{trend_emoji} **Тренд:** {trend_desc}\n\n"
+
+            # ========== 6. ТОП ПАРЫ ==========
+            if symbols_data:
+                top_symbols = sorted(symbols_data.items(), key=lambda x: x[1]["count"], reverse=True)[:3]
+                analysis += "🔥 **Топ пары:**\n"
+
+                for symbol, data in top_symbols:
+                    direction_emoji = "🟢" if data["direction"] == "LONG" else "🔴"
+
+                    if symbol in market_metrics:
+                        current_price = market_metrics[symbol]["price"]
+                        change_24h = market_metrics[symbol]["change_24h"]
+                        change_emoji = "📈" if change_24h > 0 else "📉"
+
+                        analysis += f"\n{direction_emoji} **{symbol}** ({data['count']}x)\n"
+                        analysis += f"├─ ${current_price:.4f} {change_emoji} {change_24h:+.2f}%\n"
+                        analysis += f"└─ Entry: ${data['entry']:.4f}\n"
+                    else:
+                        analysis += f"\n{direction_emoji} **{symbol}** ({data['count']}x)\n"
+
+                analysis += "\n"
+
+            # ========== 7. GEMINI AI ==========
+            gemini_analysis = await self._get_gemini_signals_interpretation(
+                signals, trend, avg_rr, market_metrics
+            )
+
+            if gemini_analysis:
+                analysis += "🤖 **AI:**\n"
+                analysis += gemini_analysis + "\n\n"
+
+            # ========== 8. РЕКОМЕНДАЦИИ ==========
+            analysis += "💡 **Рекомендации:**\n"
+
+            if trend == "BULLISH":
+                analysis += "├─ Фокус на LONG\n"
+                analysis += "└─ Трейлинг-стопы\n"
+            elif trend == "BEARISH":
+                analysis += "├─ Фокус на SHORT\n"
+                analysis += "└─ Защита капитала\n"
+            else:
+                analysis += "├─ Жди подтверждения\n"
+                analysis += "└─ Меньше объемы\n"
+
+            analysis += "\n⚠️ **Риски:**\n"
+            analysis += "├─ Стоп-лоссы обязательны\n"
+            analysis += "├─ Макс. 1-2% на сделку\n"
+            analysis += "└─ Диверсификация\n"
+
+            return analysis
+
+        except Exception as e:
+            logger.error(f"❌ _generate_advanced_signals_ai_analysis error: {e}", exc_info=True)
+            return "⚠️ AI анализ недоступен\n"
+
+
+    async def _get_gemini_signals_interpretation(
+        self,
+        signals: List[Dict],
+        trend: str,
+        avg_rr: float,
+        market_metrics: Dict
+    ) -> str:
+        """
+        Получение AI интерпретации от Gemini
+        """
+        try:
+            prompt = f"""Ты опытный криптотрейдер. Дай краткий анализ (2-3 строки):
+
+    Сигналы: {len(signals)} (LONG: {sum(1 for s in signals if s.get('direction') == 'LONG')}, SHORT: {sum(1 for s in signals if s.get('direction') == 'SHORT')})
+    Risk/Reward: {avg_rr:.2f}:1
+    Тренд: {trend}
+    Пары: {', '.join(list(market_metrics.keys())[:3])}
+
+    Оценка + рекомендация с эмодзи:"""
+
+            # Вызов Gemini
+            if hasattr(self, 'gemini_interpreter') and self.gemini_interpreter:
+                interpretation = await self.gemini_interpreter.analyze_text(prompt)
+
+                if interpretation and len(interpretation) > 20:
+                    return interpretation.strip()
+
+            # Fallback
+            return self._get_fallback_interpretation(trend, avg_rr)
+
+        except Exception as e:
+            logger.error(f"❌ Gemini error: {e}")
+            return self._get_fallback_interpretation(trend, avg_rr)
+
+
+    def _get_fallback_interpretation(self, trend: str, avg_rr: float) -> str:
+        """
+        Резервная интерпретация
+        """
+        if trend in ["BULLISH", "MODERATELY_BULLISH"]:
+            return "🚀 Бычий настрой. Следи за фиксацией прибыли. Используй трейлинг-стопы."
+        elif trend in ["BEARISH", "MODERATELY_BEARISH"]:
+            return "🐻 Медвежий тренд. Осторожность с лонгами. Приоритет — защита капитала."
+        else:
+            return "⚖️ Неопределенность. Жди подтверждения. Торгуй с меньшими объемами."
+
+
+
+    async def cmd_generate(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """
+        🎯 /generate - Ручная генерация сигналов с AI метаданными
+        """
+        try:
+            user_id = update.effective_user.id
+            username = update.effective_user.username or "Unknown"
+            logger.info(f"🔍 /generate от user_id={user_id}, username={username}")
+
+            # ✅ ОПРЕДЕЛЕНИЕ SYMBOLS
+            try:
+                from config.settings import TRACKED_SYMBOLS
+                symbols = TRACKED_SYMBOLS[:5]  # Берём ТОП-5
+            except (ImportError, AttributeError):
+                # Fallback если TRACKED_SYMBOLS не импортируется
+                symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT']
+
+            # Проверка что список не пустой
+            if not symbols:
+                await update.message.reply_text(
+                    "❌ *Нет торговых пар для анализа!*\n\n"
+                    "Проверьте конфигурацию TRACKED_SYMBOLS.",
+                    parse_mode=ParseMode.MARKDOWN
+                )
+                return
+
+            loading_msg = await update.message.reply_text(
+                f"🔍 Генерация сигналов для ТОП-5 сценариев...\n\n"
+                f"📊 Пары: {len(symbols)}\n"
+                f"🎯 {', '.join(symbols)}\n\n"
+                f"⏳ Подождите...",
+                parse_mode=ParseMode.HTML
+            )
+
+            # ✅ ПРОВЕРЯЕМ НАЛИЧИЕ signal_generation_service
+            if not hasattr(self.bot_instance, 'signal_generation_service'):
+                await loading_msg.edit_text(
+                    "❌ *Signal Generation Service не инициализирован!*\n\n"
+                    "Проверьте конфигурацию бота.",
+                    parse_mode=ParseMode.MARKDOWN
+                )
+                return
+
+            # ✅ ГЕНЕРИРУЕМ СИГНАЛЫ
+            try:
+                results = await self.bot_instance.signal_generation_service.generate_signals_for_all_symbols(
+                    manual_trigger=True
+                )
+            except Exception as e:
+                logger.error(f"❌ Ошибка генерации: {e}", exc_info=True)
+                await loading_msg.edit_text(
+                    f"❌ *Ошибка генерации:*\n\n`{str(e)}`",
+                    parse_mode=ParseMode.MARKDOWN
+                )
+                return
+
+            # ✅ ОБРАБАТЫВАЕМ РЕЗУЛЬТАТЫ
+            signals_generated = results.get('signals_generated', [])
+
+            if signals_generated:
+                message = f"🎯 *НОВЫЕ СИГНАЛЫ ({len(signals_generated)}):*\n\n"
+
+                for signal in signals_generated:
+                    emoji = "🟢" if signal.get("direction") == "LONG" else "🔴"
+
+                    # ✅ Конвертируем confidence
+                    confidence = signal.get('confidence', 'unknown')
+                    if isinstance(confidence, str):
+                        confidence_text = confidence.upper()
+                    else:
+                        confidence_text = f"{confidence * 100:.1f}%"
+
+                    # ✅ ФОРМИРУЕМ СООБЩЕНИЕ (ОДИН РАЗ!)
+                    message += f"{emoji} #{signal.get('id', 'NA')} {signal.get('symbol', 'NA')} {signal.get('direction', 'NA')}\n"
+                    message += f"💰 Entry: ${signal.get('entry_price', 0):.2f}\n"
+                    message += f"🎯 TP: ${signal.get('tp2', 0):.2f}\n"
+                    message += f"📊 Confidence: {confidence_text}\n\n"
+
+                    # ✅ СОХРАНЯЕМ В unified_signals С AI METADATA
+                    signal_data = {
+                        "id": signal.get('id', int(time.time())),
+                        "symbol": signal.get('symbol', 'UNKNOWN'),
+                        "direction": signal.get('direction', 'LONG'),
+                        "entry_price": signal.get('entry_price', 0),
+                        "scenario_id": signal.get('scenario_id'),
+                        "scenario_score": signal.get('confidence', 0) if isinstance(signal.get('confidence'), (int, float)) else 0,
+                        "confidence": signal.get('confidence', 0) if isinstance(signal.get('confidence'), (int, float)) else 0,
+                        "tp1_price": signal.get('tp1', 0),
+                        "tp2_price": signal.get('tp2', 0),
+                        "tp3_price": signal.get('tp3', 0),
+                        "sl_price": signal.get('stop_loss'),
+                        "status": "ACTIVE"
+                    }
+
+                    # AI метаданные
+                    ai_metadata = signal.get('ai_metadata', {})
+
+                    # Сохраняем
+                    try:
+                        signals_db.save_signal(signal_data, ai_metadata=ai_metadata)
+                        logger.info(f"✅ Сигнал {signal_data['id']} сохранён в БД")
+                    except Exception as save_error:
+                        logger.error(f"❌ Ошибка сохранения сигнала: {save_error}")
+
+                message += f"━━━━━━━━━━━━━━━━\n"
+                message += f"💡 Используйте `/signals` для просмотра с AI анализом"
+            else:
+                message = f"⏭️ *УСЛОВИЯ НЕ ВЫПОЛНЕНЫ*\n\n"
+                message += f"📊 Проверено пар: {results.get('checks_performed', 0)}\n\n"
+                message += f"💡 Причины:\n"
+                message += f"• ADX < 20 (нет тренда)\n"
+                message += f"• Не выполнены условия сценариев\n"
+                message += f"• Недостаточная уверенность (score < 0.55)\n"
+
+            await loading_msg.edit_text(message, parse_mode=ParseMode.MARKDOWN)
+            logger.info(f"✅ /generate выполнена (сигналов={len(signals_generated)})")
+
+        except Exception as e:
+            logger.error(f"❌ cmd_generate: {e}", exc_info=True)
+            try:
+                await update.message.reply_text(
+                    f"❌ *Критическая ошибка:*\n\n`{str(e)}`",
+                    parse_mode=ParseMode.MARKDOWN
+                )
+            except:
+                # Fallback если даже reply_text не работает
+                pass
+
+
+
 
     async def cmd_autosignals(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Команда /autosignals [on|off] - Автообновление сигналов"""
@@ -4301,6 +4679,34 @@ class TelegramBotHandler:
                     "probability": 25,
                 },
             ]
+
+    def _format_trend_emoji(self, trend: str) -> str:
+        """Эмодзи для тренда"""
+        if not trend:
+            return "❓"
+        trend = trend.lower()
+        return "↗️" if trend == "bullish" else "↘️" if trend == "bearish" else "➡️"
+
+    def _format_adx_label(self, adx: float) -> str:
+        """Описание силы тренда по ADX"""
+        if adx >= 50:
+            return "Очень сильный"
+        elif adx >= 30:
+            return "Сильный"
+        elif adx >= 20:
+            return "Умеренный"
+        else:
+            return "Слабый"
+
+    def _format_cvd_value(self, cvd: float) -> str:
+        """Форматирование CVD"""
+        if abs(cvd) >= 1_000_000:
+            return f"${cvd/1_000_000:.1f}M"
+        elif abs(cvd) >= 1_000:
+            return f"${cvd/1_000:.1f}K"
+        else:
+            return f"${cvd:.0f}"
+
 
     def _generate_tags(self, data: Dict, signals: Dict) -> List[str]:
         """Генерация тэгов"""
