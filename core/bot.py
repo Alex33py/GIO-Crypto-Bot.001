@@ -1198,6 +1198,7 @@ class GIOCryptoBot:
                 "volume_24h": volume_24h,
                 "high_24h": high_24h,
                 "low_24h": low_24h,
+                "indicators": {}  # ✅ ДОБАВЛЯЕМ СТРУКТУРУ ДЛЯ ИНДИКАТОРОВ
             }
 
             # 3. Технические индикаторы (если есть)
@@ -1209,48 +1210,93 @@ class GIOCryptoBot:
                     )
 
                     if klines and len(klines) >= 20:
-                        # RSI
+                        # Извлекаем данные свечей
                         closes = [float(k["close"]) for k in klines]
+                        highs = [float(k["high"]) for k in klines]
+                        lows = [float(k["low"]) for k in klines]
+
+                        # ✅ RSI
                         rsi = self.indicator_calculator.calculate_rsi(closes, period=14)
                         market_data["rsi"] = rsi if rsi else 50
+                        market_data["indicators"]["rsi"] = rsi if rsi else 50
 
-                        # MACD
+                        # ✅ MACD
                         macd_data = self.indicator_calculator.calculate_macd(closes)
                         if macd_data:
                             market_data["macd"] = macd_data.get("macd", 0)
                             market_data["macd_signal"] = macd_data.get("signal", 0)
+                            market_data["indicators"]["macd"] = macd_data.get("macd", 0)
+                            market_data["indicators"]["macd_signal"] = macd_data.get("signal", 0)
                         else:
                             market_data["macd"] = 0
                             market_data["macd_signal"] = 0
+                            market_data["indicators"]["macd"] = 0
+                            market_data["indicators"]["macd_signal"] = 0
 
-                        # EMA 20
-                        ema_20 = self.indicator_calculator.calculate_ema(
-                            closes, period=20
-                        )
+                        # ✅ EMA 20
+                        ema_20 = self.indicator_calculator.calculate_ema(closes, period=20)
                         market_data["ema_20"] = ema_20 if ema_20 else price
+                        market_data["indicators"]["ema_20"] = ema_20 if ema_20 else price
+
+                        # ✅ ATR (НОВОЕ! ДЛЯ СТОП-ЛОССА)
+                        atr = self.indicator_calculator.calculate_atr(highs, lows, closes, period=14)
+                        market_data["indicators"]["atr_14"] = atr if atr else 0
+                        logger.debug(f"📊 Индикаторы {symbol}: ATR={atr:.4f if atr else 0}, RSI={rsi if rsi else 50:.1f}")
+
+                        # ✅ ADX (если есть)
+                        if hasattr(self.indicator_calculator, 'calculate_adx'):
+                            adx = self.indicator_calculator.calculate_adx(highs, lows, closes, period=14)
+                            market_data["indicators"]["adx"] = adx if adx else 0
+                        else:
+                            market_data["indicators"]["adx"] = 0
+
                     else:
+                        # Недостаточно данных для расчёта
                         market_data["rsi"] = 50
                         market_data["macd"] = 0
                         market_data["macd_signal"] = 0
                         market_data["ema_20"] = price
+                        market_data["indicators"] = {
+                            "rsi": 50,
+                            "macd": 0,
+                            "macd_signal": 0,
+                            "ema_20": price,
+                            "atr_14": 0,
+                            "adx": 0
+                        }
                 else:
+                    # Indicator calculator недоступен
                     market_data["rsi"] = 50
                     market_data["macd"] = 0
                     market_data["macd_signal"] = 0
                     market_data["ema_20"] = price
+                    market_data["indicators"] = {
+                        "rsi": 50,
+                        "macd": 0,
+                        "macd_signal": 0,
+                        "ema_20": price,
+                        "atr_14": 0,
+                        "adx": 0
+                    }
             except Exception as e:
                 logger.error(f"❌ Ошибка расчёта индикаторов: {e}")
                 market_data["rsi"] = 50
                 market_data["macd"] = 0
                 market_data["macd_signal"] = 0
                 market_data["ema_20"] = price
+                market_data["indicators"] = {
+                    "rsi": 50,
+                    "macd": 0,
+                    "macd_signal": 0,
+                    "ema_20": price,
+                    "atr_14": 0,
+                    "adx": 0
+                }
 
             # 4. Whale Activity (если есть tracker)
             try:
                 if hasattr(self, "whale_tracker") and self.whale_tracker:
-                    whale_summary = self.whale_tracker.get_whale_summary(
-                        symbol, minutes=15
-                    )
+                    whale_summary = self.whale_tracker.get_whale_summary(symbol, minutes=15)
                     if whale_summary:
                         market_data["whale_activity"] = whale_summary
             except Exception as e:
@@ -1259,10 +1305,7 @@ class GIOCryptoBot:
             # 5. Orderbook Pressure (если есть analyzer)
             try:
                 if hasattr(self, "orderbook_analyzer") and self.orderbook_analyzer:
-                    # Получаем orderbook
-                    orderbook = await self.bybit_connector.get_orderbook(
-                        symbol, limit=50
-                    )
+                    orderbook = await self.bybit_connector.get_orderbook(symbol, limit=50)
                     if orderbook:
                         bids = orderbook.get("bids", [])
                         asks = orderbook.get("asks", [])
@@ -1273,12 +1316,8 @@ class GIOCryptoBot:
                             total_volume = bid_volume + ask_volume
 
                             if total_volume > 0:
-                                bid_ask_ratio = (
-                                    bid_volume / ask_volume if ask_volume > 0 else 1.0
-                                )
-                                bid_pressure = (
-                                    (bid_volume - ask_volume) / total_volume
-                                ) * 100
+                                bid_ask_ratio = bid_volume / ask_volume if ask_volume > 0 else 1.0
+                                bid_pressure = ((bid_volume - ask_volume) / total_volume) * 100
 
                                 # Spread
                                 best_bid = float(bids[0][0])
@@ -1309,34 +1348,29 @@ class GIOCryptoBot:
                             "cvd_15m": cvd_15m,
                             "cvd_pct": cvd_pct,
                             "trend": (
-                                "INCREASING"
-                                if cvd_pct > 5
-                                else "DECREASING" if cvd_pct < -5 else "STABLE"
+                                "INCREASING" if cvd_pct > 5
+                                else "DECREASING" if cvd_pct < -5
+                                else "STABLE"
                             ),
                         }
             except Exception as e:
                 logger.debug(f"⚠️ CVD данные недоступны: {e}")
 
-            # ✅ 7. LIQUIDATIONS (24H) - НОВОЕ!
+            # 7. LIQUIDATIONS (24H)
             try:
                 if hasattr(self, "bybit_connector") and self.bybit_connector:
-                    logger.info(f"📊 Fetching 24H liquidations for {symbol}...")
-                    liquidations = await self.bybit_connector.get_liquidations_24h(
-                        symbol
-                    )
+                    liquidations = await self.bybit_connector.get_liquidations_24h(symbol)
 
                     if liquidations and isinstance(liquidations, dict):
                         market_data["liquidations"] = liquidations
                         total_m = liquidations.get("total", 0) / 1_000_000
-                        logger.info(f"✅ Liquidations {symbol}: ${total_m:.2f}M total")
+                        logger.debug(f"✅ Liquidations {symbol}: ${total_m:.2f}M total")
                     else:
-                        logger.warning(f"⚠️ No liquidations data for {symbol}")
                         market_data["liquidations"] = None
                 else:
-                    logger.warning("⚠️ Bybit connector not available for liquidations")
                     market_data["liquidations"] = None
             except Exception as e:
-                logger.error(f"❌ Liquidations error for {symbol}: {e}", exc_info=True)
+                logger.error(f"❌ Liquidations error for {symbol}: {e}")
                 market_data["liquidations"] = None
 
             return market_data
@@ -1345,16 +1379,9 @@ class GIOCryptoBot:
             logger.error(f"❌ get_market_data({symbol}): {e}", exc_info=True)
             return None
 
+
     async def generate_signal_for_symbol(self, symbol: str) -> Optional[Dict]:
-        """
-        Генерация торгового сигнала для символа с AI метаданными
-
-        Args:
-            symbol: Торговая пара (например BTCUSDT)
-
-        Returns:
-            Dict: Сгенерированный сигнал или None
-        """
+        """Генерация торгового сигнала с автоматическим расчётом SL"""
         try:
             logger.info(f"🔍 Генерация сигнала для {symbol}...")
 
@@ -1365,19 +1392,18 @@ class GIOCryptoBot:
                 logger.warning(f"⚠️ {symbol}: Нет рыночных данных")
                 return None
 
-            # Извлекаем данные
+            # Извлекаем индикаторы
             indicators = market_data.get('indicators', {})
-            mtf_trends = market_data.get('mtf_trends', {})
-            volume_profile = market_data.get('volume_profile', {})
+            atr = indicators.get('atr_14', 0)
+            adx = indicators.get('adx', 0)
 
             # ШАГ 2: ПРОВЕРКА ADX
-            adx = indicators.get('adx', 0)
             if adx < 20:
                 logger.debug(f"⚠️ {symbol}: ADX={adx:.1f} < 20, пропуск")
                 return None
 
-            # ШАГ 3: ПОЛУЧАЕМ СИГНАЛ ОТ UnifiedAutoScanner
-            signal_data = await self.autoscanner.scan_symbol(symbol)
+            # ШАГ 3: ПОЛУЧАЕМ СИГНАЛ ОТ SCANNER
+            signal_data = await self.auto_scanner.scan_symbol(symbol)
 
             if not signal_data or not signal_data.get('signal_id'):
                 logger.debug(f"⚠️ {symbol}: Сценарий не вернул сигнал")
@@ -1385,7 +1411,36 @@ class GIOCryptoBot:
 
             logger.info(f"✅ {symbol}: Найден сигнал {signal_data.get('signal_id')}")
 
-            # ШАГ 4: ПОДГОТОВКА AI МЕТАДАННЫХ
+            # ✅ ШАГ 4: РАСЧЁТ СТОП-ЛОССА (НОВОЕ!)
+            entry_price = signal_data.get('entry_price', 0)
+            direction = signal_data.get('direction', 'LONG')
+            sl_price = signal_data.get('stop_loss', 0)
+
+            # Если SL не установлен или равен 0, рассчитываем его
+            if not sl_price or sl_price == 0:
+                sl_price = self.calculate_stop_loss(
+                    entry=entry_price,
+                    direction=direction,
+                    atr=atr,
+                    multiplier=2.0  # 2 ATR
+                )
+
+                if sl_price > 0:
+                    logger.info(f"📊 Рассчитан SL для {symbol} {direction}: {sl_price:.2f} (ATR={atr:.4f}, Entry={entry_price:.2f})")
+                    signal_data['stop_loss'] = sl_price  # Обновляем
+                else:
+                    logger.error(f"❌ Не удалось рассчитать SL для {symbol}")
+                    return None  # Не создаём сигнал без SL!
+
+            # Валидация
+            if entry_price == 0 or sl_price == 0:
+                logger.error(f"❌ Невалидный сигнал для {symbol}: entry={entry_price}, sl={sl_price}")
+                return None
+
+            # ШАГ 5: ПОДГОТОВКА AI МЕТАДАННЫХ
+            mtf_trends = market_data.get('mtf_trends', {})
+            volume_profile = market_data.get('volume_profile', {})
+
             ai_metadata = self._prepare_ai_metadata(
                 signal=signal_data,
                 indicators=indicators,
@@ -1393,26 +1448,26 @@ class GIOCryptoBot:
                 volume_profile=volume_profile
             )
 
-            # ШАГ 5: СОХРАНЕНИЕ В БД
+            # ШАГ 6: СОХРАНЕНИЕ
             unified_signal_data = {
                 "signal_id": signal_data['signal_id'],
                 "symbol": symbol,
-                "direction": signal_data.get('direction', 'LONG'),
-                "entry_price": signal_data.get('entry_price', 0),
+                "direction": direction,
+                "entry_price": entry_price,
                 "scenario_id": signal_data.get('scenario_id'),
                 "scenario_score": signal_data.get('quality_score', 0) * 100,
                 "confidence": signal_data.get('quality_score', 0) * 100,
                 "tp1_price": signal_data.get('tp1', 0),
                 "tp2_price": signal_data.get('tp2', 0),
                 "tp3_price": signal_data.get('tp3', 0),
-                "sl_price": signal_data.get('stop_loss'),
+                "sl_price": sl_price,  # ← РАССЧИТАННЫЙ SL
                 "status": "ACTIVE"
             }
 
             success = signals_db.save_signal(unified_signal_data, ai_metadata=ai_metadata)
 
             if success:
-                logger.info(f"✅ Сигнал сохранён с AI metadata")
+                logger.info(f"✅ Сигнал сохранён: Entry={entry_price:.2f}, SL={sl_price:.2f}, RR={self._calculate_rr(signal_data):.2f}")
                 await self._send_signal_to_telegram(unified_signal_data, ai_metadata)
                 return unified_signal_data
             else:
@@ -1425,6 +1480,62 @@ class GIOCryptoBot:
             traceback.print_exc()
             return None
 
+    def _calculate_rr(self, signal: Dict) -> float:
+        """Расчёт Risk/Reward"""
+        try:
+            entry = float(signal.get('entry_price', 0))
+            sl = float(signal.get('stop_loss', 0))
+            tp2 = float(signal.get('tp2', 0))
+
+            if entry == 0 or sl == 0 or tp2 == 0:
+                return 0
+
+            risk = abs(entry - sl)
+            reward = abs(tp2 - entry)
+
+            if risk == 0:
+                return 0
+
+            return reward / risk
+
+        except Exception as e:
+            logger.error(f"❌ Ошибка расчёта RR: {e}")
+            return 0
+
+
+    def calculate_stop_loss(self, entry: float, direction: str, atr: float, multiplier: float = 2.0) -> float:
+        """
+        Рассчитывает стоп-лосс на основе ATR с fallback
+
+        Args:
+            entry: Цена входа
+            direction: Направление (LONG/SHORT)
+            atr: Значение ATR14
+            multiplier: Множитель ATR (2.0 = 2 ATR)
+
+        Returns:
+            float: Цена стоп-лосса
+        """
+        if not entry or entry <= 0:
+            logger.error("❌ Invalid entry price for SL calculation")
+            return 0
+
+        # Если ATR недоступен, используем 2% фиксированный SL
+        if not atr or atr <= 0:
+            logger.warning(f"⚠️ Invalid ATR={atr}, using 2% fixed SL")
+            if direction == "LONG":
+                sl = entry * 0.98  # -2%
+            else:  # SHORT
+                sl = entry * 1.02  # +2%
+            return round(sl, 2)
+
+        # Расчёт на основе ATR
+        if direction == "LONG":
+            sl = entry - (atr * multiplier)
+        else:  # SHORT
+            sl = entry + (atr * multiplier)
+
+        return round(sl, 2)
 
     def _prepare_ai_metadata(
         self,
@@ -1495,22 +1606,41 @@ class GIOCryptoBot:
 
 
     def _calculate_rr(self, signal: Dict) -> float:
-        """Расчёт Risk/Reward соотношения"""
+        """Расчёт Risk/Reward с детальным логированием"""
         try:
             entry = float(signal.get('entry_price', 0))
             sl = float(signal.get('stop_loss', 0))
             tp2 = float(signal.get('tp2', 0))
 
-            if entry == 0 or sl == 0 or tp2 == 0:
+            # Валидация
+            if entry == 0:
+                logger.warning(f"⚠️ RR calculation: Entry price = 0 for {signal.get('symbol', 'Unknown')}")
+                return 0
+
+            if sl == 0:
+                logger.warning(f"⚠️ RR calculation: Stop Loss = 0 for {signal.get('symbol', 'Unknown')}")
+                return 0
+
+            if tp2 == 0:
+                logger.warning(f"⚠️ RR calculation: TP2 = 0 for {signal.get('symbol', 'Unknown')}")
                 return 0
 
             risk = abs(entry - sl)
             reward = abs(tp2 - entry)
 
-            return reward / risk if risk > 0 else 0
+            if risk == 0:
+                logger.warning(f"⚠️ RR calculation: Risk = 0 (entry={entry}, sl={sl})")
+                return 0
 
-        except:
+            rr = reward / risk
+            logger.debug(f"📊 RR: Entry={entry:.2f}, SL={sl:.2f}, TP2={tp2:.2f} → Risk={risk:.2f}, Reward={reward:.2f}, RR=1:{rr:.2f}")
+
+            return rr
+
+        except Exception as e:
+            logger.error(f"❌ Ошибка расчёта RR: {e}")
             return 0
+
 
 
     def _trend_emoji(self, trend: str) -> str:
@@ -2233,17 +2363,28 @@ class GIOCryptoBot:
         return prices
 
     async def check_and_close_signals(self, current_prices):
+        """Проверка и закрытие сигналов по TP/SL с учётом направления"""
         import sqlite3
         from datetime import datetime
 
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT id, symbol, entry, tp1, tp2, tp3, sl, status FROM signals WHERE status='open'")
+        # ИСПРАВЛЕНО: Добавляем direction в запрос
+        cursor.execute("""
+            SELECT id, symbol, direction, entry_price, tp1, tp2, tp3, sl, stop_loss, status
+            FROM signals
+            WHERE status='open'
+        """)
+
         signals = cursor.fetchall()
 
         for sig in signals:
-            sig_id, symbol, entry, tp1, tp2, tp3, sl, status = sig
+            sig_id, symbol, direction, entry, tp1, tp2, tp3, sl, stop_loss, status = sig
+
+            # Используем любое доступное поле для SL
+            actual_sl = sl if sl and sl > 0 else stop_loss
+
             price = current_prices.get(symbol)
             if price is None:
                 continue
@@ -2252,37 +2393,64 @@ class GIOCryptoBot:
             close_reason = None
             roi = 0.0
 
-            if sl > 0 and price <= sl:
-                closed = True
-                close_reason = "stop_loss"
-                roi = (price - entry) / entry if entry else 0
-            elif price >= tp1:
-                closed = True
-                close_reason = "tp1"
-                roi = (price - entry) / entry if entry else 0
-            elif tp2 and price >= tp2:
-                closed = True
-                close_reason = "tp2"
-                roi = (price - entry) / entry if entry else 0
-            elif tp3 and price >= tp3:
-                closed = True
-                close_reason = "tp3"
-                roi = (price - entry) / entry if entry else 0
+            # ✅ ИСПРАВЛЕНО: Проверка SL с учётом направления
+            if actual_sl and actual_sl > 0:
+                if direction == "LONG":
+                    # LONG: SL ниже entry, цена упала
+                    if price <= actual_sl:
+                        closed = True
+                        close_reason = "stop_loss"
+                        roi = ((price - entry) / entry) * 100 if entry else 0
+                        logger.info(f"🔴 LONG SL hit: {symbol} at {price:.2f} (entry={entry:.2f}, sl={actual_sl:.2f}, ROI={roi:.2f}%)")
+                else:  # SHORT
+                    # SHORT: SL выше entry, цена выросла
+                    if price >= actual_sl:
+                        closed = True
+                        close_reason = "stop_loss"
+                        roi = ((entry - price) / entry) * 100 if entry else 0  # ← Инвертирован!
+                        logger.info(f"🔴 SHORT SL hit: {symbol} at {price:.2f} (entry={entry:.2f}, sl={actual_sl:.2f}, ROI={roi:.2f}%)")
+
+            # ✅ Проверка TP с учётом направления
+            if not closed:
+                if direction == "LONG":
+                    if tp1 and price >= tp1:
+                        closed = True
+                        close_reason = "tp1"
+                        roi = ((price - entry) / entry) * 100 if entry else 0
+                    elif tp2 and price >= tp2:
+                        closed = True
+                        close_reason = "tp2"
+                        roi = ((price - entry) / entry) * 100 if entry else 0
+                    elif tp3 and price >= tp3:
+                        closed = True
+                        close_reason = "tp3"
+                        roi = ((price - entry) / entry) * 100 if entry else 0
+                else:  # SHORT
+                    if tp1 and price <= tp1:
+                        closed = True
+                        close_reason = "tp1"
+                        roi = ((entry - price) / entry) * 100 if entry else 0
+                    elif tp2 and price <= tp2:
+                        closed = True
+                        close_reason = "tp2"
+                        roi = ((entry - price) / entry) * 100 if entry else 0
+                    elif tp3 and price <= tp3:
+                        closed = True
+                        close_reason = "tp3"
+                        roi = ((entry - price) / entry) * 100 if entry else 0
 
             if closed:
-                cursor.execute(
-                    "UPDATE signals SET status='closed', close_time=?, close_reason=?, roi=? WHERE id=?",
-                    (
-                        datetime.utcnow().isoformat(),
-                        close_reason,
-                        roi,
-                        sig_id,
-                    ),
-                )
-                logger.info(f"Сигнал {sig_id} на {symbol} закрыт из-за {close_reason} по цене {price}")
+                cursor.execute("""
+                    UPDATE signals
+                    SET status='closed', close_time=?, close_reason=?, roi=?
+                    WHERE id=?
+                """, (datetime.utcnow().isoformat(), close_reason, roi, sig_id))
+
+                logger.info(f"✅ Сигнал {sig_id} ({symbol} {direction}) закрыт: {close_reason}, цена={price:.2f}, ROI={roi:.2f}%")
 
         conn.commit()
         conn.close()
+
 
 
     async def update_news(self):
