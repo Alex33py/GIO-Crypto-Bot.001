@@ -3,6 +3,797 @@
     "cryptocompare_all": {
       "data": [
         {
+          "id": "54394406",
+          "title": "Nasdaq turns selloff around amid valuation worries, big tech recovers",
+          "body": "5 Signs Why Investors Should Be More Cautious Market Cycles, Not Headlines: What History Says About The 2025 Rally And What Comes Next AAII Sentiment Survey: Pessimism Takes Flight US Senate passes bill to end longest ever government shutdown, sending it to House",
+          "published_at": 1763136294,
+          "source": "CryptoCompare",
+          "url": "https://seekingalpha.com/news/4522339-sp500-nasdaq-composite-dow-jones-stock-market-news?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=news",
+          "categories": [
+            "BUSINESS",
+            "MARKET",
+            "REGULATION",
+            "TRADING",
+            "MACROECONOMICS"
+          ],
+          "tags": [
+            "DJI",
+            "SP500",
+            "COMP:IND",
+            "XLK",
+            "GOOG",
+            "AXP",
+            "JPM",
+            "GS",
+            "V",
+            "TSLA",
+            "META",
+            "BTC-USD",
+            "XAGUSD:CUR",
+            "XAUUSD:CUR",
+            "CL1:COM",
+            "US10Y",
+            "US2Y",
+            "US30Y",
+            "US5Y"
+          ]
+        },
+        {
+          "id": "54395908",
+          "title": "Ripple CEO Breaks Silence After First Spot XRP ETF Hits $26 Million in 30 Minutes",
+          "body": "Ripple has finally reached the moment it's been fighting for for years. The first spot XRP ETF has launched in the United States, and CEO Brad Garlinghouse has immediately jumped online to acknowledge what the market has been waiting for since the early days of the SEC v. Ripple case. His brief article carried the weight of a decade-long struggle: regulatory crackdowns, court delays, and an industry watching as XRP remained the only top-tier asset without an ETF product. Today, that era has ende",
+          "published_at": 1763136189,
+          "source": "CryptoCompare",
+          "url": "https://en.bitcoinsistemi.com/ripple-ceo-breaks-silence-after-first-spot-xrp-etf-hits-26-million-in-30-minutes/",
+          "categories": [
+            "MARKET",
+            "REGULATION",
+            "SPONSORED",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Sponsored"
+          ]
+        },
+        {
+          "id": "54395817",
+          "title": "New XRP ETF Might Launch Sooner Than Expected",
+          "body": "The Bitwise XRP ETF may be the next XRP ETF to launch, and it might launch sooner than the expected November 19 date as the SEC fast-tracks the process upon resumption.",
+          "published_at": 1763136060,
+          "source": "CryptoCompare",
+          "url": "https://u.today/new-xrp-etf-might-launch-sooner-than-expected",
+          "categories": [
+            "REGULATION",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "XRP"
+          ]
+        },
+        {
+          "id": "54395819",
+          "title": "Alderney Eyes Bitcoin Mining To Become The Next ‘BTC Island’",
+          "body": "At Bitcoin Amsterdam on 13 November, Alderney politician Edward Hill delivered a direct pitch to the BTC community: help turn his tiny Channel Island into a Bitcoin-first jurisdiction, anchored in renewable energy and a pro-BTC regulatory stance. Hill opened by situating Alderney politically and geographically. “I’m from the little island of Alderney, which you may know are sister islands, Jersey and Guernsey that are traditional finance centers,” he said. “We are a Channel Island, but we are se",
+          "published_at": 1763136051,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinist.com/alderney-bitcoin-mining-next-btc-island/",
+          "categories": [
+            "BTC",
+            "BUSINESS",
+            "MINING",
+            "REGULATION",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Bitcoin News",
+            "bitcoin",
+            "Bitcoin Amsterdam",
+            "bitcoin news",
+            "bitcoin price",
+            "btc",
+            "BTC news",
+            "btc price",
+            "State of Alderney"
+          ]
+        },
+        {
+          "id": "54395785",
+          "title": "Shocking Bitcoin donations case: Detroit man gets 9 years for funding ISIS",
+          "body": "BitcoinWorld Shocking Bitcoin donations case: Detroit man gets 9 years for funding ISIS In a shocking development that highlights the growing intersection of cryptocurrency and national security, a Detroit man has been sentenced to nine years in prison for concealing Bitcoin donations to ISIS. This case represents one of the most significant prosecutions involving cryptocurrency and terrorist financing in recent years. How were these Bitcoin donations concealed? Jibreel Pratt used sophisticated ",
+          "published_at": 1763136012,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/bitcoin-donations-isis-sentencing/",
+          "categories": [
+            "BTC",
+            "REGULATION",
+            "TECHNOLOGY",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "#ISIS",
+            "BITCOIN",
+            "criminal sentencing",
+            "cryptocurrency regulation",
+            "Digital Currency"
+          ]
+        },
+        {
+          "id": "54395839",
+          "title": "CFO Convicted for Losing $35 Million of Company Money in Crypto Side Hustle",
+          "body": "Nevin Shetty invested the stolen funds in DeFi lending protocols in 2022, and was starting to turn a handsome profit—until Terra and the broader crypto market collapsed.",
+          "published_at": 1763135978,
+          "source": "CryptoCompare",
+          "url": "https://decrypt.co/348693/cfo-convicted-losing-35-million-crypto-side-hustle",
+          "categories": [
+            "MARKET",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "",
+            "terra-luna-2",
+            "Law and Order"
+          ]
+        },
+        {
+          "id": "54395778",
+          "title": "Starknet, Zcash, and Dash Advance On Selective Altcoin Season Flows",
+          "body": "Altcoin movement remains uneven , yet activity has concentrated around assets with functioning ecosystems and measurable on-chain or exchange participation. Starknet, Zcash, and Dash were among the few to record strong daily gains, showing that capital continues to rotate into names with distinct usage patterns even when sentiment across the market remains cautious. Liquidity has stayed consistent across active venues, allowing certain coins to advance without relying on extreme leverage or shor",
+          "published_at": 1763135944,
+          "source": "CryptoCompare",
+          "url": "https://cryptonews.com/news/starknet-zcash-and-dash-advance-on-selective-altcoin-season-flows/",
+          "categories": [
+            "ALTCOIN",
+            "BLOCKCHAIN",
+            "MARKET",
+            "TRADING",
+            "ZEC"
+          ],
+          "tags": [
+            "Altcoin News",
+            "News",
+            "Altcoin",
+            "altcoin season",
+            "zcash"
+          ]
+        },
+        {
+          "id": "54395653",
+          "title": "Strategy dismisses Bitcoin sell-off rumors, doubles down on accumulation",
+          "body": "Panic swept crypto markets Friday when blockchain trackers flagged transfers of up to 58,000 BTC from Strategy-linked wallets, sparking viral sell-off claims. But CEO Michael Saylor quickly crushed the FUD on CNBC and X.",
+          "published_at": 1763135762,
+          "source": "CryptoCompare",
+          "url": "https://ambcrypto.com/strategy-dismisses-bitcoin-sell-off-rumors-doubles-down-on-accumulation/",
+          "categories": [
+            "BLOCKCHAIN",
+            "BTC",
+            "MARKET",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Bitcoin",
+            "News",
+            "News 1",
+            "Social",
+            "Trading View"
+          ]
+        },
+        {
+          "id": "54395648",
+          "title": "Bitcoin Price Analysis: BTC Sinks To $95,000 As Liquidations Top $1 Billion",
+          "body": "Bitcoin’s ( BTC ) slump below $100,000 has intensified as the flagship cryptocurrency fell to its lowest level in six months. The flagship cryptocurrency is down nearly 7%, trading around $95,893. CoinGlass data shows significant liquidations in the market, with total liquidations crossing $1 billion in the past 24 hours. Out of this, $887 million were long positions, while $135 million were short positions. Spot Bitcoin ETFs Record Nearly $900 Million One-Day Outflow US spot Bitcoin ETFs regist",
+          "published_at": 1763135738,
+          "source": "CryptoCompare",
+          "url": "https://bitzo.com/2025/11/bitcoin-price-analysis-btc-sinks-to-95000-as-liquidations-top-1-billion",
+          "categories": [
+            "BTC",
+            "MARKET",
+            "TRADING",
+            "ZRX",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Breaking News",
+            "Bitcoin"
+          ]
+        },
+        {
+          "id": "54395654",
+          "title": "BTCS Shatters Records with Stunning Q3 Revenue Surge",
+          "body": "BitcoinWorld BTCS Shatters Records with Stunning Q3 Revenue Surge Have you ever wondered how blockchain companies are transforming traditional finance? BTCS just delivered a masterclass in digital asset performance, posting record Q3 revenue that’s turning heads across the cryptocurrency industry. This Nasdaq-listed company’s strategic moves are rewriting the rules of blockchain business profitability. How Did BTCS Achieve This Record Q3 Revenue? The numbers speak volumes about BTCS’s successful",
+          "published_at": 1763135710,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/btcs-record-q3-revenue/",
+          "categories": [
+            "BLOCKCHAIN",
+            "BUSINESS",
+            "ETH",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "blockchain revenue",
+            "BTCs",
+            "Cryptocurrency earnings",
+            "DeFi strategies",
+            "ETHEREUM"
+          ]
+        },
+        {
+          "id": "54395875",
+          "title": "Stable Returns in a Shaky Market: The Case for XRP Tundra Staking Yield",
+          "body": "Crypto markets have entered another period of heightened volatility, with short-term swings once again dominating headlines. Yet beneath the noise, a different trend is emerging among informed XRP holders: the shift toward predictable yield. Instead of relying solely on price appreciation, many are adopting staking models that generate returns regardless of market direction. XRP Tundra has positioned its Cryo Vault system at the center of this shift, offering staking mechanics designed for users",
+          "published_at": 1763135652,
+          "source": "CryptoCompare",
+          "url": "https://cryptodaily.co.uk/2025/11/stable-returns-in-a-shaky-market-the-case-for-xrp-tundra-staking-yield",
+          "categories": [
+            "MARKET",
+            "MINING",
+            "TRADING",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "More News"
+          ]
+        },
+        {
+          "id": "54395602",
+          "title": "Dogecoin Treasury Bet Backfires: CleanCore Stock Crashes 78% to Record Low",
+          "body": "CleanCore Solutions’ aggressive push into Dogecoin as an official treasury asset has triggered a market backlash, with the company’s stock collapsing nearly 78% over the last month as investors weigh deep quarterly losses and a sharp downturn in DOGE’s price. The stock, which trades under the ticker ZONE on the NYSE American, fell to a record low of $0.3818 this week and ended Thursday’s session down almost 12%. Source: Yahoo Finance The decline continued into Friday, deepening concerns over its",
+          "published_at": 1763135591,
+          "source": "CryptoCompare",
+          "url": "https://cryptonews.com/news/dogecoin-treasury-bet-backfires-cleancore-stock-crashes-78-to-record-low/",
+          "categories": [
+            "DOGE",
+            "REGULATION",
+            "DIGITAL ASSET TREASURY",
+            "MACROECONOMICS",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Altcoin News",
+            "Blockchain News",
+            "News",
+            "DOGE",
+            "Stocks",
+            "Treasury"
+          ]
+        },
+        {
+          "id": "54395621",
+          "title": "BlackRock's BUIDL Now Accepted as Collateral on Binance",
+          "body": "BlackRock's BUIDL, the world's biggest tokenized RWA fund, lands on BNB Chain as integration with Binance is announced.",
+          "published_at": 1763135580,
+          "source": "CryptoCompare",
+          "url": "https://u.today/blackrocks-buidl-now-accepted-as-collateral-on-binance",
+          "categories": [
+            "EXCHANGE",
+            "BNB",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Binance"
+          ]
+        },
+        {
+          "id": "54352578",
+          "title": "Certora Partners with Cork and Hypernative to Set a New Standard for Web3 Security",
+          "body": "",
+          "published_at": 1763135421,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/certora-partners-with-cork-and-hypernative-to-set-a-new-standard-for-web3-security-4355938",
+          "categories": [
+            "OTHER"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54395469",
+          "title": "Stunning 250 Million USDC Minted: What This Massive Stablecoin Creation Means for Crypto Markets",
+          "body": "BitcoinWorld Stunning 250 Million USDC Minted: What This Massive Stablecoin Creation Means for Crypto Markets Have you ever wondered what happens when millions of dollars in stablecoins suddenly appear in the crypto ecosystem? Whale Alert just reported a massive 250 million USDC minted at the USDC Treasury, sending ripples through the cryptocurrency community. This significant event represents one of the largest stablecoin creations we’ve seen recently, and it’s crucial to understand what this m",
+          "published_at": 1763135411,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/usdc-minted-crypto-impact-3/",
+          "categories": [
+            "BLOCKCHAIN",
+            "MARKET",
+            "TRADING",
+            "USDC",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "BLOCKCHAIN",
+            "Crypto news",
+            "CRYPTOCURRENCY",
+            "Digital Assets",
+            "Stablecoins"
+          ]
+        },
+        {
+          "id": "54395452",
+          "title": "Circle Internet Group: Earn A 22% Yield Selling Options On This Stablecoin Juggernaut",
+          "body": "Summary Circle Internet Group remains a long-term growth story, but shares are still expensive despite a recent 60% pullback. Selling put options on CRCL, specifically the February $65 strike, offers a 22%+ annualized yield and a lower entry point if assigned. CRCL's revenue growth is driven by stablecoin adoption, but falling rates and rising costs present near-term headwinds and risks. We maintain a Hold rating on CRCL, and we favor selling puts over buying shares outright for yield-oriented i",
+          "published_at": 1763135374,
+          "source": "CryptoCompare",
+          "url": "https://seekingalpha.com/article/4843865-circle-internet-group-earn-a-22-percent-yield-selling-options-on-this-stablecoin-juggernaut?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=article",
+          "categories": [
+            "BUSINESS",
+            "FIAT",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "CRCL"
+          ]
+        },
+        {
+          "id": "54395729",
+          "title": "ICBA flags risks in Sony stablecoin proposal",
+          "body": "The Independent Community Bankers of America (ICBA) is opposing Sony Bank’s bid for a national trust charter to issue stablecoins. The offer, according to the ICBA, exploits regulatory gaps that could put customers at significant risk. Last week, ICBA sent a letter to the Office of the Comptroller of the Currency (OCC) claiming that Sony Bank intends to use Connectia Trust for cryptocurrency-related activities. On October 6, Sony Bank filed to create Connectia Trust, a company that would offer d",
+          "published_at": 1763135359,
+          "source": "CryptoCompare",
+          "url": "https://www.cryptopolitan.com/icba-warns-sony-stablecoin-risks/",
+          "categories": [
+            "BUSINESS",
+            "EXCHANGE",
+            "FIAT",
+            "REGULATION",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "News",
+            "BPI",
+            "Circle",
+            "FDIC",
+            "ICBA",
+            "Ripple"
+          ]
+        },
+        {
+          "id": "54395493",
+          "title": "Shibarium Transactions Hits 14-Day High, SHIB Price Reacts",
+          "body": "Shibarium has triggered new hope for the SHIB community with a sudden transaction spike.",
+          "published_at": 1763135340,
+          "source": "CryptoCompare",
+          "url": "https://u.today/shibarium-transactions-hit-14-day-high-shib-price-reacts",
+          "categories": [
+            "SHIB",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Shibarium"
+          ]
+        },
+        {
+          "id": "54395386",
+          "title": "Eric Trump Shrugs Off Crypto Rout, Eyes Real Estate Tokenization - WSJ",
+          "body": "",
+          "published_at": 1763135295,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/eric-trump-shrugs-off-crypto-rout-eyes-real-estate-tokenization--wsj-432SI-4359568",
+          "categories": [
+            "OTHER"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54395337",
+          "title": "Rate Cuts Danger: Why Kansas City Fed’s Schmid Warns Further Reductions Could Seriously Hurt Inflation",
+          "body": "BitcoinWorld Rate Cuts Danger: Why Kansas City Fed’s Schmid Warns Further Reductions Could Seriously Hurt Inflation Federal Reserve officials are sounding the alarm about potential economic dangers ahead. Kansas City Fed President Jeffrey Schmid recently delivered a stark warning that additional rate cuts could seriously hurt inflation progress. This cautious stance comes at a critical moment for monetary policy decisions. Why Could Further Rate Cuts Hurt Inflation Control? Schmid emphasized tha",
+          "published_at": 1763135111,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/rate-cuts-hurt-inflation-warning/",
+          "categories": [
+            "BUSINESS",
+            "FIAT",
+            "MARKET",
+            "TRADING",
+            "MACROECONOMICS"
+          ],
+          "tags": [
+            "Crypto News",
+            "economic outlook",
+            "Federal Reserve",
+            "Inflation",
+            "interest rates",
+            "monetary policy"
+          ]
+        },
+        {
+          "id": "54395318",
+          "title": "This $2.5 Billion BlackRock Fund Is Coming to Binance and BNB Chain",
+          "body": "BlackRock’s $2.5 billion USD Institutional Digital Liquidity Fund (BUIDL) is expanding to Binance and BNB Chain, Securitize said Friday.",
+          "published_at": 1763135046,
+          "source": "CryptoCompare",
+          "url": "https://decrypt.co/348715/2-5-billion-blackrock-fund-coming-binance-bnb-chain",
+          "categories": [
+            "BUSINESS",
+            "EXCHANGE",
+            "BNB",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "",
+            "Business"
+          ]
+        },
+        {
+          "id": "54395259",
+          "title": "As Ethereum (ETH) Strengthens Against Bitcoin (BTC), This Could Benefit XRP the Most! Here Are the Details…",
+          "body": "Leading cryptocurrencies Bitcoin (BTC), Ethereum (ETH), and altcoins are experiencing a major correction. At this point, BTC has fallen below $95,000, while ETH finds support around $3,100. While there are analyses suggesting that the correction could deepen further, one analyst noted that Ethereum remains relatively robust against Bitcoin. Accordingly, market analyst Omkar Godbole said that Ethereum has been relatively strong against Bitcoin despite the ongoing strong correction in the market, ",
+          "published_at": 1763134992,
+          "source": "CryptoCompare",
+          "url": "https://en.bitcoinsistemi.com/as-ethereum-eth-strengthens-against-bitcoin-btc-this-could-benefit-xrp-the-most-here-are-the-details/",
+          "categories": [
+            "BTC",
+            "ETH",
+            "TRADING",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Analysis",
+            "Bitcoin",
+            "Ethereum",
+            "News",
+            "XRP"
+          ]
+        },
+        {
+          "id": "54395232",
+          "title": "Bitcoin Black Friday: Tether CEO Reacts to BTC Surprising Crash Below $100,000",
+          "body": "Bitcoin saw a crash below $95,000 for the first time since May this year; Tether CEO reacts to Bitcoin crash, which wiped out $676 million in BTC liquidations.",
+          "published_at": 1763134920,
+          "source": "CryptoCompare",
+          "url": "https://u.today/bitcoin-black-friday-tether-ceo-reacts-to-btcs-surprising-crash-below-100000",
+          "categories": [
+            "BTC",
+            "USDT",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Bitcoin",
+            "BTC"
+          ]
+        },
+        {
+          "id": "54395210",
+          "title": "Stunning 250 Million USDC Minted: What This Massive Stablecoin Creation Means for Crypto Markets",
+          "body": "BitcoinWorld Stunning 250 Million USDC Minted: What This Massive Stablecoin Creation Means for Crypto Markets In a stunning development that’s shaking up the cryptocurrency world, Whale Alert just reported that a massive 250 million USDC has been freshly minted at the USDC Treasury. This enormous stablecoin creation represents one of the largest single minting events we’ve seen recently, and it’s sending ripples across digital asset markets. But what does this actually mean for investors and the",
+          "published_at": 1763134812,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/250-million-usdc-minted-impact/",
+          "categories": [
+            "FIAT",
+            "MARKET",
+            "TRADING",
+            "USDC",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "BLOCKCHAIN",
+            "CRYPTOCURRENCY",
+            "Digital Assets",
+            "Stablecoin",
+            "USDC"
+          ]
+        },
+        {
+          "id": "54395066",
+          "title": "Circle Internet raised to Outperform at Baird on stablecoin growth, strong Q3",
+          "body": "More on Circle Internet Group, Inc. Circle Internet Group, Inc. (CRCL) Q3 2025 Earnings Call Transcript Q3-25 Earnings: Circle's Valuation & Revenue Concentration Problems Circle Internet Group, Inc. 2025 Q3 - Results - Earnings Call Presentation Circle Internet raised to Outperform at Baird on stablecoin growth, strong Q3 Circle Internet double upgraded at J.P. Morgan after Q3 earnings results on better fundamentals",
+          "published_at": 1763134587,
+          "source": "CryptoCompare",
+          "url": "https://seekingalpha.com/news/4522363-circle-internet-raised-to-outperform-at-baird-on-stablecoin-growth-strong-q3?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=news",
+          "categories": [
+            "BUSINESS",
+            "TRADING"
+          ],
+          "tags": [
+            "CRCL",
+            "MA",
+            "FISV",
+            "V",
+            "USDC-USD"
+          ]
+        },
+        {
+          "id": "54395168",
+          "title": "How Liquidity Stress and Tax Moves Are Dragging Bitcoin Down",
+          "body": "Bitcoin (BTC) has fallen below $95,000 as U.S.-centric selling pressures and liquidity tightening converge to weigh heavily on the market. Analysts are now warning that the drop is not a mere price fluctuation but a structural correction shaped by long-term holder profit-taking, fiscal constraints, and short-term investor stress. A Perfect Storm of U.S. Selling Pressure According to an analysis from XWIN Research Japan, the Coinbase Premium Index has been negative for weeks, meaning BTC is tradi",
+          "published_at": 1763134570,
+          "source": "CryptoCompare",
+          "url": "https://cryptopotato.com/how-liquidity-stress-and-tax-moves-are-dragging-bitcoin-down/",
+          "categories": [
+            "BTC",
+            "MARKET",
+            "REGULATION",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "AA News",
+            "Crypto News",
+            "Bitcoin",
+            "Bitcoin (BTC) Price"
+          ]
+        },
+        {
+          "id": "54395042",
+          "title": "Bitcoin (BTC) Price Analysis  for November 14",
+          "body": "Can bulls restore the rate of Bitcoin (BTC) above $100,000 by the end of the week?",
+          "published_at": 1763134560,
+          "source": "CryptoCompare",
+          "url": "https://u.today/bitcoin-btc-price-analysis-for-november-14",
+          "categories": [
+            "BTC",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Bitcoin Price Prediction",
+            "BTC"
+          ]
+        },
+        {
+          "id": "54395014",
+          "title": "Coinbase Ventures-Backed Supra Offers $1M Bounty to Beat Its Parallel EVM Execution Engine",
+          "body": "",
+          "published_at": 1763134541,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/coinbase-venturesbacked-supra-offers-1m-bounty-to-beat-its-parallel-evm-execution-engine-4359538",
+          "categories": [
+            "EXCHANGE",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54394983",
+          "title": "Cardano (ADA) Price Analysis  for November 14",
+          "body": "Can bulls keep the price of Cardano (ADA) above $0.50?",
+          "published_at": 1763134440,
+          "source": "CryptoCompare",
+          "url": "https://u.today/cardano-ada-price-analysis-for-november-14",
+          "categories": [
+            "ADA",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Cardano Price Prediction",
+            "ADA"
+          ]
+        },
+        {
+          "id": "54394915",
+          "title": "Bitcoin Tracks Nasdaq Losses, Not Its Rallies",
+          "body": "Bitcoin remains tightly correlated with the Nasdaq-100, but only in ways that hurt. Despite trading near record highs, BTC continues to react far more aggressively to equity market declines than rallies, an unusual dynamic that signals investor fatigue rather than market euphoria. BTC Tracks Equities, But Only on the Downside Bitcoin’s relationship with equities is",
+          "published_at": 1763134356,
+          "source": "CryptoCompare",
+          "url": "https://news.bitcoin.com/bitcoin-tracks-nasdaq-losses-not-its-rallies/",
+          "categories": [
+            "BTC",
+            "BUSINESS",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Markets and Prices",
+            "Bitcoin (BTC)",
+            "nasdaq"
+          ]
+        },
+        {
+          "id": "54395087",
+          "title": "Strategy moves 38,657 BTC, sparking sell-off rumors as Saylor insists the firm is still buying",
+          "body": "Strategy sparked rumors of selling some of its BTC holdings, as some of the company’s known wallets started moving BTC. Michael Saylor, Strategy’s executive chairman, denied the rumors and said they are actually buying BTC. Strategy’s wallets originated several large-scale transactions, moving a total of 38,657 BTC from known public addresses. Some of the coins were moved to new wallets , with no further transactions. Strategy performed several transactions, with funds sent to Coinbase Custody w",
+          "published_at": 1763134308,
+          "source": "CryptoCompare",
+          "url": "https://www.cryptopolitan.com/strategy-moves-its-btc-holdings/",
+          "categories": [
+            "BTC",
+            "BUSINESS",
+            "EXCHANGE",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "News",
+            "BTC",
+            "MSTR"
+          ]
+        },
+        {
+          "id": "54394966",
+          "title": "Cardano Price Prediction: ADA Clings to $0.50 – If This Level Breaks, It Could Be a Long Way Down",
+          "body": "Bitcoin just dropped below $100k for the first time in six months, and as you’d expect, altcoins are getting absolutely wrecked, and they were already having a rough year to begin with. Cardano’s feeling the pain too. ADA just hit its lowest level in a year at $0.50, which is a straight-up bear market level. If it loses this support level, we could be looking at a serious drop ahead. But here’s where it gets interesting: the whales are buying. Big holders just scooped up over 348 million ADA, wo",
+          "published_at": 1763134300,
+          "source": "CryptoCompare",
+          "url": "https://cryptonews.com/news/cardano-price-prediction-ada-clings-to-0-50-if-this-level-breaks-it-could-be-a-long-way-down/",
+          "categories": [
+            "ADA",
+            "ALTCOIN",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Price Analysis",
+            "ADA",
+            "Adoption",
+            "Altcoins",
+            "Cardano"
+          ]
+        },
+        {
+          "id": "54394881",
+          "title": "Pi Coin Price Prediction: Momentum Dead, Volume Crashing – Brutal Crash to $0 Possible?",
+          "body": "Look, let’s call it what it is: PI coin has been tanking hard since it went live, and it’s not getting any better. Everyone knew there’d be issues after launch because they basically handed out free coins to millions of users, but these “issues” are starting to look more like fundamental problems that might not have a fix. Nothing they’re trying seems to be working. The Pi Core team just dropped a new guide on how to create tokens on their network, getting ready for the Mainnet v23 update. Sure,",
+          "published_at": 1763134221,
+          "source": "CryptoCompare",
+          "url": "https://cryptonews.com/news/pi-coin-price-prediction-momentum-dead-volume-crashing-brutal-crash-to-0-possible/",
+          "categories": [
+            "ALTCOIN",
+            "BLOCKCHAIN",
+            "MINING",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Price Analysis",
+            "Altcoins",
+            "Blockchain",
+            "pi coin",
+            "Pi Network"
+          ]
+        },
+        {
+          "id": "54394896",
+          "title": "Stunning XRP Whale Activity: 96 Million Tokens Vanish from Coinbase in $221 Million Mystery Transfer",
+          "body": "BitcoinWorld Stunning XRP Whale Activity: 96 Million Tokens Vanish from Coinbase in $221 Million Mystery Transfer In a stunning development that’s shaking the cryptocurrency world, Whale Alert has reported massive XRP whale activity involving 96,269,897 XRP tokens suddenly moving from Coinbase to an unknown wallet. This colossal transaction, valued at approximately $221 million, represents one of the most significant XRP whale activity events this year, leaving market observers scrambling for an",
+          "published_at": 1763134213,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/xrp-whale-activity-mystery-transfer/",
+          "categories": [
+            "EXCHANGE",
+            "MARKET",
+            "TRADING",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "BLOCKCHAIN",
+            "CRYPTOCURRENCY",
+            "Digital Assets",
+            "whale transactions",
+            "XRP"
+          ]
+        },
+        {
+          "id": "54394852",
+          "title": "Why Are The Bitcoin, Ethereum, And Dogecoin Prices Down Again?",
+          "body": "The cryptocurrency market is experiencing a wave of declines, leaving investors concerned as the Bitcoin, Ethereum, and Dogecoin prices fall sharply. Despite experiencing a period of recovery earlier this week, all three digital assets are now facing renewed downward pressure. The latest price declines are driven by both macroeconomic uncertainty and internal market factors, underscoring how sensitive the crypto market remains to changes in investor sentiment. FED Skepticism Fuel Decline In Bitc",
+          "published_at": 1763134203,
+          "source": "CryptoCompare",
+          "url": "https://www.newsbtc.com/news/bitcoin-ethereum-dogecoin-down/",
+          "categories": [
+            "BTC",
+            "ETH",
+            "MARKET",
+            "MACROECONOMICS",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Cryptocurrency Market News",
+            "Bank of Minneapolis",
+            "bitcoin",
+            "Bitcoin news",
+            "bitcoin price",
+            "btc",
+            "BTC news",
+            "btc price",
+            "btcusd",
+            "BTCUSDT",
+            "CoinMarketCap",
+            "ethereum",
+            "fed",
+            "federal reserve",
+            "FOMC Meeting",
+            "Neel Kashkari",
+            "pot Bitcoin ETF"
+          ]
+        },
+        {
+          "id": "54394856",
+          "title": "Institutions Killed Bitcoin’s Spirit, Claims Legendary Trader Peter Brandt as BTC Price Slips Below $100,000",
+          "body": "Bitcoin stopped being the people's asset and lost the spirit that built it, argued legendary trader Peter Brandt as the prime cryptocurrency lost the $100,000 price tag, and there is no \"plunge protection\" yet.",
+          "published_at": 1763134200,
+          "source": "CryptoCompare",
+          "url": "https://u.today/institutions-killed-bitcoins-spirit-claims-legendary-trader-peter-brandt-as-btc-price-slips-below",
+          "categories": [
+            "BTC",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Peter Brandt"
+          ]
+        },
+        {
+          "id": "54395425",
+          "title": "Prediction markets, DATs, the fee switch, and Project Crypto",
+          "body": "Jeff Yass bets that prediction markets could stop wars, Paul Atkins’ announcement on “tokens,” and more",
+          "published_at": 1763134091,
+          "source": "CryptoCompare",
+          "url": "https://blockworks.co/news/prediction-markets-dats-project-crypto",
+          "categories": [
+            "MARKET"
+          ],
+          "tags": [
+            "Policy",
+            "The Breakdown"
+          ]
+        },
+        {
+          "id": "54395477",
+          "title": "SUI Price Prediction: Bears Control Market As EMA Ceiling Blocks Every Rally Attempt",
+          "body": "SUI price today trades near $1.78, struggling after repeated rejections from the descending trendline and key EMAs. Coinglass data shows $6.61M in outflows, extending months of distribution as traders continue reducing exposure. Losing $1.65 support could open the path toward $1.50, while a recovery above $2.00 is needed to confirm stabilization. SUI price today trades near $1.78, sitting at its lowest level in weeks after a sharp drop through intraday support. The decline follows persistent neg",
+          "published_at": 1763134059,
+          "source": "CryptoCompare",
+          "url": "https://coinedition.com/sui-price-prediction-bears-control-market-as-ema-ceiling-blocks-every-rally-attempt/",
+          "categories": [
+            "MARKET",
+            "TRADING",
+            "SUI",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Market",
+            "News",
+            "Price Analysis",
+            "Price Prediction",
+            "Sui (SUI)"
+          ]
+        },
+        {
+          "id": "54394754",
+          "title": "Ethereum on the Line as Binance and BlackRock Sell Into Whale Bids",
+          "body": "Ethereum is caught between heavy selling from major players and fresh whale demand at a fragile $3,200 support zone. As Binance and BlackRock offload about $1 billion in ETH, large spot orders and key chart levels now decide the token’s next move. Binance and BlackRock extend heavy ETH outflows as $1B leaves wallets Fresh data from Arkham shows a sharp wave of Ethereum outflows from major Binance wallets in the past few hours, adding pressure to a trend that has unfolded for three straight days.",
+          "published_at": 1763134005,
+          "source": "CryptoCompare",
+          "url": "https://coinpaper.com/12365/ethereum-on-the-line-as-binance-and-black-rock-sell-into-whale-bids",
+          "categories": [
+            "ETH",
+            "EXCHANGE",
+            "MARKET",
+            "BNB",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "News",
+            "Ethereum"
+          ]
+        },
+        {
           "id": "54394695",
           "title": "Shocking Truth: 99% of Bitcoin Investors Face Major Losses According to Glassnode Data",
           "body": "BitcoinWorld Shocking Truth: 99% of Bitcoin Investors Face Major Losses According to Glassnode Data Are you among the 99% of Bitcoin investors currently facing losses? Recent data from Glassnode reveals a startling reality that has shaken the cryptocurrency community. If you purchased Bitcoin around the $96,000 mark in the last 155 days, you’re likely experiencing significant financial pressure right now. What Does Glassnode’s Data Reveal About Bitcoin Investors? Glassnode’s latest report delive",
@@ -42,6 +833,24 @@
           "tags": [
             "Analysis",
             "Latest Binance Coin (BNB) News Market Updates"
+          ]
+        },
+        {
+          "id": "54394768",
+          "title": "BingX Unveils Listing FastTrack for Swift and Transparent Token Onboarding",
+          "body": "PANAMA CITY, November 14, 2025 – BingX , a leading cryptocurrency exchange and Web3 AI company, today announced the launch of Listing FastTrack , a faster gateway for innovative projects to be listed on BingX, backed by enhanced support and pioneering infrastructure and security. Listing FastTrack is BingX’s new portal where projects can apply for token listing on BingX in a shorter and simpler process, with a transparent fee schedule. The applications will be submitted directly to BingX’s exclu",
+          "published_at": 1763133747,
+          "source": "CryptoCompare",
+          "url": "https://www.cryptopolitan.com/bingx-unveils-listing-fasttrack-for-swift-and-transparent-token-onboarding/",
+          "categories": [
+            "BLOCKCHAIN",
+            "EXCHANGE",
+            "TRADING",
+            "TOKEN LISTING AND DELISTING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Press Release"
           ]
         },
         {
@@ -117,40 +926,6 @@
           ]
         },
         {
-          "id": "54394406",
-          "title": "Stock market sell-off continues as tech valuation worries rise",
-          "body": "5 Signs Why Investors Should Be More Cautious Market Cycles, Not Headlines: What History Says About The 2025 Rally And What Comes Next AAII Sentiment Survey: Pessimism Takes Flight US Senate passes bill to end longest ever government shutdown, sending it to House",
-          "published_at": 1763133282,
-          "source": "CryptoCompare",
-          "url": "https://seekingalpha.com/news/4522339-sp500-nasdaq-composite-dow-jones-stock-market-news?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=news",
-          "categories": [
-            "BUSINESS",
-            "MARKET",
-            "REGULATION",
-            "TRADING",
-            "MACROECONOMICS"
-          ],
-          "tags": [
-            "DJI",
-            "SP500",
-            "COMP:IND",
-            "XLK",
-            "AXP",
-            "JPM",
-            "GS",
-            "V",
-            "TSLA",
-            "BTC-USD",
-            "XAGUSD:CUR",
-            "XAUUSD:CUR",
-            "CL1:COM",
-            "US10Y",
-            "US2Y",
-            "US30Y",
-            "US5Y"
-          ]
-        },
-        {
           "id": "54394447",
           "title": "Hyperliquid loses $4.9M in POPCAT price attack as new on-chain evidence points to BTX Capital",
           "body": "The decentralized derivatives platform Hyperliquid suffered a loss of about $4.9 million in a market manipulation of POPCAT token prices. After days of Crypto Twitter pointing to Binance’s CZ, analysts have found a new suspect. BTX Capital and founder Vanessa Cao have been accused of involvement in the manipulation, a claim she vehemently denies. On November 12, an attacker used over 26 wallets to create a buy wall of about $25 million buys on POPCAT to inflate the price and create an illusion o",
@@ -204,817 +979,28 @@
           ]
         },
         {
-          "id": "54394318",
-          "title": "Is PEPE Gearing up for a Comeback After $9M Whale Accumulation?",
-          "body": "Recently, PEPE whales and chart analysts have turned more active as the memecoin grinds through a key support zone. Now, large on-chain buys, a 2017-style XRP fractal and an oversold weekly setup are shaping fresh debate over PEPE’s next phase. PEPE whale steps up accumulation with $9 million in weekly buys A large PEPE holder has sharply increased purchases this month, on-chain data from Arkham and tracking by X user @PepeEthWhale show. The wallet has accumulated nearly $9 million worth of PEPE",
-          "published_at": 1763133118,
+          "id": "54394848",
+          "title": "Bitcoin Dips Below $95K Amid Sharper Altcoin Losses and Surging Liquidations",
+          "body": "Bitcoin’s price has plunged below $95,000 for the first time in six months, but altcoins like Ethereum and Solana have faced steeper declines amid rising crypto liquidations totaling $1.36 billion",
+          "published_at": 1763133128,
           "source": "CryptoCompare",
-          "url": "https://coinpaper.com/12363/is-pepe-gearing-up-for-a-comeback-after-9-m-whale-accumulation",
-          "categories": [
-            "MARKET",
-            "TRADING",
-            "XRP",
-            "PEPE",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "News",
-            "Reports"
-          ]
-        },
-        {
-          "id": "54394306",
-          "title": "Crypto Bulls Get Rekt as Ethereum, XRP Fall Harder Than Bitcoin",
-          "body": "Think Bitcoin is having a bad day? Altcoins have been hit much harder, and crypto liquidations are piling up.",
-          "published_at": 1763133016,
-          "source": "CryptoCompare",
-          "url": "https://decrypt.co/348687/crypto-bulls-get-rekt-ethereum-xrp-fall-harder-than-bitcoin",
-          "categories": [
-            "BTC",
-            "ETH",
-            "MARKET",
-            "XRP",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "",
-            "",
-            "Markets"
-          ]
-        },
-        {
-          "id": "54394267",
-          "title": "Cryptocurrency Scam Exposed: Oklahoma Fraudster Gets 5 Years for $9.4M Investor Theft",
-          "body": "BitcoinWorld Cryptocurrency Scam Exposed: Oklahoma Fraudster Gets 5 Years for $9.4M Investor Theft Have you ever wondered how cryptocurrency scams manage to steal millions from unsuspecting investors? The recent case of Travis Ford from Oklahoma reveals the shocking truth about how one man orchestrated a massive cryptocurrency scam that defrauded thousands of people out of $9.4 million. This case serves as a stark reminder of the dangers lurking in the unregulated corners of the digital asset sp",
-          "published_at": 1763133012,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/oklahoma-cryptocurrency-scam-sentence/",
-          "categories": [
-            "BLOCKCHAIN",
-            "BUSINESS",
-            "REGULATION",
-            "TECHNOLOGY",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News",
-            "Blockchain Security",
-            "Crypto Regulation.",
-            "Cryptocurrency Scam",
-            "Financial crime",
-            "Investment Fraud"
-          ]
-        },
-        {
-          "id": "54394268",
-          "title": "Coinbase Ventures-Backed Supra Offers $1M Bounty to Beat Its Parallel EVM Execution Engine",
-          "body": "Zug, Switzerland, November 14th, 2025, Chainwire Supra , the first Layer-1 blockchain built for Automatic DeFi (AutoFi) via full vertical integration, is proud to announce an expansion of its SupraEVM Beta Bounty . CEO and Co-Founder Joshua Tobkin has committed up to $1 million worth of his own $SUPRA tokens as a personal bounty to any developer or research team that can demonstrate a faster, verifiably correct EVM-parallel execution engine than SupraBTM, the core execution engine powering Supra",
-          "published_at": 1763133000,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptointelligence.co.uk/coinbase-ventures-backed-supra-offers-1m-bounty-to-beat-its-parallel-evm-execution-engine/",
-          "categories": [
-            "BLOCKCHAIN",
-            "ETH",
-            "EXCHANGE",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Press Releases"
-          ]
-        },
-        {
-          "id": "54394211",
-          "title": "Coinbase Ventures-Backed Supra Offers $1M Bounty to Beat Its Parallel EVM Execution Engine",
-          "body": "Zug, Switzerland, November 14th, 2025, Chainwire Supra , the first Layer-1 blockchain built for Automatic DeFi (AutoFi) via full vertical integration, is proud to announce an expansion of its SupraEVM Beta Bounty . CEO and Co-Founder Joshua Tobkin has committed up to $1 million worth of his own $SUPRA tokens as a personal bounty to any developer or research team that can demonstrate a faster, verifiably correct EVM-parallel execution engine than SupraBTM, the core execution engine powering Supra",
-          "published_at": 1763132895,
-          "source": "CryptoCompare",
-          "url": "https://bitzo.com/2025/11/coinbase-ventures-backed-supra-offers-1m-bounty-to-beat-its-parallel-evm-execution-engine",
-          "categories": [
-            "BLOCKCHAIN",
-            "EXCHANGE",
-            "SPONSORED",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "More News"
-          ]
-        },
-        {
-          "id": "54394149",
-          "title": "Researcher to XRP Investors: Our Life-Changing Gains Are Coming Soon. Here’s why",
-          "body": "From the outside, XRP’s recent on-chain milestones might seem routine . But beneath the surface, a powerful convergence of supply dynamics, wallet behavior, and growing network adoption could set the stage for truly life-changing gains for long-term holders. According to XRPScan, the XRP Ledger (XRPL) has now surpassed 7 million active accounts, defined as wallets holding at least 1 XRP. This milestone reflects both the ecosystem’s scale and the changing nature of account usage. Notably, the min",
-          "published_at": 1763132799,
-          "source": "CryptoCompare",
-          "url": "https://timestabloid.com/researcher-to-xrp-investors-our-life-changing-gains-are-coming-soon-heres-why/",
-          "categories": [
-            "BUSINESS",
-            "EXCHANGE",
-            "TRADING",
-            "XRP",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Cryptocurrency",
-            "News",
-            "XRP",
-            "XRP Holders"
-          ]
-        },
-        {
-          "id": "54394139",
-          "title": "Chainlink RWA Perps Go Live as LINK Compresses Toward $17 Breakout Zone",
-          "body": "Chainlink is deepening its role in real-world asset markets just as LINK’s charts hit key long-term levels. ApeX Exchange’s new RWA perpetuals and fresh technical setups now frame the next phase for the token across spot and derivatives markets. ApeX integrates Chainlink Data Streams to launch RWA perpetual markets ApeX Exchange has adopted Chainlink Data Streams to power new on-chain real-world asset perpetuals, expanding its derivatives offering across multiple networks. The perp DEX, which re",
-          "published_at": 1763132693,
-          "source": "CryptoCompare",
-          "url": "https://coinpaper.com/12362/chainlink-rwa-perps-go-live-as-link-compresses-toward-17-breakout-zone",
-          "categories": [
-            "EXCHANGE",
-            "LINK",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "News",
-            "Crypto"
-          ]
-        },
-        {
-          "id": "54394212",
-          "title": "AIO is available for trading!",
-          "body": "We’re thrilled to announce that AIO is available for trading on Kraken! Funding and trading AIO trading is live as of November 14, 2025. To add an asset to your Kraken account, navigate to Funding, select the asset you’re after, and hit ‘Deposit’. Make sure to deposit your tokens into networks supported by Kraken. Deposits made using other networks will be lost. Trade on Kraken Here’s some more information about this asset : OlaXBT (AIO) OlaXBT (AIO) is an AI-driven decentralized trading platfor",
-          "published_at": 1763132685,
-          "source": "CryptoCompare",
-          "url": "https://blog.kraken.com/product/asset-listings/aio-is-available-for-trading",
-          "categories": [
-            "BLOCKCHAIN",
-            "EXCHANGE",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Asset Listings",
-            "Kraken",
-            "trading"
-          ]
-        },
-        {
-          "id": "54394019",
-          "title": "DAT strategies under strain? What the $622M sell-off tells us",
-          "body": "Why are Bitcoin DAT firms betting on the upside?",
-          "published_at": 1763132416,
-          "source": "CryptoCompare",
-          "url": "https://ambcrypto.com/dat-strategies-under-strain-what-the-622m-sell-off-tells-us/",
-          "categories": [
-            "BTC",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Bitcoin",
-            "BTC Trading View",
-            "News",
-            "News 1",
-            "Social",
-            "Trading View",
-            "ambcrypto"
-          ]
-        },
-        {
-          "id": "54394021",
-          "title": "Bitcoin Price Surge Shatters Records: BTC Soars Above $96,000 Mark",
-          "body": "BitcoinWorld Bitcoin Price Surge Shatters Records: BTC Soars Above $96,000 Mark In an extraordinary market movement that has captivated investors worldwide, Bitcoin has achieved a monumental milestone by breaking through the $96,000 barrier. This Bitcoin price surge represents one of the most significant achievements in cryptocurrency history, with BTC currently trading at $96,006.29 on the Binance USDT market according to Bitcoin World market monitoring. What’s Driving This Massive Bitcoin Pric",
-          "published_at": 1763132413,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/bitcoin-price-surge-record-3/",
-          "categories": [
-            "BTC",
-            "BUSINESS",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News",
-            "BITCOIN",
-            "BLOCKCHAIN",
-            "CRYPTOCURRENCY",
-            "Market Analysis",
-            "trading."
-          ]
-        },
-        {
-          "id": "54393977",
-          "title": "Top Meme Coins Besides Dogecoin And Shiba Inu With Potential Still Seeing Major Interest",
-          "body": "Dogecoin and Shiba Inu have not seen the best performances over the last few years, but this has not deterred other meme coins from going on major rallies. The likes of PEPE and BONK have emerged with great potential, building strong communities and contending with the likes of Dogecoin and Shiba Inu for the top spot. This report takes a look at these meme coins with potential as the market starts to pick up once again. USELESS Joins The Ranks Of The Greats Useless Coin (USELESS) is one of the S",
-          "published_at": 1763132402,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinist.com/meme-coins-dogecoin-shiba-inu-2/",
-          "categories": [
-            "DOGE",
-            "MARKET",
-            "SHIB",
-            "FLOKI",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "meme coins",
-            "Doge",
-            "DOGE news",
-            "doge price",
-            "dogecoin",
-            "Dogecoin news",
-            "dogecoin price",
-            "dogeusd",
-            "dogeusdt",
-            "meme coin",
-            "Meme coin news",
-            "Meme coins news"
-          ]
-        },
-        {
-          "id": "54394148",
-          "title": "Cardano (ADA) In Serious Trouble Of Being Overtaken By This New Crypto",
-          "body": "The Cardano price shows tentative recovery signs just above $0.60 as it rebounded by 5%. This slight recovery pairs with a 38% rise in trading volume and continued whale accumulation, suggesting a return of some cautious interest from investors. Although these technical factors point towards a potential bullish reversal, ADA price still remains uncertain and under heavy resistance. This shift leaves room for new projects with strong growth catalysts and value propositions. A new crypto coin with",
-          "published_at": 1763132400,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/cardano-ada-in-serious-trouble-of-being-overtaken-by-this-new-crypto/",
-          "categories": [
-            "ADA",
-            "BUSINESS",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Press Release"
-          ]
-        },
-        {
-          "id": "54394578",
-          "title": "MoonPay Launches Enterprise Stablecoin Platform With M0 Integration",
-          "body": "MoonPay launched enterprise-grade stablecoin issuance with full M0 integration. The platform allows businesses to deploy fully reserved digital dollars across multiple blockchains. MoonPay now covers the entire value chain, from issuance to global payments distribution. MoonPay has launched an enterprise-focused stablecoin platform, signaling its new strategy through a deep technical integration with M0, an open, programmable infrastructure for issuing application-specific digital dollars. Accor",
-          "published_at": 1763132400,
-          "source": "CryptoCompare",
-          "url": "https://coinedition.com/moonpay-enterprise-stablecoin-platform-with-m0/",
-          "categories": [
-            "BUSINESS",
-            "SPONSORED",
-            "TRADING"
-          ],
-          "tags": [
-            "Market News",
-            "News",
-            "Stablecoin"
-          ]
-        },
-        {
-          "id": "54393974",
-          "title": "Ether Tumbles 8% as ETFs Bleed Over $1.4B, Long-Term Holders Sell",
-          "body": "ETH plunged below $3,100 on Friday as the crypto selloff accelerated with bitcoin losing the $100,000 level.",
-          "published_at": 1763132393,
-          "source": "CryptoCompare",
-          "url": "https://www.coindesk.com/markets/2025/11/13/ether-tumbles-8-as-etfs-bleed-over-usd1-4b-long-term-holders-sell",
-          "categories": [
-            "BTC",
-            "ETH",
-            "MARKET",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Markets",
-            "Ethereum",
-            "AI Market Insights",
-            "Ether ETFs",
-            "Glassnode",
-            "News"
-          ]
-        },
-        {
-          "id": "54393882",
-          "title": "Warning: US-Based Company Founder Allegedly Manipulated Prices of Many Altcoins! \"Including the Most Popular Altcoin of Recent Times!\"",
-          "body": "While Bitcoin (BTC) and altcoins continued to experience sharp declines after October, there was a major collapse in the last 24 hours. While bearish rhetoric increased after the decline, allegations of manipulation emerged in some altcoins. At this point, crypto analyst Specter claimed that BTX Capital and its founder Vanessa Cao may have been involved in the price manipulation of multiple altcoins, including POPCAT and TST, on the Hyperliquid platform. Accordingly, Cao is alleged to have artif",
-          "published_at": 1763132289,
-          "source": "CryptoCompare",
-          "url": "https://en.bitcoinsistemi.com/warning-us-based-company-founder-allegedly-manipulated-prices-of-many-altcoins-including-the-most-popular-altcoin-of-recent-times/",
+          "url": "https://en.coinotag.com/bitcoin-dips-below-95k-amid-sharper-altcoin-losses-and-surging-liquidations/",
           "categories": [
             "ALTCOIN",
             "BTC",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "News"
-          ]
-        },
-        {
-          "id": "54393897",
-          "title": "Bitcoin Fear and Greed Index hits ‘Extreme Fear’",
-          "body": "Bitcoin ( BTC ) slipped 5.49% in the past 24 hours, falling to $95,383 before attempting to stabilize above $96,000. 1-day Bitcoin price chart. Source: Finbold The sell-off hit sentiment hard. The Bitcoin Fear and Greed Index slid to 15 on November 13 and edged up to 16 on November 14, firmly in Extreme Fear territory. Selling intensified after the Federal Reserve rejected the possibility of a December rate cut, a decision that rattled risk assets across global markets. Bitcoin’s pullback occurr",
-          "published_at": 1763132251,
-          "source": "CryptoCompare",
-          "url": "https://finbold.com/bitcoin-fear-and-greed-index-hits-extreme-fear/",
-          "categories": [
-            "BTC",
-            "MARKET",
-            "REGULATION",
-            "MACROECONOMICS",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Cryptocurrency news",
-            "Bitcoin",
-            "Bitcoin fear abd greed index",
-            "BTC",
-            "cryptocurrency"
-          ]
-        },
-        {
-          "id": "54393827",
-          "title": "Shocking Downturn: Major US Stock Indices Plunge at Market Open",
-          "body": "BitcoinWorld Shocking Downturn: Major US Stock Indices Plunge at Market Open Investors received a jarring wake-up call this morning as the three major US stock indices opened significantly lower, sending shockwaves through financial markets. The sudden downturn has left many wondering what’s driving this unexpected market movement and how it might affect their investment portfolios. Why Are US Stock Indices Falling Today? The opening bell brought concerning numbers across the board. The S&P 500 ",
-          "published_at": 1763132111,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/us-stock-indices-drop/",
-          "categories": [
-            "BUSINESS",
-            "MARKET",
-            "TECHNOLOGY",
-            "TRADING",
-            "MACROECONOMICS"
-          ],
-          "tags": [
-            "Crypto News",
-            "financial news",
-            "investing",
-            "Market Analysis",
-            "Stock Market",
-            "US economy"
-          ]
-        },
-        {
-          "id": "54394700",
-          "title": "Unknown Whale Moves 95M XRP to Binance Amid 8% Price Dip",
-          "body": "An unknown crypto whale has transferred a significant amount of XRP to popular cryptocurrency exchange Binance. Leading blockchain tracking platform Whale Alert flagged the major XRP transaction today, revealing that an unidentified whale transferred 94,699,869 XRP (94.69 million tokens) to Binance. Visit Website",
-          "published_at": 1763131965,
-          "source": "CryptoCompare",
-          "url": "https://thecryptobasic.com/2025/11/14/unknown-whale-moves-95m-xrp-to-binance-amid-8-price-dip/",
-          "categories": [
-            "EXCHANGE",
-            "TRADING",
-            "XRP",
-            "BNB",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Market",
-            "Latest XRP (Ripple) News Today"
-          ]
-        },
-        {
-          "id": "54394699",
-          "title": "Bitcoin Not in Bear Market Despite Correction, Says CryptoQuant CEO",
-          "body": "CryptoQuant CEO Ki Young Ju says Bitcoin remains outside a bear market as long as inflows persist. A chart shared by Young Ju on X revealed that Bitcoin’s realized capitalization has reached $1.1 trillion, marking its highest level to date as capital continues flowing into the market. Visit Website",
-          "published_at": 1763131952,
-          "source": "CryptoCompare",
-          "url": "https://thecryptobasic.com/2025/11/14/bitcoin-not-in-bear-market-despite-correction-says-cryptoquant-ceo/",
-          "categories": [
-            "BTC",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Market",
-            "Latest Bitcoin (BTC) News Today"
-          ]
-        },
-        {
-          "id": "54393726",
-          "title": "'No Truth to the Rumor': Michael Saylor Says Strategy Aggressively Accumulating Bitcoin",
-          "body": "Amid the continued panicky action in crypto, online chatter suggested Strategy was unloading some of its bitcoin stack, a rumor Executive Chairman Michael Saylor shot down Friday morning.",
-          "published_at": 1763131943,
-          "source": "CryptoCompare",
-          "url": "https://www.coindesk.com/markets/2025/11/14/saylor-says-strategy-buying-bitcoin-shooting-down-rumors-of-sales",
-          "categories": [
-            "BTC",
-            "MARKET",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Markets",
-            "Strategy",
-            "Bitcoin",
-            "Breaking News",
-            "News"
-          ]
-        },
-        {
-          "id": "54393650",
-          "title": "Stunning Bitcoin Price Prediction: 70% Chance BTC Stays Below $90K by Year-End",
-          "body": "BitcoinWorld Stunning Bitcoin Price Prediction: 70% Chance BTC Stays Below $90K by Year-End Are you tracking Bitcoin’s wild ride? Prediction market Polymarket just dropped a bombshell: there’s now a 70% probability that Bitcoin will finish 2024 below the $90,000 mark. This surprising Bitcoin price prediction is making waves across crypto communities and forcing investors to reconsider their year-end expectations. What Does This Bitcoin Price Prediction Really Mean? Polymarket’s latest data revea",
-          "published_at": 1763131811,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/bitcoin-price-prediction-polymarket-odds/",
-          "categories": [
-            "BTC",
-            "BUSINESS",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News",
-            "BITCOIN",
-            "crypto trading",
-            "CRYPTOCURRENCY",
-            "Market Analysis",
-            "Prediction Markets"
-          ]
-        },
-        {
-          "id": "54393666",
-          "title": "Strategy is acquiring 'quite a lot' of bitcoin, Saylor says, amid sell-off",
-          "body": "More on Strategy, Bitcoin USD Strategy's Bitcoin Treasury: Different Securities For Different Investors (New Ratings) Bitcoin: Shrinking Supply, Institutional Demand Driving Its Transformation Into Monetary Infrastructure Cryptocurrencies: Monetary Alternative Or Mass Delusion? Bitcoin ETFs hit by $870M in outflows, deepening market slide - report Crypto weakness drags down Coinbase, Robinhood, miners, others",
-          "published_at": 1763131700,
-          "source": "CryptoCompare",
-          "url": "https://seekingalpha.com/news/4522320-strategy-is-acquiring-quite-a-lot-of-bitcoin-saylor-says-amid-sell-off?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=news",
-          "categories": [
-            "BTC",
-            "BUSINESS",
-            "EXCHANGE",
-            "DIGITAL ASSET TREASURY",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "MSTR",
-            "BTC-USD"
-          ]
-        },
-        {
-          "id": "54393579",
-          "title": "Spot Bitcoin ETFs Log Second Largest Outflows On Record As BTC Price Nosedives Below $95,000",
-          "body": "The mass exodus signals a risk-off reset, reflecting institutions pulling back amid macro uncertainty.",
-          "published_at": 1763131676,
-          "source": "CryptoCompare",
-          "url": "https://zycrypto.com/spot-bitcoin-etfs-log-second-largest-outflows-on-record-as-btc-price-nosedives-below-95000/",
-          "categories": [
-            "BTC",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Bitcoin",
-            "News",
-            "Bitcoin News",
-            "BTCUSD",
-            "BTCUSDC",
-            "BTCUSDT",
-            "Cryptocurrency News",
-            "XBTUSD"
-          ]
-        },
-        {
-          "id": "54376841",
-          "title": "Bitcoin price nosedives to 6-mth low below $96k as Dec rate cut bets wane",
-          "body": "",
-          "published_at": 1763131620,
-          "source": "CryptoCompare",
-          "url": "https://www.investing.com/news/cryptocurrency-news/bitcoin-price-today-slides-to-6mth-low-below-100k-as-dec-rate-cut-bets-wane-4357687",
-          "categories": [
-            "BTC",
-            "TRADING",
-            "MACROECONOMICS",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            ""
-          ]
-        },
-        {
-          "id": "54393725",
-          "title": "3 Altcoins Top Crypto Investors Highlight for 2025–2026 Bull Cycle, One Shows 700% Potential",
-          "body": "As the 2025–2026 bull cycle begins to form, investors are narrowing their focus to altcoins with strong upside potential. While blue-chip assets still dominate headlines, many traders believe larger gains will come from tokens valued under $10 or even under $1. Among the assets being discussed in private research groups, three names consistently appear, and one of them is showing the most room for significant growth. Avalanche (AVAX) Avalanche remains a top-tier blockchain project known for its ",
-          "published_at": 1763131603,
-          "source": "CryptoCompare",
-          "url": "https://cryptodaily.co.uk/2025/11/3-altcoins-top-crypto-investors-highlight-for-2025-2026-bull-cycle-one-shows-700-potential",
-          "categories": [
-            "ADA",
-            "AVAX",
-            "BUSINESS",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "More News"
-          ]
-        },
-        {
-          "id": "54393672",
-          "title": "Breaking: Saylor Denies Rumors of Selling 47K BTC",
-          "body": "Saylor has taken to the X social media network to deny rumors of selling BTC",
-          "published_at": 1763131602,
-          "source": "CryptoCompare",
-          "url": "https://u.today/breaking-saylor-denies-rumors-of-selling-47k-btc",
-          "categories": [
-            "BTC",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Bitcoin News",
-            "BTC"
-          ]
-        },
-        {
-          "id": "54393522",
-          "title": "Strategic Bitmine CEO appointment transforms Ethereum investment leadership",
-          "body": "BitcoinWorld Strategic Bitmine CEO appointment transforms Ethereum investment leadership The cryptocurrency world just witnessed a significant leadership shift as Nasdaq-listed Bitmine announces its new CEO appointment, signaling a fresh direction for Ethereum-focused investments. This strategic move comes at a crucial time when institutional interest in blockchain technology continues to surge. Why does the Bitmine CEO appointment matter for investors? Chi Tsang’s appointment as Bitmine’s new C",
-          "published_at": 1763131510,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/bitmine-ceo-appointment-ethereum-investment/",
-          "categories": [
-            "BLOCKCHAIN",
             "ETH",
-            "MARKET",
-            "TECHNOLOGY",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News",
-            "Bitmine",
-            "Blockchain companies",
-            "Crypto news",
-            "cryptocurrency leadership",
-            "Ethereum Investment"
-          ]
-        },
-        {
-          "id": "54393507",
-          "title": "Stablecoin Issuer Tether Set to Rival Banks in Commodity Trade Lending",
-          "body": "Leading stablecoin issuer Tether is positioning itself to compete with banks in commodity trade lending after deploying approximately $1.5 billion in credit to the market, according to a Bloomberg report . Tether CEO Paolo Ardoino revealed on November 14 that the firm intends to scale up its lending activities across multiple commodity markets, ranging from oil and cotton to wheat and various agricultural goods. The company has provided loans in both US dollars and its USDT stablecoin , which is",
-          "published_at": 1763131482,
-          "source": "CryptoCompare",
-          "url": "https://cryptonews.com/news/stablecoin-issuer-tether-set-to-rival-banks-in-commodity-trade-lending/",
-          "categories": [
-            "COMMODITY",
-            "FIAT",
-            "MARKET",
-            "USDT",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Blockchain News",
-            "Paolo Ardoino",
-            "Tether",
-            "Tether USDT"
-          ]
-        },
-        {
-          "id": "54393480",
-          "title": "Binance Coin (BNB) Price Analysis  for November 14",
-          "body": "Can the rate of Binance Coin (BNB) remain above $900 until the end of the week?",
-          "published_at": 1763131440,
-          "source": "CryptoCompare",
-          "url": "https://u.today/binance-coin-bnb-price-analysis-for-november-14",
-          "categories": [
-            "EXCHANGE",
-            "MARKET",
-            "TRADING",
-            "BNB",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Binance coin price prediction"
-          ]
-        },
-        {
-          "id": "54393531",
-          "title": "New firms push risky in-kind DAT model as altcoin treasuries surge",
-          "body": "A new wave of firms is using the DAT model based on in-kind funding with newly launched tokens. Unlike playbook companies buying assets on the open market, those companies propose to build the treasuries with existing reserves of tokens or altcoins. New companies are trying to raise funds for digital asset treasuries (DAT) by supplying the digital tokens in kind. This approach allows public firms access to fresh capital and a pricing model for their illiquid tokens. Digital asset companies come ",
-          "published_at": 1763131434,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/dat-companies-switch-to-in-kind-fundraising/",
-          "categories": [
-            "ALTCOIN",
-            "BTC",
-            "TRADING",
-            "DIGITAL ASSET TREASURY",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "News",
-            "0G",
-            "BTC"
-          ]
-        },
-        {
-          "id": "54393463",
-          "title": "EU Pushes to Hand All Crypto Oversight to ESMA, Undermining MiCA",
-          "body": "The European Commission is pushing for a major shake-up of Europe’s crypto rulebook, proposing that the European Securities and Markets Authority (ESMA) become the direct supervisor of every crypto firm operating in the bloc. Key Takeaways: The European Commission wants ESMA to directly supervise all crypto firms, replacing MiCA’s national regulator model. Industry groups warn the shift could disrupt MiCA’s rollout and create legal uncertainty. Critics say ESMA lacks the resources and proximity ",
-          "published_at": 1763131397,
-          "source": "CryptoCompare",
-          "url": "https://cryptonews.com/news/eu-pushes-to-hand-all-crypto-oversight-to-esma-undermining-mica/",
-          "categories": [
-            "BLOCKCHAIN",
-            "EXCHANGE",
-            "MARKET",
-            "REGULATION",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto Regulation News",
-            "EU",
-            "Europe",
-            "MiCA"
-          ]
-        },
-        {
-          "id": "54394081",
-          "title": "Kraken CEO Shrugs Off Bitcoin Slide as Tokenized Stocks Hit $10B in Volume",
-          "body": "Kraken co-CEO says long-term slope matters more than short-term volatility cycles. Kraken’s tokenized stock platform Xstocks surpasses $10B in global trading volume. Sethi says new U.S. regulation could unleash major innovation, capital, and adoption. Kraken co-CEO Arjun Sethi remains unfazed by Bitcoin’s drop below $100,000 and stated that short-term price movements are less important than the asset’s long-term trajectory. In a recent conversation on Yahoo Finance, Sethi shared his perspective ",
-          "published_at": 1763131370,
-          "source": "CryptoCompare",
-          "url": "https://coinedition.com/kraken-ceo-shrugs-off-bitcoin-slide-as-tokenized-stocks-hit-10b-in-volume/",
-          "categories": [
-            "BTC",
-            "EXCHANGE",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Market",
-            "Market News",
-            "News",
-            "Bitcoin News"
-          ]
-        },
-        {
-          "id": "54394375",
-          "title": "Changelly Celebrates Black Friday: Up to 75% Off Fees & iPhone 17 Pro Giveaway",
-          "body": "Changelly is bringing Black Friday to the crypto market with its 2025 campaign , offering users record-low crypto purchase fees and exclusive rewards. The campaign is powered by Topper by Uphold , featuring the guaranteed lowest fees of 2025. Until November 30, users can buy crypto with up to 75% lower fees and enter a giveaway to win one of ten iPhone 17 Pro devices—all via the smart fiat on-ramp aggregator on Changelly’s website or in its mobile app.",
-          "published_at": 1763131334,
-          "source": "CryptoCompare",
-          "url": "https://www.bitdegree.org/crypto/news/changelly-celebrates-black-friday-up-to-75-off-fees-iphone-17-pro-giveaway",
-          "categories": [
-            "FIAT",
-            "MARKET",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "press-releases"
-          ]
-        },
-        {
-          "id": "54393325",
-          "title": "Stunning BlackRock Bitcoin and Ethereum Move: $380M Deposit Signals Major Market Shift",
-          "body": "BitcoinWorld Stunning BlackRock Bitcoin and Ethereum Move: $380M Deposit Signals Major Market Shift In a stunning development that’s shaking the cryptocurrency world, BlackRock has just made a massive $380 million Bitcoin and Ethereum deposit to Coinbase Prime. This enormous institutional move represents one of the most significant crypto transactions we’ve seen this year, and it’s sending ripples across the entire digital asset market. What Does BlackRock’s Massive Bitcoin and Ethereum Deposit ",
-          "published_at": 1763131211,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/blackrock-bitcoin-ethereum-deposit/",
-          "categories": [
-            "BTC",
-            "ETH",
-            "EXCHANGE",
-            "MARKET",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News",
-            "BITCOIN",
-            "CRYPTOCURRENCY",
-            "ETHEREUM",
-            "Institutional Investment",
-            "Market Analysis"
-          ]
-        },
-        {
-          "id": "54393324",
-          "title": "VanEck Solana ETF Set for Launch as SOL Tests Five-Year Trendline",
-          "body": "Solana moved deeper into an important phase this week as market activity combined with new regulatory filings to reshape expectations around institutional demand. Van Eck signaled that its Solana spot ETF launch may be close after submitting an 8-A form to the U.S. Securities and Exchange Commission. The filing followed its S-1 form from late October and showed that preparations for the fund continue despite recent volatility. The broader ETF market also stayed active through the U.S. government",
-          "published_at": 1763131202,
-          "source": "CryptoCompare",
-          "url": "https://coinpaper.com/12361/van-eck-solana-etf-set-for-launch-as-sol-tests-five-year-trendline",
-          "categories": [
-            "MARKET",
             "SOL",
-            "TRADING",
-            "MACROECONOMICS",
             "CRYPTOCURRENCY"
           ],
           "tags": [
             "News",
-            "Crypto"
-          ]
-        },
-        {
-          "id": "54393235",
-          "title": "Shiba Inu Sets Up Never Before Seen Signal on Weekly Chart: Details",
-          "body": "Shiba Inu (SHIB) weekly chart is preparing to flash a first-ever signal as investors eye a potential trend reversal on the markets.",
-          "published_at": 1763131020,
-          "source": "CryptoCompare",
-          "url": "https://u.today/shiba-inu-sets-up-never-before-seen-signal-on-weekly-chart-details",
-          "categories": [
-            "BUSINESS",
-            "MARKET",
-            "SHIB",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Shiba Inu (SHIB) News"
-          ]
-        },
-        {
-          "id": "54394374",
-          "title": "Coinbase Opposes Bank Effort to Block Stablecoin Payment Benefits",
-          "body": "Coinbase has pushed back against several US banking groups after they urged regulators to block rewards and discounts tied to stablecoin payments.",
-          "published_at": 1763130929,
-          "source": "CryptoCompare",
-          "url": "https://www.bitdegree.org/crypto/news/coinbase-opposes-bank-effort-to-block-stablecoin-payment-benefits",
-          "categories": [
-            "EXCHANGE",
-            "FIAT",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "exchanges"
-          ]
-        },
-        {
-          "id": "54384122",
-          "title": "Wall Street opens in red as post shutdown optimism fades, tech valuation worries rise",
-          "body": "5 Signs Why Investors Should Be More Cautious Market Cycles, Not Headlines: What History Says About The 2025 Rally And What Comes Next AAII Sentiment Survey: Pessimism Takes Flight US Senate passes bill to end longest ever government shutdown, sending it to House",
-          "published_at": 1763130822,
-          "source": "CryptoCompare",
-          "url": "https://seekingalpha.com/news/4522115-sp500-nasdaq-dow-jones-outlook-stock-market?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=news",
-          "categories": [
-            "BUSINESS",
-            "MARKET",
-            "REGULATION",
-            "TRADING",
-            "MACROECONOMICS"
-          ],
-          "tags": [
-            "DJI",
-            "SP500",
-            "COMP:IND",
-            "BTC-USD",
-            "XAGUSD:CUR",
-            "XAUUSD:CUR",
-            "CL1:COM",
-            "US10Y",
-            "US2Y",
-            "US30Y",
-            "US5Y"
-          ]
-        },
-        {
-          "id": "54393115",
-          "title": "Zcash Price Retains 4% Rally Amid Crypto Bloodbath",
-          "body": "Zcash has decoupled from Bitcoin and other top digital currencies with an uptick amid the current bloodbath.",
-          "published_at": 1763130660,
-          "source": "CryptoCompare",
-          "url": "https://u.today/zcash-price-retains-4-rally-amid-crypto-bloodbath",
-          "categories": [
-            "BTC",
-            "TRADING",
-            "ZEC",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Zcash"
-          ]
-        },
-        {
-          "id": "54393083",
-          "title": "Bitcoin Bottom Confirmed: Michael Saylor’s Powerful Bullish Prediction and Ongoing BTC Accumulation",
-          "body": "BitcoinWorld Bitcoin Bottom Confirmed: Michael Saylor’s Powerful Bullish Prediction and Ongoing BTC Accumulation MicroStrategy founder Michael Saylor just dropped a bombshell announcement that has the crypto world buzzing. In a recent CNBC interview, the billionaire Bitcoin advocate declared that BTC has established a solid foundation and he’s backing his words with action by continuing to accumulate more Bitcoin. What Does Bitcoin Bottom Mean for Investors? When experts talk about a Bitcoin bot",
-          "published_at": 1763130614,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/bitcoin-bottom-saylor-buying/",
-          "categories": [
-            "BTC",
-            "BUSINESS",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News",
-            "BITCOIN",
-            "CRYPTOCURRENCY",
-            "Investment",
-            "Market Analysis",
-            "Michael Saylor"
+            "BTC"
           ]
         }
       ],
-      "timestamp": 1763134051188,
+      "timestamp": 1763136399354,
       "ttl": 900
     }
   },
-  "saved_at": 1763134051188
+  "saved_at": 1763136399354
 }
