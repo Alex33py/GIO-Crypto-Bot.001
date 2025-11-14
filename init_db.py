@@ -5,7 +5,7 @@ import os
 os.makedirs("data", exist_ok=True)
 
 # Підключення до БД
-conn = sqlite3.connect("data/gio_cypto_bot.db")
+conn = sqlite3.connect("data/gio_crypto_bot.db")
 cursor = conn.cursor()
 
 print("🔧 Створення таблиць...")
