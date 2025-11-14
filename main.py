@@ -7,6 +7,7 @@ GIO Crypto Bot  Enhanced Modular
 
 import sys
 import os
+import sqlite3
 import asyncio
 import logging
 from pathlib import Path
@@ -211,11 +212,49 @@ def print_banner():
 """
     print(banner)
 
+def log_db_path_and_permissions(db_path):
+    logger.info(f"Используемый путь базы: {db_path}")
+    if not os.path.exists(db_path):
+        logger.warning("⚠️ Файл базы не найден")
+    else:
+        logger.info("✅ Файл базы найден")
+        if os.access(db_path, os.R_OK | os.W_OK):
+            logger.info("✅ Права на чтение и запись присутствуют")
+        else:
+            logger.warning("⚠️ Нет прав на чтение или запись")
+
+
+def log_table_schema(db_path):
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(signals)")
+        columns = cursor.fetchall()
+        column_names = [col[1] for col in columns]
+        logger.info(f"Колонки таблицы 'signals': {column_names}")
+    except Exception as e:
+        logger.error(f"Ошибка чтения схемы таблицы: {e}")
+    finally:
+        conn.close()
+
 async def main():
+    DB_PATH = os.getenv('DB_PATH', '/app/data/gio_crypto_bot.db')
+    log_db_path_and_permissions(DB_PATH)
+
+    logger.info("🔧 Инициализация базы данных...")
+    init_database()
+    logger.info("✅ Инициализация БД завершена")
+
+    logger.info("🔧 Проверка необходимости миграции БД...")
+    migrate_database()
+    logger.info("✅ Миграция завершена")
+
+    log_table_schema(DB_PATH)
+
     logger.info("🔧 Инициализация базы данных...")
     init_database()  # Создаёт таблицы, если их ещё нет
     logger.info("✅ Инициализация БД завершена")
-    
+
     """Главная функция"""
     logger.info("🔧 Проверка необходимости миграции БД...")
     migrate_database()
