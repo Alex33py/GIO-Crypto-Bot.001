@@ -1,22 +1,26 @@
-
 def init_database():
     import sqlite3
     import os
 
-    # ВАЖНО: Для Railway используем переменную окружения
-    DB_PATH = os.getenv('DB_PATH', '/app/data/gio_crypto_bot.db')
+    # Универсальная директория проекта
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    # Створити папку data якщо не існує
+    # Путь к БД:
+    # 1) если есть переменная окружения DB_PATH → используем её (Railway/Docker)
+    # 2) иначе: ./data/gio_crypto_bot.db (локальный Windows/Linux)
+    DB_PATH = os.getenv("DB_PATH", os.path.join(BASE_DIR, "data", "gio_crypto_bot.db"))
+
+    # Создать папку data, если она отсутствует
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
-    # Підключення до БД (ИСПРАВЛЕНО ИМЯFILE!)
+    # Подключение к БД
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     print(f"🔧 Створення таблиць у {DB_PATH}...")
 
     # ============================================
-    # ТАБЛИЦЯ 1: signals (торгові сигнали)
+    # ТАБЛИЦЯ 1: signals
     # ============================================
     cursor.execute(
         """
@@ -44,11 +48,9 @@ def init_database():
         tp2_hit INTEGER DEFAULT 0,
         tp3_hit INTEGER DEFAULT 0
     )
->>>>>>> a6f26206f5094a2950636dcbec3d2ffca896ce21
     """
     )
 
-    # Індекси для signals
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_symbol ON signals(symbol)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_status ON signals(status)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_timestamp ON signals(timestamp)")
@@ -113,17 +115,14 @@ def init_database():
 
     print("✅ Таблиця 'large_trades' створена")
 
-    # ============================================
-    # COMMIT
-    # ============================================
+    # Commit
     conn.commit()
     print("\n✅ Усі таблиці створені успішно!")
 
-    # ============================================
-    # ПЕРЕВІРКА ТАБЛИЦЬ
-    # ============================================
+    # Перевірка таблиць
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tables = cursor.fetchall()
+
     print("\n📊 Таблиці в БД:")
     for t in tables:
         print(f"  - {t[0]}")
