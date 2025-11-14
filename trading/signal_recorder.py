@@ -48,22 +48,22 @@ class SignalRecorder:
                 """
                 INSERT INTO signals (
                     symbol, direction, entry_price,
-                    sl, tp1, tp2, tp3,
+                    sl, tp1_price, tp2_price, tp3_price,
                     scenario_id, status, quality_score, risk_reward,
                     strategy, market_regime, confidence,
                     phase, risk_profile, tactic_name,
                     validation_score, trigger_score,
                     timestamp
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-            """,
+                """,
                 (
                     symbol,
                     direction,
                     entry_price,
                     sl,
-                    tp1,
-                    tp2,
-                    tp3,
+                    tp1,  # значение для tp1_price
+                    tp2,  # значение для tp2_price
+                    tp3,  # значение для tp3_price
                     scenario_id,
                     status,
                     quality_score,
@@ -78,6 +78,7 @@ class SignalRecorder:
                     trigger_score,
                 ),
             )
+
 
             signal_id = cursor.lastrowid
             conn.commit()

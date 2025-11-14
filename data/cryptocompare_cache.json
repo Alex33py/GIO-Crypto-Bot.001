@@ -3,6 +3,346 @@
     "cryptocompare_all": {
       "data": [
         {
+          "id": "54354268",
+          "title": "RISE Evolves Beyond Fastest Layer 2 into the Home for Global Markets, with RISE MarketCore and RISEx.",
+          "body": "",
+          "published_at": 1763123855,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/rise-evolves-beyond-fastest-layer-2-into-the-home-for-global-markets-with-rise-marketcore-and-risex-4356175",
+          "categories": [
+            "MARKET"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54352579",
+          "title": "kpk Launches Agent-Powered Vaults on Morpho",
+          "body": "",
+          "published_at": 1763123704,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/kpk-launches-agentpowered-vaults-on-morpho-4355937",
+          "categories": [
+            "OTHER"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54352578",
+          "title": "Certora Partners with Cork and Hypernative to Set a New Standard for Web3 Security",
+          "body": "",
+          "published_at": 1763123626,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/certora-partners-with-cork-and-hypernative-to-set-a-new-standard-for-web3-security-4355938",
+          "categories": [
+            "OTHER"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54389545",
+          "title": "Bybit x Block Scholes Report: Crypto Positioning Forewarned Bitcoin Bear Market",
+          "body": "BitcoinWorld Bybit x Block Scholes Report: Crypto Positioning Forewarned Bitcoin Bear Market DUBAI, UAE , Nov. 14, 2025 /PRNewswire/ — Bybit , the world’s second-largest cryptocurrency exchange by trading volume, has released its latest Bybit x Block Scholes Crypto Derivatives Analytics Report , in collaboration with Block Scholes. The report provides an in-depth examination of crypto derivatives data and market sentiment that appeared to foreshadow Bitcoin’s drop extending past 20% below its re",
+          "published_at": 1763123514,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/bybit-x-block-scholes-report-crypto-positioning-forewarned-bitcoin-bear-market/",
+          "categories": [
+            "BTC",
+            "EXCHANGE",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Press Release"
+          ]
+        },
+        {
+          "id": "54352198",
+          "title": "Canary Capital Launches Spot XRP ETF (XRPC), Delivering Simplified Access to a Foundational Blockchain Asset",
+          "body": "",
+          "published_at": 1763123478,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/canary-capital-launches-spot-xrp-etf-xrpc-delivering-simplified-access-to-a-foundational-blockchain-asset-4355819",
+          "categories": [
+            "BLOCKCHAIN",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54389508",
+          "title": "Bitcoin Slips Toward $95K as Strategy Transfer Fuels $1B Sale Speculation",
+          "body": "Bitcoin’s 24-hour-long nosedive continues in full force as the asset just dug a new six-month low of under $96,000 after losing more than ten grand in just three days. Although there are no evident significant reasons behind this market-wide calamity, unlike the April crash that was fueled by tariff uncertainty, a new rumor is circulating that Strategy might have started to sell off some of its BTC holdings. The speculation began from a rather shady profile with just 10,000 followers on X, which",
+          "published_at": 1763123469,
+          "source": "CryptoCompare",
+          "url": "https://cryptopotato.com/bitcoin-slips-toward-95k-as-strategy-transfer-fuels-1b-sale-speculation/",
+          "categories": [
+            "BTC",
+            "REGULATION",
+            "TRADING",
+            "MACROECONOMICS",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "AA News",
+            "Crypto News",
+            "Bitcoin (BTC) Price",
+            "Michael Saylor",
+            "MicroStrategy"
+          ]
+        },
+        {
+          "id": "54389511",
+          "title": "What Will Trigger The XRP 1,300% Break To $36 This Bull Cycle?",
+          "body": "The weekly chart for XRP has compressed into a decisive structure that now sits on the edge of a major move, and the latest projection from crypto analyst Dark Defender outlines how this structure could push to as high as $36 this bull cycle. His outlook centers on an Elliott Wave pattern that started forming in June, and the chart behind the analysis shows a sequence that is approaching the point where momentum returns with force. Elliott Wave Structure Points To A Wave Three Expansion Technica",
+          "published_at": 1763123437,
+          "source": "CryptoCompare",
+          "url": "https://www.newsbtc.com/analysis/xrp/xrp-1300-break-to-36-bull-cycle/",
+          "categories": [
+            "BTC",
+            "MARKET",
+            "TRADING",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "XRP",
+            "Ripple",
+            "ripple news",
+            "xrp",
+            "xrp news",
+            "XRP Price",
+            "XRPUSD",
+            "xrpusdt"
+          ]
+        },
+        {
+          "id": "54389485",
+          "title": "Revealed: American Bitcoin’s Massive 3,000+ BTC Purchase Strategy That’s Shaking Crypto Markets",
+          "body": "BitcoinWorld Revealed: American Bitcoin’s Massive 3,000+ BTC Purchase Strategy That’s Shaking Crypto Markets Have you ever wondered how major institutional players are positioning themselves in the cryptocurrency market? The recent announcement from American Bitcoin (ABTC) provides a stunning answer. The mining company revealed it made substantial Bitcoin purchases during the third quarter, acquiring over 3,000 BTC and bringing their total holdings to an impressive 3,418 Bitcoin. What Do These M",
+          "published_at": 1763123412,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/american-bitcoin-btc-purchases/",
+          "categories": [
+            "BTC",
+            "MARKET",
+            "MINING",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "BITCOIN",
+            "CRYPTOCURRENCY",
+            "Institutional Investment",
+            "MINING",
+            "Trump"
+          ]
+        },
+        {
+          "id": "54389448",
+          "title": "Draft Law Accuses Central Bank of Brazil of ‘Overreaching’ With Stablecoin Rules",
+          "body": "A draft introduced in the Brazilian Congress seeks to void the recently issued stablecoin rules, arguing they represent regulatory overreach by the central bank. The proposal also accuses the bank of effectively creating new taxes by classifying stablecoin movements as equivalent to foreign-currency transactions. New Draft Law States Brazil’s Central Bank Exceeded Its Authority With",
+          "published_at": 1763123409,
+          "source": "CryptoCompare",
+          "url": "https://news.bitcoin.com/draft-law-accuses-central-bank-of-brazil-of-overreaching-with-stablecoin-rules/",
+          "categories": [
+            "FIAT",
+            "REGULATION",
+            "MACROECONOMICS"
+          ],
+          "tags": [
+            "Regulation",
+            "Brazil",
+            "Stablecoin"
+          ]
+        },
+        {
+          "id": "54389556",
+          "title": "Proof of reserves is crypto’s key to rebuilding trust and transparency",
+          "body": "Transparency through proof of reserves is essential for restoring and maintaining trust in crypto exchanges, ensuring security through independent audits and verifiable reserves.",
+          "published_at": 1763123400,
+          "source": "CryptoCompare",
+          "url": "https://cointelegraph.com/news/proof-of-reserves-trust?utm_source=rss_feed&utm_medium=rss%3F_q%3D1763123554888%26_dc%3D1763123554888%26rand%3Dxyrld_1763123554888%26ttl%3D0&utm_campaign=rss_partner_inbound",
+          "categories": [
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54336435",
+          "title": "Bitcoin price today: slips to $103k as institutional flows slow, US govt reopens",
+          "body": "",
+          "published_at": 1763123368,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/bitcoin-price-today-flat-at-1025k-as-institutional-flows-slow-us-govt-reopens-4353960",
+          "categories": [
+            "BTC",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54350861",
+          "title": "CleanCore Solutions posts Q1 revenue growth amid Dogecoin strategy",
+          "body": "",
+          "published_at": 1763123209,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/cleancore-solutions-posts-q1-revenue-growth-amid-dogecoin-strategy-432SI-4355571",
+          "categories": [
+            "BUSINESS",
+            "DOGE",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54380035",
+          "title": "EOS Falls 14% In Bearish Trade",
+          "body": "",
+          "published_at": 1763123131,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/eos-falls-14-in-bearish-trade-4357724",
+          "categories": [
+            "TRADING"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54389310",
+          "title": "Massive Bitcoin Transfer: Strategy Moves $5.8B in BTC to Secure New Address",
+          "body": "BitcoinWorld Massive Bitcoin Transfer: Strategy Moves $5.8B in BTC to Secure New Address In one of the largest cryptocurrency movements this year, a wallet linked to Strategy has executed a monumental Bitcoin transfer worth nearly $6 billion. This massive Bitcoin transfer involves 58,915 BTC moving to a fresh address, sparking intense interest across crypto markets worldwide. What Does This Massive Bitcoin Transfer Mean? According to on-chain analytics firm Lookonchain, this significant Bitcoin ",
+          "published_at": 1763123115,
+          "source": "CryptoCompare",
+          "url": "https://bitcoinworld.co.in/strategy-bitcoin-transfer-custody/",
+          "categories": [
+            "BLOCKCHAIN",
+            "BTC",
+            "MARKET",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto News",
+            "BITCOIN",
+            "BLOCKCHAIN",
+            "Crypto news",
+            "CRYPTOCURRENCY",
+            "Digital Assets"
+          ]
+        },
+        {
+          "id": "28951644",
+          "title": "TON price prediction 2025-2031: Will TON reach $10?",
+          "body": "Key takeaways: Our TON price prediction anticipates a high of $6.35 in 2025. In 2027, it will range between $9.26 and $11.49, with an average price of $9.60. In 2030, it will range between $28.31 and $34.81, with an average price of $29.16. TON (The Open Network) is a decentralized protocol designed by Telegram and created by the community. The protocol is a distributed supercomputer, or “super server,” that consists of TON Blockchain , TON DNS, TON Storage, and TON Sites. The native token for t",
+          "published_at": 1763123100,
+          "source": "CryptoCompare",
+          "url": "https://www.cryptopolitan.com/ton-price-prediction/",
+          "categories": [
+            "ALTCOIN",
+            "BLOCKCHAIN",
+            "BTC",
+            "BUSINESS",
+            "MARKET",
+            "TRADING",
+            "TON",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Crypto Price Predictions",
+            "Toncoin"
+          ]
+        },
+        {
+          "id": "54389334",
+          "title": "Ripple CTO: XRP Has No Issuer",
+          "body": "Ripple CTO David Schwartz sheds crucial light on XRP and XRP Ledger dynamics, highlighting one key reason why XRP has no issuer.",
+          "published_at": 1763123100,
+          "source": "CryptoCompare",
+          "url": "https://u.today/ripple-cto-xrp-has-no-issuer",
+          "categories": [
+            "WALLET",
+            "XRP",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Ripple News",
+            "XRP"
+          ]
+        },
+        {
+          "id": "54376841",
+          "title": "Bitcoin price today: slides to 6-mth low below $100k as Dec rate cut bets wane",
+          "body": "",
+          "published_at": 1763122974,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/bitcoin-price-today-slides-to-6mth-low-below-100k-as-dec-rate-cut-bets-wane-4357687",
+          "categories": [
+            "BTC",
+            "TRADING",
+            "MACROECONOMICS",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54375728",
+          "title": "Ethereum Falls 11% In Bearish Trade",
+          "body": "",
+          "published_at": 1763122894,
+          "source": "CryptoCompare",
+          "url": "https://www.investing.com/news/cryptocurrency-news/ethereum-falls-11-in-bearish-trade-4357684",
+          "categories": [
+            "ETH",
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            ""
+          ]
+        },
+        {
+          "id": "54389712",
+          "title": "Eyebrows raised as China unveils largest gold deposit discovery in seven decades",
+          "body": "China has discovered the largest gold deposit ever found in the country over the past seven decades, sitting on approximately 1,444 tonnes of gold. Lianing Geological and Mining Group’s 1,000 technicians and workers completed the find in just 15 days, and it comes as gold prices hit record highs. China’s Ministry of Natural Resources confirmed the discovery of the Dadonggou gold deposit on November 14. Chinese officials claim the site has an estimated 2.586 million tonnes of ore with an average ",
+          "published_at": 1763122891,
+          "source": "CryptoCompare",
+          "url": "https://www.cryptopolitan.com/china-discovers-the-largest-gold/",
+          "categories": [
+            "ASIA",
+            "FIAT",
+            "MARKET",
+            "TRADING",
+            "MACROECONOMICS"
+          ],
+          "tags": [
+            "Economy",
+            "CNY",
+            "Gold",
+            "USD"
+          ]
+        },
+        {
           "id": "54389194",
           "title": "Revolutionary: Binance Alpha Adds PLAYSOLANA for Early Crypto Investors",
           "body": "BitcoinWorld Revolutionary: Binance Alpha Adds PLAYSOLANA for Early Crypto Investors Exciting news for cryptocurrency enthusiasts! Binance Alpha has just announced a groundbreaking addition to its platform – PLAYSOLANA. This strategic move demonstrates Binance’s commitment to providing cutting-edge opportunities for early-stage crypto investors. The platform continues to expand its offerings, giving users exclusive access to promising digital assets before they hit mainstream markets. What Does ",
@@ -190,6 +530,7 @@
           "categories": [
             "ASIA",
             "BUSINESS",
+            "EXCHANGE",
             "MARKET",
             "CRYPTOCURRENCY"
           ],
@@ -362,6 +703,24 @@
           ],
           "tags": [
             ""
+          ]
+        },
+        {
+          "id": "54389198",
+          "title": "FASB Considers New Rules for Crypto Transfers to Clarify Accounting",
+          "body": "FASB is considering new rules for accounting crypto transfers to reduce confusion over when assets leave a company’s books. The board may expand 2023 fair-value standards or create specific derecognition rules. Clearer rules could boost mainstream adoption, improve reporting consistency. The US Financial Accounting Standards Board (FASB) is preparing to review how companies report cryptocurrency transfers. Bloomberg reports the board will discuss next week whether to add “accounting for crypto a",
+          "published_at": 1763121600,
+          "source": "CryptoCompare",
+          "url": "https://coinedition.com/fasb-crypto-asset-transfer-accounting-rules/",
+          "categories": [
+            "TRADING",
+            "CRYPTOCURRENCY"
+          ],
+          "tags": [
+            "Market News",
+            "News",
+            "Crypto Tax",
+            "US Government"
           ]
         },
         {
@@ -623,419 +982,11 @@
             "Bitcoin",
             "News"
           ]
-        },
-        {
-          "id": "54384122",
-          "title": "Nasdaq, S&P, Dow futures fall sharply day after Wall Street closes deep in red",
-          "body": "More on markets 5 Signs Why Investors Should Be More Cautious Market Cycles, Not Headlines: What History Says About The 2025 Rally And What Comes Next AAII Sentiment Survey: Pessimism Takes Flight US Senate passes bill to end longest ever government shutdown, sending it to House",
-          "published_at": 1763120577,
-          "source": "CryptoCompare",
-          "url": "https://seekingalpha.com/news/4522115-sp500-nasdaq-dow-jones-outlook-stock-market?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=news",
-          "categories": [
-            "BUSINESS",
-            "MARKET",
-            "REGULATION",
-            "TRADING",
-            "MACROECONOMICS"
-          ],
-          "tags": [
-            "SPX",
-            "INDU",
-            "US100:IND",
-            "BTC-USD",
-            "XAGUSD:CUR",
-            "XAUUSD:CUR",
-            "CL1:COM",
-            "US10Y",
-            "US2Y",
-            "US30Y",
-            "US5Y"
-          ]
-        },
-        {
-          "id": "54388734",
-          "title": "XRP Dips on Bitcoin Selloff, But Institutional Accumulation Hints at Rebound Potential",
-          "body": "XRP’s recent drop to around $2.29 stems from Bitcoin’s broader market selloff, not inherent weaknesses in the XRP ecosystem. Despite the dip, institutional investors are accumulating over 149 million XRP",
-          "published_at": 1763120559,
-          "source": "CryptoCompare",
-          "url": "https://en.coinotag.com/xrp-dips-on-bitcoin-selloff-but-institutional-accumulation-hints-at-rebound-potential/",
-          "categories": [
-            "BTC",
-            "BUSINESS",
-            "MARKET",
-            "XRP",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "News",
-            "BTC",
-            "XRP"
-          ]
-        },
-        {
-          "id": "54388850",
-          "title": "LINK dips 10%, eyes the $11 support level; check forecast",
-          "body": "It will be a bearish end to the week for cryptocurrencies as Bitcoin, Ether, XRP, and other major altcoins are currently in the red. Bitcoin’s price has dropped below the $97k level, while Ether is still holding above $3k. LINK, the native coin of the Chainlink network, has lost 10% of its value in the last 24 hours and now risks dropping below $14. LINK dips below $15 despite positive news from the ecosystem LINK’s poor performance over the last 24 hours comes despite positive news from the bro",
-          "published_at": 1763120486,
-          "source": "CryptoCompare",
-          "url": "https://invezz.com/news/2025/11/14/link-dips-10-eyes-the-11-support-level-check-forecast/",
-          "categories": [
-            "ALTCOIN",
-            "LINK",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Altcoins",
-            "Crypto",
-            "Chainlink"
-          ]
-        },
-        {
-          "id": "54387815",
-          "title": "Nearly 25% of Asian Adults Online May Hold Crypto: $BEST Presale Passes $17M Milestone",
-          "body": "Quick Facts: Nearly a quarter of APAC adults with internet access may own crypto, pointing to strong regional onboarding tailwinds for simple, secure wallets. Reducing friction with multi-chain support, clean swaps, and clear fee flows drives retention as first-time users move beyond their debut transaction. $BEST ties wallet utility to incentives with staking, fee perks, and launch access, aiming to convert new users into long-term participants. Reasonable price scenarios hinge on listings and ",
-          "published_at": 1763120049,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinist.com/best-wallet-token-presale-17m-apac-crypto-ownership-near-25-percent/",
-          "categories": [
-            "BLOCKCHAIN",
-            "MARKET",
-            "TRADING",
-            "RESEARCH",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto News"
-          ]
-        },
-        {
-          "id": "54387780",
-          "title": "OAK Mining Reaches $6,899 Daily Earnings Milestone for XRP Users",
-          "body": "OAK Mining is introducing a low-risk, high-return profit model for crypto investors seeking daily income without relying on traditional trading. – OAK Mining, a rapidly developing cloud mining platform, is reportedly helping XRP holders and other cryptocurrency users generate passive income through its contract-based mining services—with daily earnings reaching up to $6,700. As short-term trading strategies face increasing uncertainty, OAK Mining offers a more stable and convenient alternative. ",
-          "published_at": 1763119939,
-          "source": "CryptoCompare",
-          "url": "https://en.bitcoinsistemi.com/oak-mining-reaches-6899-daily-earnings-milestone-for-xrp-users-2/",
-          "categories": [
-            "BUSINESS",
-            "MINING",
-            "TRADING",
-            "XRP",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Sponsored"
-          ]
-        },
-        {
-          "id": "54388141",
-          "title": "Solana rides XStocks 2025 surge to top 5 status among tokenized equities platforms",
-          "body": "XStocks are becoming the tokenized shares of choice, after reaching $10B in total trading volumes. Solana is also the main carrier for actively traded RWA tokens. XStocks has shown ongoing expansion in trading activity since the launch of the new tokenized share standard. The XStocks market broke above $10B in total volumes for the first time, on a mix of activity inflows from Kraken and, more recently, Hyperliquid. Most of the trading volumes are concentrated on centralized markets, with around",
-          "published_at": 1763119854,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/xstocks-daily-volume-breaks-above-solana-rwa/",
-          "categories": [
-            "EXCHANGE",
-            "MARKET",
-            "SOL",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "News",
-            "NVDA",
-            "SOL",
-            "TSLA"
-          ]
-        },
-        {
-          "id": "54387696",
-          "title": "Fed’s Miran: Stablecoins Are ‘Transformational’ for Emerging Markets",
-          "body": "Federal Reserve Governor Stephen Miran described stablecoins as innovative tools that could provide users in jurisdictions with limited access to dollar assets. Miran estimates stablecoins could help satisfy about $3 trillion of foreign demand for dollar assets in the coming years. Fed’s Miran: Stablecoins Might Prop up Demand for Dollar Assets Globally The Facts Stephen",
-          "published_at": 1763119809,
-          "source": "CryptoCompare",
-          "url": "https://news.bitcoin.com/feds-miran-stablecoins-are-transformational-for-emerging-markets/",
-          "categories": [
-            "FIAT",
-            "MARKET",
-            "MACROECONOMICS"
-          ],
-          "tags": [
-            "Crypto News",
-            "Federal Reserve",
-            "Stablecoin"
-          ]
-        },
-        {
-          "id": "54388140",
-          "title": "This $0.035 New Crypto Could Be the Best Investment Before the Next Bull Run",
-          "body": "With the crypto market preparing to enter what many analysts regard as the pre-bull run accumulation phase, investors are in full throttle trying to find the best crypto to buy in the near future before the market prices start soaring across the board. Traditionally, initially taking over positions in high utility projects has resulted in outsize returns when the market becomes bullish. A new token in the DeFi crypto sector that is gaining increased interest is Mutuum Finance (MUTM) , a project ",
-          "published_at": 1763119800,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/this-0-035-new-crypto-could-be-the-best-investment-before-the-next-bull-run/",
-          "categories": [
-            "BLOCKCHAIN",
-            "BUSINESS",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Press Release"
-          ]
-        },
-        {
-          "id": "54388139",
-          "title": "SACHI unlocks creativity with The Locker, where players design, mint, and flex their own identities",
-          "body": "[Dubai, UAE] Gamers commit hundreds of hours to games. However, between cutscenes, guided campaign modes, timed or point contests, or even battle royale modes, gamers have limited opportunities to actually insert their personality or style into games. Sometimes, they get to toggle a few character body builds before starting the game, and that’s it. SACHI’s belief in the importance of personalization in gaming is the reason it is encouraging self-expression through The Locker , a system that turn",
-          "published_at": 1763119800,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/sachi-unlocks-creativity-with-the-locker-where-players-design-mint-and-flex-their-own-identities/",
-          "categories": [
-            "BUSINESS"
-          ],
-          "tags": [
-            "Press Release"
-          ]
-        },
-        {
-          "id": "54388305",
-          "title": "Peter Schiff Mocks Bitcoin After $97K Slide, Cites Gold’s 60% Surge",
-          "body": "Peter Schiff renews his attack on Bitcoin after a break below $97,000, stoking bearish sentiment. Bitcoin supporters counter with history and cycle context as gold strength draws comparisons. Bitcoin trades near the mid-$90Ks after a volatile week; traders track liquidations and support. Bitcoin critic Peter Schiff has taken a swipe at the cryptocurrency following the latest price decline that saw BTC drop below $100,000. In his latest post on X, Schiff poked fun at Bitcoin users who celebrated ",
-          "published_at": 1763119800,
-          "source": "CryptoCompare",
-          "url": "https://coinedition.com/peter-schiff-mocks-bitcoin-after-97k-slide-cites-golds-60-surge/",
-          "categories": [
-            "BTC",
-            "FIAT",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Market News",
-            "News",
-            "Bitcoin News"
-          ]
-        },
-        {
-          "id": "54387550",
-          "title": "Sony Bank stablecoin faces shocking opposition from US community bankers group",
-          "body": "BitcoinWorld Sony Bank stablecoin faces shocking opposition from US community bankers group The cryptocurrency world faces another regulatory showdown as the Independent Community Bankers of America takes a firm stand against Sony Bank’s ambitious stablecoin plan. This developing story highlights the ongoing tension between traditional financial institutions and emerging digital currency innovations. Why is Sony Bank stablecoin causing controversy? The Independent Community Bankers of America (I",
-          "published_at": 1763119511,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/sony-bank-stablecoin-opposition/",
-          "categories": [
-            "FIAT",
-            "MARKET",
-            "REGULATION",
-            "CRYPTOCURRENCY",
-            "SECURITY INCIDENTS"
-          ],
-          "tags": [
-            "Crypto News",
-            "banking",
-            "cryptocurrency regulation",
-            "ICBA",
-            "Sony",
-            "Stablecoin"
-          ]
-        },
-        {
-          "id": "54387634",
-          "title": "Bitcoin ETFs Record $866M Outflows Post-US Shutdown, Raising Market Demand Concerns",
-          "body": "Bitcoin ETF outflows reached $866 million on Thursday despite the end of the 43-day US government shutdown, marking the second-worst day for these funds and pushing BTC prices to a",
-          "published_at": 1763119490,
-          "source": "CryptoCompare",
-          "url": "https://en.coinotag.com/bitcoin-etfs-record-866m-outflows-post-us-shutdown-raising-market-demand-concerns/",
-          "categories": [
-            "BTC",
-            "MARKET",
-            "SOL",
-            "MACROECONOMICS",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Analysis",
-            "Bitcoin",
-            "News",
-            "Ripple",
-            "BTC",
-            "Core",
-            "SOL",
-            "XRP"
-          ]
-        },
-        {
-          "id": "54388372",
-          "title": "Bitcoin could retest $93K amid declining institutional demand; check forecast",
-          "body": "The cryptocurrency market has continued its poor performance in November as Bitcoin failed to overcome the $107K resistance level earlier this week. The selling pressure that followed has seen Bitcoin drop below $97K for the first time since May. With the bears currently in control, Bitcoin could test lower support levels in the near term. BTC dips below $97K as spot Bitcoin ETFs suffer huge outflows Bitcoin (BTC), Ethereum (ETH), and Ripple (XRP) are trading in the red zone after correcting mor",
-          "published_at": 1763119176,
-          "source": "CryptoCompare",
-          "url": "https://invezz.com/news/2025/11/14/bitcoin-could-retest-93k-amid-declining-institutional-demand-check-forecast/",
-          "categories": [
-            "ALTCOIN",
-            "BTC",
-            "ETH",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Altcoins",
-            "Crypto",
-            "Bitcoin"
-          ]
-        },
-        {
-          "id": "54387564",
-          "title": "Kyrgyzstan's central bank green lights escrow accounts for commercial banks crypto deals",
-          "body": "The central bank of Kyrgyzstan has permitted commercial banks to open escrow accounts specifically for operations with cryptocurrencies. This type of bank accounts offer transacting clients the option to keep funds with a third party, thus reducing risks for themselves until the deal is done. Kyrgyz banks to establish escrow accounts for crypto users The National Bank of the Kyrgyz Republic (NBKR) has authorized banking institutions in the country to set up escrow accounts for transactions invol",
-          "published_at": 1763119030,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/kyrgyzstan-banks-open-escrow-accounts-crypto/",
-          "categories": [
-            "BTC",
-            "FIAT",
-            "REGULATION",
-            "MACROECONOMICS",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Regulation",
-            "A7A5",
-            "BTC",
-            "KZT",
-            "USDKG"
-          ]
-        },
-        {
-          "id": "54387287",
-          "title": "XRP ETF Debuts with $58M Record Volume, Suggesting Strong Investor Demand Ahead",
-          "body": "The Canary Capital XRP ETF (XRPC) achieved a record $58 million in day-one trading volume, surpassing nearly 900 ETF launches this year and highlighting surging investor interest in XRP-based investment",
-          "published_at": 1763118981,
-          "source": "CryptoCompare",
-          "url": "https://en.coinotag.com/xrp-etf-debuts-with-58m-record-volume-suggesting-strong-investor-demand-ahead/",
-          "categories": [
-            "BTC",
-            "BUSINESS",
-            "ETH",
-            "XRP",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Bitcoin",
-            "Ethereum",
-            "News",
-            "BTC",
-            "ETH",
-            "SOL",
-            "XRP"
-          ]
-        },
-        {
-          "id": "54387561",
-          "title": "Blue Origin intensifies SpaceX competition with successful booster landing",
-          "body": "Blue Origin has successfully landed the booster of its New Glenn rocket for the first time on Thursday, November 13, 2025. The feat, achieved on the company’s second attempt after failing in January, moves Jeff Bezos’ space venture a step further toward challenging Elon Musk’s SpaceX, whose feats and progress have long overshadowed it. A boost to rival SpaceX The New Glenn rocket lifted off from Cape Canaveral Space Force Station and carried on it NASA’s ESCAPADE mission to Mars. Three minutes i",
-          "published_at": 1763118912,
-          "source": "CryptoCompare",
-          "url": "https://www.cryptopolitan.com/blue-origin-spacex-booster-landing/",
-          "categories": [
-            "EXCHANGE",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Tech",
-            "Amazon",
-            "Blue Origin",
-            "NASA",
-            "SpaceX",
-            "USD"
-          ]
-        },
-        {
-          "id": "54387232",
-          "title": "ETH Crashes 10%, Smart Money Piles In as Whales and Institutions Double Down",
-          "body": "Ethereum (ETH) dropped sharply over the past 24 hours, losing nearly 10% to trade below $3,200. The latest plunge extended a week-long decline that has pressured the broader cryptocurrency market. Despite the downturn, accumulation continued across multiple wallets. Stealth Accumulation Wave Lookonchain reported that BitMine Immersion Technologies, the Ethereum-focused digital asset treasury (DAT) firm led by Wall Street strategist Thomas Lee, remains active in the market. The on-chain analytics",
-          "published_at": 1763118838,
-          "source": "CryptoCompare",
-          "url": "https://cryptopotato.com/eth-crashes-10-smart-money-piles-in-as-whales-and-institutions-double-down/",
-          "categories": [
-            "BUSINESS",
-            "ETH",
-            "MARKET",
-            "TRADING",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "AA News",
-            "Crypto News",
-            "Ethereum (ETH) Price"
-          ]
-        },
-        {
-          "id": "54387153",
-          "title": "A Miracle Proven by the Community! WonderChain Rewrites Blockchain History with Web3.5, Emerging as a ‘Top-Tier Exchange Listing Candidate for 2026’",
-          "body": "BitcoinWorld A Miracle Proven by the Community! WonderChain Rewrites Blockchain History with Web3.5, Emerging as a ‘Top-Tier Exchange Listing Candidate for 2026’ [Special Feature] Breaking the Record for ‘Most Media Exposure in the Shortest Time’ in Blockchain History! A New Era of Web3.5 Forged by a 140,000-Strong Community The blockchain market is currently restructuring around ‘social value’ and ‘community governance,’ moving beyond mere technological innovation. In this landscape, WonderChai",
-          "published_at": 1763118771,
-          "source": "CryptoCompare",
-          "url": "https://bitcoinworld.co.in/a-miracle-proven-by-the-community-wonderchain-rewrites-blockchain-history-with-web3-5-emerging-as-a-top-tier-exchange-listing-candidate-for-2026/",
-          "categories": [
-            "BLOCKCHAIN",
-            "EXCHANGE",
-            "MARKET",
-            "AIRDROP",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Press Release",
-            "WonderChain"
-          ]
-        },
-        {
-          "id": "54387134",
-          "title": "Tokenization - The Quiet Infrastructure Boom Powering The Next Financial Revolution",
-          "body": "Summary Tokenization is revolutionizing finance, enabling instant, low-cost, 24/7 asset transfers and programmable money through blockchain-based stablecoins like USDC and USDT. Coinbase, Robinhood, and Circle stand out as investment opportunities, as they are leading the infrastructure buildout for digital assets and tokenized finance. Key catalysts include regulatory clarity, institutional adoption, and integration by payment giants like Visa and Mastercard, driving growth and mainstream accep",
-          "published_at": 1763118684,
-          "source": "CryptoCompare",
-          "url": "https://seekingalpha.com/article/4843756-tokenization-the-quiet-infrastructure-boom-powering-the-next-financial-revolution?utm_source=cryptocompare.com&utm_medium=referral&feed_item_type=article",
-          "categories": [
-            "BLOCKCHAIN",
-            "BUSINESS",
-            "EXCHANGE",
-            "MARKET",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "CRCL",
-            "COIN",
-            "HOOD"
-          ]
-        },
-        {
-          "id": "54387450",
-          "title": "Early XRP and SUI investors reveal new altcoin with better potential",
-          "body": "XRP and SUI holders have been riding a solid wave lately. XRP’s holding above $2.50 after the recent spot ETF filings, and SUI’s pushing past $2 on fresh developer activity. Despite these altcoins trending, a growing number of early-stage investors are pointing to a different opportunity: Opter . Opter is a decentralized perpetuals exchange where traders earn XP, unlock Prestige ranks and compound rewards through skill-based activity. Priced at just $0.02 in Stage 1 of its presale, many XRP and ",
-          "published_at": 1763118621,
-          "source": "CryptoCompare",
-          "url": "https://invezz.com/news/2025/11/14/early-xrp-and-sui-investors-reveal-new-altcoin-with-better-potential/",
-          "categories": [
-            "BUSINESS",
-            "TRADING",
-            "XRP",
-            "SUI",
-            "CRYPTOCURRENCY"
-          ],
-          "tags": [
-            "Crypto",
-            "Sponsored"
-          ]
         }
       ],
-      "timestamp": 1763122897752,
+      "timestamp": 1763124159854,
       "ttl": 900
     }
   },
-  "saved_at": 1763122897752
+  "saved_at": 1763124159854
 }
