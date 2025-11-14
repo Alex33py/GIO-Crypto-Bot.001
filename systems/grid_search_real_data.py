@@ -74,9 +74,9 @@ class GridSearchRealData:
             elif position is not None:
                 try:
                     tp = position['entry'] + position['atr'] * tp_mult
-                    sl = position['entry'] - position['atr'] * sl_mult
+                    sl_price = position['entry'] - position['atr'] * sl_mult
 
-                    if row['close'] >= tp or row['close'] <= sl:
+                    if row['close'] >= tp or row['close'] <= sl_price:
                         pnl = row['close'] - position['entry']
                         trades.append({'pnl': pnl, 'pnl_pct': (pnl/position['entry'])*100})
                         position = None
@@ -131,17 +131,17 @@ class GridSearchRealData:
 
         print(f"Total configs: {len(configs)}\n")
 
-        for i, (sl, tp, adx, rsi_min, rsi_max, vol) in enumerate(configs, 1):
+        for i, (sl_price, tp, adx, rsi_min, rsi_max, vol) in enumerate(configs, 1):
             if rsi_min >= rsi_max:
                 continue
 
-            result = self.backtest(sl, tp, adx, rsi_min, rsi_max, vol)
+            result = self.backtest(sl_price, tp, adx, rsi_min, rsi_max, vol)
 
             if result and result['pf'] >= 1.0:
                 self.results.append(result)
 
                 if result['pf'] > 1.3:
-                    print(f"[{i}] ✅ SL={sl} TP={tp} ADX={adx} RSI={rsi_min}-{rsi_max} Vol={vol}")
+                    print(f"[{i}] ✅ SL={sl_price} TP={tp} ADX={adx} RSI={rsi_min}-{rsi_max} Vol={vol}")
                     print(f"    WR={result['win_rate']:.1f}% PF={result['pf']:.2f} Trades={result['trades']}\n")
 
     def print_top(self):

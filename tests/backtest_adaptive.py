@@ -149,14 +149,14 @@ class AdaptiveBacktest:
 
                 if direction == 'LONG':
                     tp = entry + atr * cfg['tp_multiplier']
-                    sl = entry - atr * cfg['sl_multiplier']
-                    should_close = row['close'] >= tp or row['close'] <= sl
+                    sl_price = entry - atr * cfg['sl_multiplier']
+                    should_close = row['close'] >= tp or row['close'] <= sl_price
                     exit_reason = 'TP' if row['close'] >= tp else 'SL'
 
                 else:  # SHORT
                     tp = entry - atr * cfg['tp_multiplier']
-                    sl = entry + atr * cfg['sl_multiplier']
-                    should_close = row['close'] <= tp or row['close'] >= sl
+                    sl_price = entry + atr * cfg['sl_multiplier']
+                    should_close = row['close'] <= tp or row['close'] >= sl_price
                     exit_reason = 'TP' if row['close'] <= tp else 'SL'
 
                 if should_close:

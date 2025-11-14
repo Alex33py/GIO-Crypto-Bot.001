@@ -342,10 +342,10 @@ class FullSimulationBacktest:
 
         if signal_type.upper() == "LONG":
             stop_loss = signal.get("stop_loss", price - (atr * 1.5))
-            take_profit = signal.get("tp1", price + (atr * 3.0))
+            take_profit = signal.get("tp1_price", price + (atr * 3.0))
         else:
             stop_loss = signal.get("stop_loss", price + (atr * 1.5))
-            take_profit = signal.get("tp1", price - (atr * 3.0))
+            take_profit = signal.get("tp1_price", price - (atr * 3.0))
 
 
         if self.open_position:

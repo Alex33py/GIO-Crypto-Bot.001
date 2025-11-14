@@ -171,10 +171,10 @@ class SignalGenerationService:
                     symbol=signal['symbol'],
                     direction=signal['direction'],
                     entry_price=signal['entry_price'],
-                    sl=signal['stop_loss'],
-                    tp1=signal['tp1'],
-                    tp2=signal['tp2'],
-                    tp3=signal['tp3'],
+                    sl_price=signal['stop_loss'],
+                    tp1_price=signal['tp1_price'],
+                    tp2_price=signal['tp2_price'],
+                    tp3_price=signal['tp3_price'],
                     scenario_id=signal['scenario_id'],
                     status=signal['status'],
                     quality_score=signal.get('confidence', 0),
@@ -532,7 +532,7 @@ class SignalGenerationService:
         """Создать торговый сигнал"""
         try:
             # ✅ ИСПРАВЛЕНО: Используем уровни из scenario_result напрямую
-            # scenario_result уже содержит stop_loss, tp1, tp2, tp3 из unified_scenario_matcher
+            # scenario_result уже содержит stop_loss, tp1_price, tp2_price, tp3_price из unified_scenario_matcher
 
             signal = {
                 'id': self._generate_signal_id(),
@@ -540,10 +540,10 @@ class SignalGenerationService:
                 'direction': scenario_result.get('direction', 'LONG'),
                 'entry_price': current_price,
                 'stop_loss': scenario_result.get('stop_loss'),
-                'take_profit': scenario_result.get('tp1'),  # Основной TP
-                'tp1': scenario_result.get('tp1'),
-                'tp2': scenario_result.get('tp2'),
-                'tp3': scenario_result.get('tp3'),
+                'take_profit': scenario_result.get('tp1_price'),  # Основной TP
+                'tp1_price': scenario_result.get('tp1_price'),
+                'tp2_price': scenario_result.get('tp2_price'),
+                'tp3_price': scenario_result.get('tp3_price'),
                 'scenario_id': scenario_result.get('scenario_id'),
                 'confidence': scenario_result.get('confidence', 0),
                 'timestamp': datetime.now().isoformat(),

@@ -317,10 +317,10 @@ class GridSearchOptimizer:
             config = item['config']
             result = item['result']
 
-            sl = config.get('sl_multiplier', '?')
+            sl_price = config.get('sl_multiplier', '?')
             tp = config.get('tp_multiplier', '?')
 
-            print(f"{rank}. SL={sl}x, TP={tp}x (RR={tp/sl if isinstance(sl, (int,float)) and isinstance(tp, (int,float)) else '?'})")
+            print(f"{rank}. SL={sl_price}x, TP={tp}x (RR={tp/sl_price if isinstance(sl_price, (int,float)) and isinstance(tp, (int,float)) else '?'})")
             print(f"   ├─ Profit Factor: {result.get('profit_factor', 0):.2f}")
             print(f"   ├─ Win Rate: {result.get('win_rate', 0):.1f}%")
             print(f"   ├─ Avg Win: ${result.get('avg_win', 0):.2f}")

@@ -522,7 +522,7 @@ class UnifiedDashboardHandler:
             # ✅ ИСПРАВЛЕНО: используем существующие колонки
             cursor.execute(
                 """
-                SELECT symbol, direction, entry_price, tp1
+                SELECT symbol, direction, entry_price, tp1_price
                 FROM signals
                 WHERE status = 'active'
                 ORDER BY timestamp DESC

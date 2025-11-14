@@ -167,14 +167,14 @@ class BacktestV3Production:
                 # Вычислить TP/SL
                 if direction == 'LONG':
                     tp = entry + atr * self.config['tp_multiplier']
-                    sl = entry - atr * self.config['sl_multiplier']
-                    should_close = row['close'] >= tp or row['close'] <= sl
+                    sl_price = entry - atr * self.config['sl_multiplier']
+                    should_close = row['close'] >= tp or row['close'] <= sl_price
                     exit_reason = 'TP' if row['close'] >= tp else 'SL'
 
                 else:  # SHORT
                     tp = entry - atr * self.config['tp_multiplier']
-                    sl = entry + atr * self.config['sl_multiplier']
-                    should_close = row['close'] <= tp or row['close'] >= sl
+                    sl_price = entry + atr * self.config['sl_multiplier']
+                    should_close = row['close'] <= tp or row['close'] >= sl_price
                     exit_reason = 'TP' if row['close'] <= tp else 'SL'
 
                 if should_close:

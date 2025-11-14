@@ -117,7 +117,7 @@ class PerfectTradesReport:
                         'entry_volume_ratio': vol_ratio,
                         'entry_bar': i,
                         'tp': row['close'] + (atr_value * TP_MULT),
-                        'sl': row['close'] - (atr_value * SL_MULT),
+                        'sl_price': row['close'] - (atr_value * SL_MULT),
                     }
 
                     consecutive_bars_no_trade = 0
@@ -131,7 +131,7 @@ class PerfectTradesReport:
             elif position is not None:
                 try:
                     tp = position['tp']
-                    sl = position['sl']
+                    sl_price = position['sl_price']
 
                     # ✅ ТОЧНАЯ проверка TP/SL
                     exit_price = None
@@ -142,14 +142,14 @@ class PerfectTradesReport:
 
                     # На самом деле для LONG:
                     # TP срабатывает если close >= tp
-                    # SL срабатывает если close <= sl
+                    # SL срабатывает если close <= sl_price
 
                     if row['high'] >= tp:
                         exit_reason = "TAKE_PROFIT"
                         exit_price = tp
-                    elif row['low'] <= sl:
+                    elif row['low'] <= sl_price:
                         exit_reason = "STOP_LOSS"
-                        exit_price = sl
+                        exit_price = sl_price
                     else:
                         consecutive_bars_no_trade += 1
                         continue
@@ -177,7 +177,7 @@ class PerfectTradesReport:
                         'entry_rsi': position['entry_rsi'],
                         'volume_ratio': position['entry_volume_ratio'],
                         'tp_level': position['tp'],
-                        'sl_level': position['sl'],
+                        'sl_level': position['sl_price'],
                         'result': 'WIN' if pnl > 0 else 'LOSS',
                     })
 

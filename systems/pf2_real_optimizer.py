@@ -97,9 +97,9 @@ class PF2Optimizer:
             elif position is not None:
                 try:
                     tp = position['entry'] + position['atr'] * tp_mult
-                    sl = position['entry'] - position['atr'] * sl_mult
+                    sl_price = position['entry'] - position['atr'] * sl_mult
 
-                    if row['close'] >= tp or row['close'] <= sl:
+                    if row['close'] >= tp or row['close'] <= sl_price:
                         pnl = row['close'] - position['entry']
                         pnl_pct = (pnl / position['entry']) * 100
 
@@ -160,18 +160,18 @@ class PF2Optimizer:
 
         print(f"Testing {len(configs)} configs for PF 2.0+\n")
 
-        for sl, tp, adx, momentum in configs:
-            result = self.backtest_selective(sl, tp, adx, momentum)
+        for sl_price, tp, adx, momentum in configs:
+            result = self.backtest_selective(sl_price, tp, adx, momentum)
 
             if result and result['pf'] >= 1.8:
                 self.results.append(result)
 
                 if result['pf'] >= 2.0:
                     print(f"🎉 FOUND PF 2.0+!")
-                    print(f"   SL={sl}x TP={tp}x ADX={adx} Momentum={momentum:.3f}")
+                    print(f"   SL={sl_price}x TP={tp}x ADX={adx} Momentum={momentum:.3f}")
                     print(f"   WR={result['win_rate']:.1f}% PF={result['pf']:.2f} Trades={result['trades']}\n")
                 else:
-                    print(f"✅ Good: SL={sl} TP={tp} ADX={adx} → PF={result['pf']:.2f}")
+                    print(f"✅ Good: SL={sl_price} TP={tp} ADX={adx} → PF={result['pf']:.2f}")
 
     def print_top(self):
         """TOP результаты"""

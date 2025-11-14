@@ -106,9 +106,9 @@ def test_momentum_long_matching():
             print(f"   🎯 Направление: {result['direction']}")
             print(f"   💰 Entry: ${result['entry_price']:.2f}")
             print(f"   🛑 Stop Loss: ${result['stop_loss']:.2f}")
-            print(f"   🎯 TP1: ${result['tp1']:.2f}")
-            print(f"   🎯 TP2: ${result['tp2']:.2f}")
-            print(f"   🎯 TP3: ${result['tp3']:.2f}")
+            print(f"   🎯 TP1: ${result['tp1_price']:.2f}")
+            print(f"   🎯 TP2: ${result['tp2_price']:.2f}")
+            print(f"   🎯 TP3: ${result['tp3_price']:.2f}")
             print(f"   📊 Confidence: {result['confidence']}")
             print(f"   🌐 Market Regime: {result['market_regime']}")
             print(f"   ⚖️ Risk Profile: {result['risk_profile']}")
@@ -118,7 +118,7 @@ def test_momentum_long_matching():
             assert result['strategy'] in ['momentum', 'breakout'], "❌ Неверная стратегия"
             assert result['entry_price'] > 0, "❌ Некорректная entry_price"
             assert result['stop_loss'] < result['entry_price'], "❌ SL должен быть ниже entry для LONG"
-            assert result['tp1'] > result['entry_price'], "❌ TP1 должен быть выше entry для LONG"
+            assert result['tp1_price'] > result['entry_price'], "❌ TP1 должен быть выше entry для LONG"
 
             print("✅ ТЕСТ ПРОЙДЕН\n")
             return True
@@ -206,7 +206,7 @@ def test_mean_reversion_matching():
             print(f"   🎯 Направление: {result['direction']}")
             print(f"   💰 Entry: ${result['entry_price']:.2f}")
             print(f"   🛑 Stop Loss: ${result['stop_loss']:.2f}")
-            print(f"   🎯 TP1: ${result['tp1']:.2f}")
+            print(f"   🎯 TP1: ${result['tp1_price']:.2f}")
             print(f"   📊 Confidence: {result['confidence']}")
             print(f"   🌐 Market Regime: {result['market_regime']}")
 

@@ -68,15 +68,15 @@ print(f"   TP3%: {tp3_percent:.2f}% (4x ATR)")
 # Long позиция
 print(f"\n3️⃣ LONG Position Prices:")
 stop_loss = current_price * (1 - sl_percent / 100)
-tp1 = current_price * (1 + tp1_percent / 100)
-tp2 = current_price * (1 + tp2_percent / 100)
-tp3 = current_price * (1 + tp3_percent / 100)
+tp1_price = current_price * (1 + tp1_percent / 100)
+tp2_price = current_price * (1 + tp2_percent / 100)
+tp3_price = current_price * (1 + tp3_percent / 100)
 
 print(f"   Entry: {current_price:.2f}")
 print(f"   SL: {stop_loss:.2f} ({-sl_percent:.2f}%)")
-print(f"   TP1: {tp1:.2f} (+{tp1_percent:.2f}%)")
-print(f"   TP2: {tp2:.2f} (+{tp2_percent:.2f}%)")
-print(f"   TP3: {tp3:.2f} (+{tp3_percent:.2f}%)")
+print(f"   TP1: {tp1_price:.2f} (+{tp1_percent:.2f}%)")
+print(f"   TP2: {tp2_price:.2f} (+{tp2_percent:.2f}%)")
+print(f"   TP3: {tp3_price:.2f} (+{tp3_percent:.2f}%)")
 
 # Risk:Reward Ratio
 rr_ratio = tp1_percent / sl_percent

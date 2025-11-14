@@ -22,11 +22,11 @@ def close_signal(signal_id, exit_price, roi, tp_flags):
 def check_signals(current_prices):
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, symbol, direction, entry_price, tp1, tp2, tp3, stop_loss FROM signals WHERE status = 'active'")
+    cursor.execute("SELECT id, symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, stop_loss FROM signals WHERE status = 'active'")
     signals = cursor.fetchall()
 
     for sig in signals:
-        signal_id, symbol, direction, entry_price, tp1, tp2, tp3, stop_loss = sig
+        signal_id, symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, stop_loss = sig
         price = current_prices.get(symbol)
         if price is None:
             continue
@@ -35,15 +35,15 @@ def check_signals(current_prices):
         roi = 0
 
         if direction == 'LONG':
-            if price >= tp3:
+            if price >= tp3_price:
                 tp_flags = {'tp1_hit': 1, 'tp2_hit': 1, 'tp3_hit': 1}
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
-            elif price >= tp2:
+            elif price >= tp2_price:
                 tp_flags = {'tp1_hit': 1, 'tp2_hit': 1}
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
-            elif price >= tp1:
+            elif price >= tp1_price:
                 tp_flags = {'tp1_hit': 1}
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
@@ -51,15 +51,15 @@ def check_signals(current_prices):
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
         elif direction == 'SHORT':
-            if price <= tp3:
+            if price <= tp3_price:
                 tp_flags = {'tp1_hit': 1, 'tp2_hit': 1, 'tp3_hit': 1}
                 roi = (entry_price - price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
-            elif price <= tp2:
+            elif price <= tp2_price:
                 tp_flags = {'tp1_hit': 1, 'tp2_hit': 1}
                 roi = (entry_price - price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
-            elif price <= tp1:
+            elif price <= tp1_price:
                 tp_flags = {'tp1_hit': 1}
                 roi = (entry_price - price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)

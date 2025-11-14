@@ -101,9 +101,9 @@ class EnhancedTelegramFormatter:
         message += "💰 <b>ЦЕНЫ:</b>\n"
         message += f"├ Entry: <code>{signal.get('entry_price', 0):.8f}</code>\n"
         message += f"├ Stop Loss: <code>{signal.get('stop_loss', 0):.8f}</code>\n"
-        message += f"├ TP1: <code>{signal.get('tp1', 0):.8f}</code>\n"
-        message += f"├ TP2: <code>{signal.get('tp2', 0):.8f}</code>\n"
-        message += f"└ TP3: <code>{signal.get('tp3', 0):.8f}</code>\n\n"
+        message += f"├ TP1: <code>{signal.get('tp1_price', 0):.8f}</code>\n"
+        message += f"├ TP2: <code>{signal.get('tp2_price', 0):.8f}</code>\n"
+        message += f"└ TP3: <code>{signal.get('tp3_price', 0):.8f}</code>\n\n"
 
         # ========== МЕТРИКИ ==========
         message += "📊 <b>МЕТРИКИ:</b>\n"

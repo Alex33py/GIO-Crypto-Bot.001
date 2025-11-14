@@ -32,7 +32,7 @@ class TelegramSender:
 ⏰ {signal['timestamp']}
 
 📊 Entry: ${signal['entry']:,.2f}
-🛑 SL: ${signal['sl']:,.2f}
+🛑 SL: ${signal['sl_price']:,.2f}
 💰 TP: ${signal['tp']:,.2f}
 
 📈 ADX: {signal['adx']:.1f}

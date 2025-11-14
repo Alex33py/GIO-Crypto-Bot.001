@@ -100,7 +100,7 @@ class GridSearchExactCopy:
                         'entry_volume_ratio': vol_ratio,
                         'entry_bar': i,
                         'tp': row['close'] + (atr_value * TP_MULT),
-                        'sl': row['close'] - (atr_value * SL_MULT),
+                        'sl_price': row['close'] - (atr_value * SL_MULT),
                     }
 
                     print(f"[{trade_num:2d}] ENTRY @ ${row['close']:>10.2f} | ADX={row['adx']:>5.1f} Vol={vol_ratio:>4.2f}x")
@@ -112,7 +112,7 @@ class GridSearchExactCopy:
             elif position is not None:
                 try:
                     tp = position['tp']
-                    sl = position['sl']
+                    sl_price = position['sl_price']
 
                     exit_price = None
                     exit_reason = None
@@ -121,9 +121,9 @@ class GridSearchExactCopy:
                     if row['high'] >= tp:
                         exit_reason = "TP"
                         exit_price = tp
-                    elif row['low'] <= sl:
+                    elif row['low'] <= sl_price:
                         exit_reason = "SL"
-                        exit_price = sl
+                        exit_price = sl_price
                     else:
                         continue
 
@@ -146,7 +146,7 @@ class GridSearchExactCopy:
                         'entry_adx': position['entry_adx'],
                         'volume_ratio': position['entry_volume_ratio'],
                         'tp_level': position['tp'],
-                        'sl_level': position['sl'],
+                        'sl_level': position['sl_price'],
                         'result': 'WIN' if pnl > 0 else 'LOSS',
                     })
 

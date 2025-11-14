@@ -87,10 +87,10 @@ class AutoROITracker:
                     "symbol": signal.get("symbol"),
                     "direction": signal.get("direction"),
                     "entry_price": signal.get("entry_price"),
-                    "stop_loss": signal.get("sl"),
-                    "tp1": signal.get("tp1"),
-                    "tp2": signal.get("tp2"),
-                    "tp3": signal.get("tp3"),
+                    "stop_loss": signal.get("sl_price"),
+                    "tp1_price": signal.get("tp1_price"),
+                    "tp2_price": signal.get("tp2_price"),
+                    "tp3_price": signal.get("tp3_price"),
                     "tp1_reached": tp1_hit,
                     "tp2_reached": tp2_hit,
                     "tp3_reached": tp3_hit,
@@ -117,10 +117,10 @@ class AutoROITracker:
                     "symbol": signal.get("symbol"),
                     "direction": signal.get("direction"),
                     "entry_price": signal.get("entry_price"),
-                    "stop_loss": signal.get("sl"),
-                    "tp1": signal.get("tp1"),
-                    "tp2": signal.get("tp2"),
-                    "tp3": signal.get("tp3"),
+                    "stop_loss": signal.get("sl_price"),
+                    "tp1_price": signal.get("tp1_price"),
+                    "tp2_price": signal.get("tp2_price"),
+                    "tp3_price": signal.get("tp3_price"),
                     "tp1_reached": False,
                     "tp2_reached": False,
                     "tp3_reached": False,
@@ -151,9 +151,9 @@ class AutoROITracker:
             direction = signal.get("direction")
             entry_price = signal.get("entry_price")
             stop_loss = signal.get("stop_loss")
-            tp1 = signal.get("tp1")
-            tp2 = signal.get("tp2")
-            tp3 = signal.get("tp3")
+            tp1_price = signal.get("tp1_price")
+            tp2_price = signal.get("tp2_price")
+            tp3_price = signal.get("tp3_price")
 
             current_price = await self._get_current_price(symbol)
             if not current_price:
@@ -164,20 +164,20 @@ class AutoROITracker:
                 return
 
             if not signal.get("tp1_reached"):
-                if tp1 and tp1 != 0 and tp1 != entry_price:
-                    if self._check_tp_reached(current_price, tp1, direction):
+                if tp1_price and tp1_price != 0 and tp1_price != entry_price:
+                    if self._check_tp_reached(current_price, tp1_price, direction):
                         await self._handle_tp1_reached(signal_id, signal, current_price)
                         signal["tp1_reached"] = True
 
             if signal.get("tp1_reached") and not signal.get("tp2_reached"):
-                if tp2 and tp2 != 0 and tp2 != entry_price:
-                    if self._check_tp_reached(current_price, tp2, direction):
+                if tp2_price and tp2_price != 0 and tp2_price != entry_price:
+                    if self._check_tp_reached(current_price, tp2_price, direction):
                         await self._handle_tp2_reached(signal_id, signal, current_price)
                         signal["tp2_reached"] = True
 
             if signal.get("tp2_reached") and not signal.get("tp3_reached"):
-                if tp3 and tp3 != 0 and tp3 != entry_price:
-                    if self._check_tp_reached(current_price, tp3, direction):
+                if tp3_price and tp3_price != 0 and tp3_price != entry_price:
+                    if self._check_tp_reached(current_price, tp3_price, direction):
                         await self._handle_tp3_reached(signal_id, signal, current_price)
                         signal["tp3_reached"] = True
                         del self.active_signals[signal_id]
@@ -220,10 +220,10 @@ class AutoROITracker:
         """Обработка достижения TP1"""
         try:
             entry_price = signal.get("entry_price")
-            tp1 = signal.get("tp1")
+            tp1_price = signal.get("tp1_price")
             direction = signal.get("direction")
 
-            if not tp1 or tp1 == 0 or tp1 == entry_price:
+            if not tp1_price or tp1_price == 0 or tp1_price == entry_price:
                 logger.info(
                     f"⏭️ Пропуск TP1 #{signal_id}: TP1 не установлен или равен entry"
                 )
@@ -293,10 +293,10 @@ class AutoROITracker:
         """Обработка достижения TP2"""
         try:
             entry_price = signal.get("entry_price")
-            tp2 = signal.get("tp2")
+            tp2_price = signal.get("tp2_price")
             direction = signal.get("direction")
 
-            if not tp2 or tp2 == 0 or tp2 == entry_price:
+            if not tp2_price or tp2_price == 0 or tp2_price == entry_price:
                 logger.info(
                     f"⏭️ Пропуск TP2 #{signal_id}: TP2 не установлен или равен entry"
                 )
@@ -359,10 +359,10 @@ class AutoROITracker:
         """Обработка достижения TP3"""
         try:
             entry_price = signal.get("entry_price")
-            tp3 = signal.get("tp3")
+            tp3_price = signal.get("tp3_price")
             direction = signal.get("direction")
 
-            if not tp3 or tp3 == 0 or tp3 == entry_price:
+            if not tp3_price or tp3_price == 0 or tp3_price == entry_price:
                 logger.info(
                     f"⏭️ Пропуск TP3 #{signal_id}: TP3 не установлен или равен entry"
                 )

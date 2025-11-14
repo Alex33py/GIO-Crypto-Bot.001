@@ -574,10 +574,10 @@ class EnhancedTradingSignal:
     scenario_id: str
     status: SignalStatusEnum
     price_entry: float
-    sl: float
-    tp1: float
-    tp2: float = 0.0
-    tp3: float = 0.0
+    sl_price: float
+    tp1_price: float
+    tp2_price: float = 0.0
+    tp3_price: float = 0.0
     rr1: float = 0.0
     rr2: float = 0.0
     rr3: float = 0.0
@@ -677,8 +677,8 @@ if __name__ == "__main__":
             scenario_id="test_001",
             status=SignalStatusEnum.DEAL,
             price_entry=50000.0,
-            sl=48000.0,
-            tp1=52000.0,
+            sl_price=48000.0,
+            tp1_price=52000.0,
         )
         print(f"  ✅ Создан тестовый сигнал: {test_signal.symbol} {test_signal.side}")
         print(f"  ✅ Статус: {test_signal.status.value}")

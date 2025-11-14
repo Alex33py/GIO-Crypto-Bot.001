@@ -88,30 +88,30 @@ class DynamicRiskCalculator:
             )
 
             # Расчёт Take Profit уровней
-            tp1 = self._calculate_tp1(
+            tp1_price = self._calculate_tp1(
                 entry_price, side, atr_value, market_data, scenario_config
             )
 
-            tp2 = self._calculate_tp2(
+            tp2_price = self._calculate_tp2(
                 entry_price, side, atr_value, market_data, scenario_config
             )
 
-            tp3 = self._calculate_tp3(
+            tp3_price = self._calculate_tp3(
                 entry_price, side, atr_value, market_data, scenario_config
             )
 
             # Расчёт Risk/Reward для каждого уровня
             if side == "LONG":
                 risk = entry_price - stop_loss
-                rr1 = (tp1 - entry_price) / risk if risk > 0 else 0
-                rr2 = (tp2 - entry_price) / risk if risk > 0 else 0
-                rr3 = (tp3 - entry_price) / risk if risk > 0 else 0
+                rr1 = (tp1_price - entry_price) / risk if risk > 0 else 0
+                rr2 = (tp2_price - entry_price) / risk if risk > 0 else 0
+                rr3 = (tp3_price - entry_price) / risk if risk > 0 else 0
                 sl_percent = (stop_loss / entry_price - 1) * 100
             else:  # SHORT
                 risk = stop_loss - entry_price
-                rr1 = (entry_price - tp1) / risk if risk > 0 else 0
-                rr2 = (entry_price - tp2) / risk if risk > 0 else 0
-                rr3 = (entry_price - tp3) / risk if risk > 0 else 0
+                rr1 = (entry_price - tp1_price) / risk if risk > 0 else 0
+                rr2 = (entry_price - tp2_price) / risk if risk > 0 else 0
+                rr3 = (entry_price - tp3_price) / risk if risk > 0 else 0
                 sl_percent = (1 - stop_loss / entry_price) * 100
 
             # Проверка минимального RR
@@ -129,9 +129,9 @@ class DynamicRiskCalculator:
             risk_levels = RiskLevels(
                 entry_price=entry_price,
                 stop_loss=stop_loss,
-                take_profit_1=tp1,
-                take_profit_2=tp2,
-                take_profit_3=tp3,
+                take_profit_1=tp1_price,
+                take_profit_2=tp2_price,
+                take_profit_3=tp3_price,
                 risk_reward_1=rr1,
                 risk_reward_2=rr2,
                 risk_reward_3=rr3,
@@ -142,9 +142,9 @@ class DynamicRiskCalculator:
 
             logger.info(
                 f"✅ Уровни риска: SL={stop_loss:.2f} ({sl_percent:.2f}%), "
-                f"TP1={tp1:.2f} (RR:{rr1:.2f}), "
-                f"TP2={tp2:.2f} (RR:{rr2:.2f}), "
-                f"TP3={tp3:.2f} (RR:{rr3:.2f})"
+                f"TP1={tp1_price:.2f} (RR:{rr1:.2f}), "
+                f"TP2={tp2_price:.2f} (RR:{rr2:.2f}), "
+                f"TP3={tp3_price:.2f} (RR:{rr3:.2f})"
             )
 
             return risk_levels
@@ -249,11 +249,11 @@ class DynamicRiskCalculator:
                 tp_percent = scenario_config.get('tp1_percent', tp_percent)
 
             if side == "LONG":
-                tp1 = entry_price * (1 + tp_percent / 100)
+                tp1_price = entry_price * (1 + tp_percent / 100)
             else:  # SHORT
-                tp1 = entry_price * (1 - tp_percent / 100)
+                tp1_price = entry_price * (1 - tp_percent / 100)
 
-            return round(tp1, 2)
+            return round(tp1_price, 2)
 
         except Exception as e:
             logger.error(f"❌ Ошибка расчёта TP1: {e}")
@@ -294,11 +294,11 @@ class DynamicRiskCalculator:
             # Иначе расчёт для RR = 2.5
             # Предполагаем SL ~1.5%, значит TP2 ~3.75% для RR 2.5
             if side == "LONG":
-                tp2 = entry_price * 1.0375
+                tp2_price = entry_price * 1.0375
             else:  # SHORT
-                tp2 = entry_price * 0.9625
+                tp2_price = entry_price * 0.9625
 
-            return round(tp2, 2)
+            return round(tp2_price, 2)
 
         except Exception as e:
             logger.error(f"❌ Ошибка расчёта TP2: {e}")
@@ -324,16 +324,16 @@ class DynamicRiskCalculator:
             atr_extension = atr_value * 2
 
             if side == "LONG":
-                tp3 = entry_price * 1.0375 + atr_extension  # TP2 + расширение
+                tp3_price = entry_price * 1.0375 + atr_extension  # TP2 + расширение
                 # Ограничение 5-7%
-                tp3 = min(tp3, entry_price * 1.07)
-                tp3 = max(tp3, entry_price * 1.05)
+                tp3_price = min(tp3_price, entry_price * 1.07)
+                tp3_price = max(tp3_price, entry_price * 1.05)
             else:  # SHORT
-                tp3 = entry_price * 0.9625 - atr_extension
-                tp3 = max(tp3, entry_price * 0.93)
-                tp3 = min(tp3, entry_price * 0.95)
+                tp3_price = entry_price * 0.9625 - atr_extension
+                tp3_price = max(tp3_price, entry_price * 0.93)
+                tp3_price = min(tp3_price, entry_price * 0.95)
 
-            return round(tp3, 2)
+            return round(tp3_price, 2)
 
         except Exception as e:
             logger.error(f"❌ Ошибка расчёта TP3: {e}")

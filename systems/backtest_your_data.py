@@ -128,9 +128,9 @@ class RealDataBacktester:
             elif position is not None:
                 try:
                     tp = position['entry'] + position['atr'] * tp_mult
-                    sl = position['entry'] - position['atr'] * sl_mult
+                    sl_price = position['entry'] - position['atr'] * sl_mult
 
-                    if row['close'] >= tp or row['close'] <= sl:
+                    if row['close'] >= tp or row['close'] <= sl_price:
                         pnl = row['close'] - position['entry']
                         pnl_pct = (pnl / position['entry']) * 100
                         bars_held = i - position['bar']

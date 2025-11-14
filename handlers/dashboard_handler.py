@@ -416,7 +416,7 @@ class GIODashboardHandler:
                         "symbol": metrics.symbol,
                         "side": metrics.direction.upper(),
                         "entry": metrics.entry_price,
-                        "tp": metrics.tp1,
+                        "tp": metrics.tp1_price,
                     }
                     for sid, metrics in list(active.items())[:5]
                 ]

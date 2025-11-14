@@ -99,7 +99,7 @@ class TradesDetailReport:
                         'entry_volume': row['volume'],
                         'entry_bar': i,
                         'tp': row['close'] + (row['atr'] * TP_MULT),
-                        'sl': row['close'] - (row['atr'] * SL_MULT),
+                        'sl_price': row['close'] - (row['atr'] * SL_MULT),
                     }
 
                     print(f"[{trade_num}] ENTRY @ {row['close']:.2f} | ADX={row['adx']:.1f} RSI={row['rsi']:.1f}")
@@ -111,15 +111,15 @@ class TradesDetailReport:
             elif position is not None:
                 try:
                     tp = position['tp']
-                    sl = position['sl']
+                    sl_price = position['sl_price']
 
                     # Проверка TP/SL
                     if row['close'] >= tp:
                         exit_reason = "TAKE_PROFIT"
                         exit_price = tp
-                    elif row['close'] <= sl:
+                    elif row['close'] <= sl_price:
                         exit_reason = "STOP_LOSS"
-                        exit_price = sl
+                        exit_price = sl_price
                     else:
                         continue
 
@@ -143,7 +143,7 @@ class TradesDetailReport:
                         'entry_adx': position['entry_adx'],
                         'entry_rsi': position['entry_rsi'],
                         'tp_level': position['tp'],
-                        'sl_level': position['sl'],
+                        'sl_level': position['sl_price'],
                         'result': 'WIN' if pnl > 0 else 'LOSS',
                     })
 

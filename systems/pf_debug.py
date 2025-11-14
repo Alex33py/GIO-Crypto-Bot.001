@@ -67,9 +67,9 @@ class PFDebug:
             # Выход
             elif position is not None:
                 tp = position['entry'] + position['atr'] * 3.0
-                sl = position['entry'] - position['atr'] * 0.8
+                sl_price = position['entry'] - position['atr'] * 0.8
 
-                if row['close'] >= tp or row['close'] <= sl:
+                if row['close'] >= tp or row['close'] <= sl_price:
                     pnl = row['close'] - position['entry']
                     trades.append({'pnl': pnl, 'result': 'WIN' if pnl > 0 else 'LOSS'})
                     position = None
@@ -110,9 +110,9 @@ class PFDebug:
             # Выход
             elif position is not None:
                 tp = position['entry'] + position['atr'] * 3.0
-                sl = position['entry'] - position['atr'] * 0.8
+                sl_price = position['entry'] - position['atr'] * 0.8
 
-                if row['close'] >= tp or row['close'] <= sl:
+                if row['close'] >= tp or row['close'] <= sl_price:
                     pnl = row['close'] - position['entry']
                     trades.append({'pnl': pnl, 'result': 'WIN' if pnl > 0 else 'LOSS'})
                     position = None
@@ -161,9 +161,9 @@ class PFDebug:
 
                 # RR FILTER
                 tp = row['close'] + row['atr'] * 3.0
-                sl = row['close'] - row['atr'] * 0.5
+                sl_price = row['close'] - row['atr'] * 0.5
                 reward = tp - row['close']
-                risk = row['close'] - sl
+                risk = row['close'] - sl_price
                 rr = reward / risk if risk > 0 else 0
 
                 if rr < 3.5:
@@ -178,9 +178,9 @@ class PFDebug:
             # Выход
             elif position is not None:
                 tp = position['entry'] + position['atr'] * 3.0
-                sl = position['entry'] - position['atr'] * 0.5
+                sl_price = position['entry'] - position['atr'] * 0.5
 
-                if row['close'] >= tp or row['close'] <= sl:
+                if row['close'] >= tp or row['close'] <= sl_price:
                     pnl = row['close'] - position['entry']
                     trades.append({'pnl': pnl, 'result': 'WIN' if pnl > 0 else 'LOSS'})
                     position = None

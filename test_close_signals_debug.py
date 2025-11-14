@@ -22,7 +22,7 @@ def close_signal(signal_id, exit_price, roi, tp_flags):
 def check_signals(test_prices):
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, symbol, direction, entry_price, tp1, tp2, tp3, stop_loss FROM signals WHERE status = 'active'")
+    cursor.execute("SELECT id, symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, stop_loss FROM signals WHERE status = 'active'")
     signals = cursor.fetchall()
 
     if not signals:
@@ -33,7 +33,7 @@ def check_signals(test_prices):
     print(f"Checking {len(signals)} active signals")
 
     for sig in signals:
-        signal_id, symbol, direction, entry_price, tp1, tp2, tp3, stop_loss = sig
+        signal_id, symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, stop_loss = sig
         price = test_prices.get(symbol)
         if price is None:
             print(f"No test price for symbol {symbol}, skipping signal {signal_id}")
@@ -43,15 +43,15 @@ def check_signals(test_prices):
         roi = 0
 
         if direction == 'LONG':
-            if price >= tp3:
+            if price >= tp3_price:
                 tp_flags = {'tp1_hit':1, 'tp2_hit':1, 'tp3_hit':1}
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
-            elif price >= tp2:
+            elif price >= tp2_price:
                 tp_flags = {'tp1_hit':1, 'tp2_hit':1}
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
-            elif price >= tp1:
+            elif price >= tp1_price:
                 tp_flags = {'tp1_hit':1}
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
@@ -59,7 +59,7 @@ def check_signals(test_prices):
                 roi = (price - entry_price) / entry_price * 100
                 close_signal(signal_id, price, roi, tp_flags)
             else:
-                print(f"Signal {signal_id} not closed, current price {price} below tp1 {tp1}")
+                print(f"Signal {signal_id} not closed, current price {price} below tp1_price {tp1_price}")
         else:
             print(f"Unsupported direction {direction} for signal {signal_id}")
 

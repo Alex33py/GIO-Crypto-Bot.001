@@ -34,9 +34,9 @@ class Signal:
     direction: str  # LONG/SHORT
     entry_price: float
     stop_loss: float
-    tp1: float
-    tp2: float
-    tp3: float
+    tp1_price: float
+    tp2_price: float
+    tp3_price: float
 
     # Статусы достижения
     tp1_hit: bool = False
@@ -321,9 +321,9 @@ class ROITracker:
             direction=signal_data["direction"],
             entry_price=signal_data["entry_price"],
             stop_loss=signal_data["stop_loss"],
-            tp1=signal_data.get("tp1", 0),
-            tp2=signal_data.get("tp2", 0),
-            tp3=signal_data.get("tp3", 0),
+            tp1_price=signal_data.get("tp1_price", 0),
+            tp2_price=signal_data.get("tp2_price", 0),
+            tp3_price=signal_data.get("tp3_price", 0),
             quality_score=signal_data.get("quality_score", 0.0),
         )
 
@@ -420,17 +420,17 @@ class ROITracker:
             # === LONG ПОЗИЦИЯ ===
 
             # TP3 (самая высокая цель)
-            if not signal.tp3_hit and current_price >= signal.tp3:
+            if not signal.tp3_hit and current_price >= signal.tp3_price:
                 signal.tp3_hit = True
                 event = await self._handle_tp_hit(signal, "TP3", current_price)
 
             # TP2
-            elif not signal.tp2_hit and current_price >= signal.tp2:
+            elif not signal.tp2_hit and current_price >= signal.tp2_price:
                 signal.tp2_hit = True
                 event = await self._handle_tp_hit(signal, "TP2", current_price)
 
             # TP1
-            elif not signal.tp1_hit and current_price >= signal.tp1:
+            elif not signal.tp1_hit and current_price >= signal.tp1_price:
                 signal.tp1_hit = True
                 event = await self._handle_tp_hit(signal, "TP1", current_price)
 
@@ -443,17 +443,17 @@ class ROITracker:
             # === SHORT ПОЗИЦИЯ ===
 
             # TP3 (самая низкая цель)
-            if not signal.tp3_hit and current_price <= signal.tp3:
+            if not signal.tp3_hit and current_price <= signal.tp3_price:
                 signal.tp3_hit = True
                 event = await self._handle_tp_hit(signal, "TP3", current_price)
 
             # TP2
-            elif not signal.tp2_hit and current_price <= signal.tp2:
+            elif not signal.tp2_hit and current_price <= signal.tp2_price:
                 signal.tp2_hit = True
                 event = await self._handle_tp_hit(signal, "TP2", current_price)
 
             # TP1
-            elif not signal.tp1_hit and current_price <= signal.tp1:
+            elif not signal.tp1_hit and current_price <= signal.tp1_price:
                 signal.tp1_hit = True
                 event = await self._handle_tp_hit(signal, "TP1", current_price)
 
@@ -679,7 +679,7 @@ class ROITracker:
                         f"📊 {signal.symbol} {signal.direction.upper()}\n"
                         f"💰 Entry: ${signal.entry_price:,.2f}\n"
                         f"📈 Current: ${price:,.2f}\n"
-                        f"🎯 TP1: ${signal.tp1:,.2f}\n"
+                        f"🎯 TP1: ${signal.tp1_price:,.2f}\n"
                         f"💵 Profit: {profit_percent:.2f}%\n\n"
                         f"⚠️ Повышенный риск!\n"
                         f"💡 Рекомендация:\n"
@@ -693,7 +693,7 @@ class ROITracker:
                         f"📊 {signal.symbol} {signal.direction.upper()}\n"
                         f"💰 Entry: ${signal.entry_price:,.2f}\n"
                         f"📈 Current: ${price:,.2f}\n"
-                        f"🎯 TP1: ${signal.tp1:,.2f}\n"
+                        f"🎯 TP1: ${signal.tp1_price:,.2f}\n"
                         f"💵 Profit: {profit_percent:.2f}%\n\n"
                         f"✅ Рекомендация:\n"
                         f"   • Зафиксируй 25% позиции\n"
@@ -707,7 +707,7 @@ class ROITracker:
                     f"📊 {signal.symbol} {signal.direction.upper()}\n"
                     f"💰 Entry: ${signal.entry_price:,.2f}\n"
                     f"📈 Current: ${price:,.2f}\n"
-                    f"🎯 TP2: ${signal.tp2:,.2f}\n"
+                    f"🎯 TP2: ${signal.tp2_price:,.2f}\n"
                     f"💵 Profit: {profit_percent:.2f}%\n\n"
                     f"✅ Рекомендация:\n"
                     f"   • Зафиксируй 25% позиции\n"
@@ -721,7 +721,7 @@ class ROITracker:
                     f"📊 {signal.symbol} {signal.direction.upper()}\n"
                     f"💰 Entry: ${signal.entry_price:,.2f}\n"
                     f"📈 Current: ${price:,.2f}\n"
-                    f"🎯 TP3: ${signal.tp3:,.2f}\n"
+                    f"🎯 TP3: ${signal.tp3_price:,.2f}\n"
                     f"💵 Profit: {profit_percent:.2f}%\n\n"
                     f"✅ Рекомендация:\n"
                     f"   • Трейлим остаток (trailing stop)\n"
@@ -867,9 +867,9 @@ class ROITracker:
                         direction TEXT,
                         entry_price REAL,
                         stop_loss REAL,
-                        tp1 REAL,
-                        tp2 REAL,
-                        tp3 REAL,
+                        tp1_price REAL,
+                        tp2_price REAL,
+                        tp3_price REAL,
                         tp1_hit INTEGER DEFAULT 0,
                         tp2_hit INTEGER DEFAULT 0,
                         tp3_hit INTEGER DEFAULT 0,
@@ -908,7 +908,7 @@ class ROITracker:
                     """
                     INSERT INTO signals (
                         signal_id, symbol, direction, entry_price, stop_loss,
-                        tp1, tp2, tp3, status, entry_time, quality_score
+                        tp1_price, tp2_price, tp3_price, status, entry_time, quality_score
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                     (
@@ -917,9 +917,9 @@ class ROITracker:
                         signal.direction,
                         signal.entry_price,
                         signal.stop_loss,
-                        signal.tp1,
-                        signal.tp2,
-                        signal.tp3,
+                        signal.tp1_price,
+                        signal.tp2_price,
+                        signal.tp3_price,
                         signal.status,
                         signal.entry_time,
                         signal.quality_score,

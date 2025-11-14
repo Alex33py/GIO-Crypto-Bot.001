@@ -154,10 +154,10 @@ def save_signal_to_unified(signal, ai_metadata: Optional[Dict] = None) -> bool:
                 signal.scenario_id,
                 signal.confidence_score * 100,
                 signal.confidence_score * 100,
-                signal.tp1,
-                signal.tp2,
-                signal.tp3,
-                signal.sl,
+                signal.tp1_price,
+                signal.tp2_price,
+                signal.tp3_price,
+                signal.sl_price,
                 "ACTIVE",
                 datetime.now().isoformat(),
                 datetime.now().isoformat(),
@@ -194,7 +194,7 @@ def update_signal_roi(signal_id: int, current_price: float) -> Optional[Dict]:
             if not row:
                 return None
 
-            (symbol, direction, entry, tp1, tp2, tp3, sl, tp1_hit, tp2_hit, tp3_hit, sl_hit) = row
+            (symbol, direction, entry, tp1_price, tp2_price, tp3_price, sl_price, tp1_hit, tp2_hit, tp3_hit, sl_hit) = row
 
             if direction == "LONG":
                 roi = ((current_price - entry) / entry) * 100
@@ -204,25 +204,25 @@ def update_signal_roi(signal_id: int, current_price: float) -> Optional[Dict]:
             updates = {"current_roi": roi}
 
             if direction == "LONG":
-                if current_price >= tp1 and not tp1_hit:
+                if current_price >= tp1_price and not tp1_hit:
                     updates["tp1_hit"] = 1
-                if current_price >= tp2 and not tp2_hit:
+                if current_price >= tp2_price and not tp2_hit:
                     updates["tp2_hit"] = 1
-                if current_price >= tp3 and not tp3_hit:
+                if current_price >= tp3_price and not tp3_hit:
                     updates["tp3_hit"] = 1
                     updates["status"] = "CLOSED"
-                if sl and current_price <= sl and not sl_hit:
+                if sl_price and current_price <= sl_price and not sl_hit:
                     updates["sl_hit"] = 1
                     updates["status"] = "CLOSED"
             else:
-                if current_price <= tp1 and not tp1_hit:
+                if current_price <= tp1_price and not tp1_hit:
                     updates["tp1_hit"] = 1
-                if current_price <= tp2 and not tp2_hit:
+                if current_price <= tp2_price and not tp2_hit:
                     updates["tp2_hit"] = 1
-                if current_price <= tp3 and not tp3_hit:
+                if current_price <= tp3_price and not tp3_hit:
                     updates["tp3_hit"] = 1
                     updates["status"] = "CLOSED"
-                if sl and current_price >= sl and not sl_hit:
+                if sl_price and current_price >= sl_price and not sl_hit:
                     updates["sl_hit"] = 1
                     updates["status"] = "CLOSED"
 

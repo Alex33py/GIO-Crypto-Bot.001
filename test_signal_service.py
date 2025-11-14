@@ -50,16 +50,16 @@ class MockScenarioMatcher:
             "matched": True,
             "direction": "LONG",
             "stop_loss": 29000,
-            "tp1": 31000,
-            "tp2": 32000,
-            "tp3": 33000,
+            "tp1_price": 31000,
+            "tp2_price": 32000,
+            "tp3_price": 33000,
             "scenario_id": "TEST001",
             "confidence": "high"
         }
 
 class MockSignalRecorder:
-    def recordsignal(self, direction, entryprice, sl, tp1, tp2, tp3, scenarioid, status, qualityscore, riskreward):
-        print(f"Recorded signal: {direction=}, {entryprice=}, {sl=}, {tp1=}, {tp2=}, {tp3=}, {scenarioid=}, {status=}, {qualityscore=}, {riskreward=}")
+    def recordsignal(self, direction, entryprice, sl_price, tp1_price, tp2_price, tp3_price, scenarioid, status, qualityscore, riskreward):
+        print(f"Recorded signal: {direction=}, {entryprice=}, {sl_price=}, {tp1_price=}, {tp2_price=}, {tp3_price=}, {scenarioid=}, {status=}, {qualityscore=}, {riskreward=}")
 
 async def run_test():
     mock_bot = MockBot()

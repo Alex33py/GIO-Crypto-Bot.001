@@ -151,10 +151,10 @@ class UnifiedAutoScanner:
                                 symbol=symbol,
                                 direction=result["direction"],
                                 entry_price=result["entry_price"],
-                                sl=result["stop_loss"],
-                                tp1=result["tp1"],
-                                tp2=result["tp2"],
-                                tp3=result["tp3"],
+                                sl_price=result["stop_loss"],
+                                tp1_price=result["tp1_price"],
+                                tp2_price=result["tp2_price"],
+                                tp3_price=result["tp3_price"],
                                 scenario_id=result.get("scenario_id", "auto_scanner"),
                                 status="active",
                                 quality_score=result.get("quality_score", 0),
@@ -222,9 +222,9 @@ class UnifiedAutoScanner:
                                             "symbol": symbol,
                                             "direction": result["direction"],
                                             "entry_price": result["entry_price"],
-                                            "tp1": result["tp1"],
-                                            "tp2": result["tp2"],
-                                            "tp3": result["tp3"],
+                                            "tp1_price": result["tp1_price"],
+                                            "tp2_price": result["tp2_price"],
+                                            "tp3_price": result["tp3_price"],
                                             "stop_loss": result["stop_loss"],
                                             "quality_score": result.get(
                                                 "quality_score", 0
@@ -277,10 +277,10 @@ class UnifiedAutoScanner:
                     symbol=symbol,
                     direction=result["direction"],
                     entry_price=result["entry_price"],
-                    sl=result["stop_loss"],
-                    tp1=result["tp1"],
-                    tp2=result["tp2"],
-                    tp3=result["tp3"],
+                    sl_price=result["stop_loss"],
+                    tp1_price=result["tp1_price"],
+                    tp2_price=result["tp2_price"],
+                    tp3_price=result["tp3_price"],
                     scenario_id=result.get("scenario_id", "auto_scanner"),
                     status="active",
                     quality_score=result.get("quality_score", 0),
@@ -330,9 +330,9 @@ class UnifiedAutoScanner:
                                 "symbol": symbol,
                                 "direction": result["direction"],
                                 "entry_price": result["entry_price"],
-                                "tp1": result["tp1"],
-                                "tp2": result["tp2"],
-                                "tp3": result["tp3"],
+                                "tp1_price": result["tp1_price"],
+                                "tp2_price": result["tp2_price"],
+                                "tp3_price": result["tp3_price"],
                                 "stop_loss": result["stop_loss"],
                                 "quality_score": result.get("quality_score", 0),
                                 "risk_reward": result.get("risk_reward", 0),
@@ -349,9 +349,9 @@ class UnifiedAutoScanner:
                     "direction": result["direction"],
                     "entry_price": result["entry_price"],
                     "stop_loss": result["stop_loss"],
-                    "tp1": result["tp1"],
-                    "tp2": result["tp2"],
-                    "tp3": result["tp3"],
+                    "tp1_price": result["tp1_price"],
+                    "tp2_price": result["tp2_price"],
+                    "tp3_price": result["tp3_price"],
                     "quality_score": result.get("quality_score", 0),
                     "risk_reward": result.get("risk_reward", 0),
                     "status": result.get("status", "active"),
@@ -600,17 +600,17 @@ class UnifiedAutoScanner:
             # ========== 10. ВАЛИДАЦИЯ TP/SL ==========
             entry_price = match_result.get("entry_price", 0)
             stop_loss = match_result.get("stop_loss", 0)
-            tp1 = match_result.get("tp1", 0)
-            tp2 = match_result.get("tp2", 0)
-            tp3 = match_result.get("tp3", 0)
+            tp1_price = match_result.get("tp1_price", 0)
+            tp2_price = match_result.get("tp2_price", 0)
+            tp3_price = match_result.get("tp3_price", 0)
 
             if not all(
                 [
                     DataValidator.validate_price(entry_price, f"{symbol}.entry"),
-                    DataValidator.validate_price(stop_loss, f"{symbol}.sl"),
-                    DataValidator.validate_price(tp1, f"{symbol}.tp1"),
-                    DataValidator.validate_price(tp2, f"{symbol}.tp2"),
-                    DataValidator.validate_price(tp3, f"{symbol}.tp3"),
+                    DataValidator.validate_price(stop_loss, f"{symbol}.sl_price"),
+                    DataValidator.validate_price(tp1_price, f"{symbol}.tp1_price"),
+                    DataValidator.validate_price(tp2_price, f"{symbol}.tp2_price"),
+                    DataValidator.validate_price(tp3_price, f"{symbol}.tp3_price"),
                 ]
             ):
                 logger.warning(f"⚠️ {symbol}: Невалидные TP/SL, пропускаем сигнал")
@@ -651,9 +651,9 @@ class UnifiedAutoScanner:
                 "direction": match_result.get("direction", "LONG"),
                 "entry_price": entry_price,
                 "stop_loss": stop_loss,
-                "tp1": tp1,
-                "tp2": tp2,
-                "tp3": tp3,
+                "tp1_price": tp1_price,
+                "tp2_price": tp2_price,
+                "tp3_price": tp3_price,
                 "scenario_id": match_result.get("scenario_id", "unknown"),
                 "scenario_name": match_result.get("scenario_name", "Unknown"),
                 "status": match_result.get("status", "active"),

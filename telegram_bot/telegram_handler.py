@@ -1171,14 +1171,14 @@ class TelegramBotHandler:
                 text += f"💰 Entry: ${sig['entry_price']:.2f}\n"
 
                 # TP levels
-                tp1 = sig.get("tp1_price", 0)
-                tp2 = sig.get("tp2_price", 0)
-                tp3 = sig.get("tp3_price", 0)
-                text += f"🎯 TP1: ${tp1:.2f} | TP2: ${tp2:.2f} | TP3: ${tp3:.2f}\n"
+                tp1_price = sig.get("tp1_price", 0)
+                tp2_price = sig.get("tp2_price", 0)
+                tp3_price = sig.get("tp3_price", 0)
+                text += f"🎯 TP1: ${tp1_price:.2f} | TP2: ${tp2_price:.2f} | TP3: ${tp3_price:.2f}\n"
 
                 # Stop Loss
-                sl = sig.get("stop_loss", 0)
-                text += f"🛑 SL: ${sl:.2f}\n"
+                sl_price = sig.get("stop_loss", 0)
+                text += f"🛑 SL: ${sl_price:.2f}\n"
 
                 # Timestamp
                 timestamp = sig.get("timestamp", "N/A")
@@ -1231,8 +1231,8 @@ class TelegramBotHandler:
                         "count": 0,
                         "direction": sig.get("direction"),
                         "entry": sig.get("entry_price", 0),
-                        "tp3": sig.get("tp3_price", 0),
-                        "sl": sig.get("stop_loss", 0)
+                        "tp3_price": sig.get("tp3_price", 0),
+                        "sl_price": sig.get("stop_loss", 0)
                     }
                 symbols_data[symbol]["count"] += 1
 
@@ -1240,12 +1240,12 @@ class TelegramBotHandler:
             avg_risk_reward = []
             for sig in signals:
                 entry = sig.get("entry_price", 0)
-                tp3 = sig.get("tp3_price", 0)
-                sl = sig.get("stop_loss", 0)
+                tp3_price = sig.get("tp3_price", 0)
+                sl_price = sig.get("stop_loss", 0)
 
-                if entry > 0 and sl > 0:
-                    risk = abs(entry - sl)
-                    reward = abs(tp3 - entry)
+                if entry > 0 and sl_price > 0:
+                    risk = abs(entry - sl_price)
+                    reward = abs(tp3_price - entry)
                     if risk > 0:
                         rr_ratio = reward / risk
                         avg_risk_reward.append(rr_ratio)
@@ -1492,7 +1492,7 @@ class TelegramBotHandler:
                     # ✅ ФОРМИРУЕМ СООБЩЕНИЕ (ОДИН РАЗ!)
                     message += f"{emoji} #{signal.get('id', 'NA')} {signal.get('symbol', 'NA')} {signal.get('direction', 'NA')}\n"
                     message += f"💰 Entry: ${signal.get('entry_price', 0):.2f}\n"
-                    message += f"🎯 TP: ${signal.get('tp2', 0):.2f}\n"
+                    message += f"🎯 TP: ${signal.get('tp2_price', 0):.2f}\n"
                     message += f"📊 Confidence: {confidence_text}\n\n"
 
                     # ✅ СОХРАНЯЕМ В unified_signals С AI METADATA
@@ -1504,9 +1504,9 @@ class TelegramBotHandler:
                         "scenario_id": signal.get('scenario_id'),
                         "scenario_score": signal.get('confidence', 0) if isinstance(signal.get('confidence'), (int, float)) else 0,
                         "confidence": signal.get('confidence', 0) if isinstance(signal.get('confidence'), (int, float)) else 0,
-                        "tp1_price": signal.get('tp1', 0),
-                        "tp2_price": signal.get('tp2', 0),
-                        "tp3_price": signal.get('tp3', 0),
+                        "tp1_price": signal.get('tp1_price', 0),
+                        "tp2_price": signal.get('tp2_price', 0),
+                        "tp3_price": signal.get('tp3_price', 0),
                         "sl_price": signal.get('stop_loss'),
                         "status": "ACTIVE"
                     }
@@ -2069,7 +2069,7 @@ class TelegramBotHandler:
 
             conn = sqlite3.connect(str(DATABASE_PATH))
             query = """
-                SELECT id, symbol, direction, entry_price, tp1, status
+                SELECT id, symbol, direction, entry_price, tp1_price, status
                 FROM signals
                 ORDER BY id DESC
                 LIMIT 10
@@ -2104,7 +2104,7 @@ class TelegramBotHandler:
                 symbol = row["symbol"]
                 direction = row["direction"]
                 entry = float(row["entry_price"])
-                tp1 = float(row["tp1"])
+                tp1_price = float(row["tp1_price"])
 
                 # Получаем текущую цену
                 try:
@@ -2123,10 +2123,10 @@ class TelegramBotHandler:
                 # Рассчитываем P&L
                 if direction == "LONG":
                     pnl = ((current - entry) / entry) * 100 if entry > 0 else 0
-                    to_tp1 = ((tp1 - current) / current) * 100 if current > 0 else 0
+                    to_tp1 = ((tp1_price - current) / current) * 100 if current > 0 else 0
                 else:
                     pnl = ((entry - current) / entry) * 100 if entry > 0 else 0
-                    to_tp1 = ((current - tp1) / current) * 100 if current > 0 else 0
+                    to_tp1 = ((current - tp1_price) / current) * 100 if current > 0 else 0
 
                 total_pnl += pnl
 
@@ -3701,16 +3701,16 @@ class TelegramBotHandler:
                 action = "🟢 LONG (покупка)"
                 entry_low = price * 0.995
                 entry_high = price * 1.005
-                tp1 = price * 1.018
-                tp2 = price * 1.033
-                sl = price * 0.99
+                tp1_price = price * 1.018
+                tp2_price = price * 1.033
+                sl_price = price * 0.99
             elif sentiment_score <= -3:
                 action = "🔴 SHORT (продажа)"
                 entry_low = price * 0.995
                 entry_high = price * 1.005
-                tp1 = price * 0.982
-                tp2 = price * 0.967
-                sl = price * 1.01
+                tp1_price = price * 0.982
+                tp2_price = price * 0.967
+                sl_price = price * 1.01
             else:
                 action = "⚪ WAIT (ожидание)"
                 lines.append(f"   └─ Действие: {action}")
@@ -3718,17 +3718,17 @@ class TelegramBotHandler:
                 lines.append("")
                 return lines
 
-            rr_ratio = abs((tp1 - price) / (sl - price)) if (sl - price) != 0 else 0
+            rr_ratio = abs((tp1_price - price) / (sl_price - price)) if (sl_price - price) != 0 else 0
 
             lines.append(f"   └─ Действие: {action}")
             lines.append(f"   └─ Вход: ${entry_low:,.2f} - ${entry_high:,.2f}")
             lines.append(
-                f"   └─ Цель 1: ${tp1:,.2f} ({((tp1 / price - 1) * 100):+.1f}%)"
+                f"   └─ Цель 1: ${tp1_price:,.2f} ({((tp1_price / price - 1) * 100):+.1f}%)"
             )
             lines.append(
-                f"   └─ Цель 2: ${tp2:,.2f} ({((tp2 / price - 1) * 100):+.1f}%)"
+                f"   └─ Цель 2: ${tp2_price:,.2f} ({((tp2_price / price - 1) * 100):+.1f}%)"
             )
-            lines.append(f"   └─ Стоп: ${sl:,.2f} ({((sl / price - 1) * 100):+.1f}%)")
+            lines.append(f"   └─ Стоп: ${sl_price:,.2f} ({((sl_price / price - 1) * 100):+.1f}%)")
             lines.append(
                 f"   └─ R/R: {rr_ratio:.1f}:1 {'(отлично)' if rr_ratio > 2 else '(хорошо)' if rr_ratio > 1.5 else '(осторожно)'}"
             )

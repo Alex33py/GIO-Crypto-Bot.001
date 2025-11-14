@@ -128,7 +128,7 @@ class FinalBacktestWithScenarios:
                         'entry_rsi': row['rsi'],
                         'entry_bar': i,
                         'tp': row['close'] + (atr_value * TP_MULT),
-                        'sl': row['close'] - (atr_value * SL_MULT),
+                        'sl_price': row['close'] - (atr_value * SL_MULT),
                         'scenario_id': scenario_id,
                         'scenario_name': scenario_name,
                     }
@@ -145,13 +145,13 @@ class FinalBacktestWithScenarios:
             elif position is not None:
                 try:
                     tp = position['tp']
-                    sl = position['sl']
+                    sl_price = position['sl_price']
 
                     if row['high'] >= tp:
                         exit_price = tp
                         exit_reason = "TP"
-                    elif row['low'] <= sl:
-                        exit_price = sl
+                    elif row['low'] <= sl_price:
+                        exit_price = sl_price
                         exit_reason = "SL"
                     else:
                         continue
@@ -173,7 +173,7 @@ class FinalBacktestWithScenarios:
                         'scenario_id': position['scenario_id'],
                         'scenario_name': position['scenario_name'],
                         'tp_level': position['tp'],
-                        'sl_level': position['sl'],
+                        'sl_level': position['sl_price'],
                         'result': 'WIN' if pnl > 0 else 'LOSS',
                     })
 

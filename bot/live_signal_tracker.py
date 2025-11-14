@@ -115,7 +115,7 @@ class LiveSignalTracker:
         print("✅ ALL CRITICAL FILTERS PASSED!")
 
         entry_price = latest_close
-        sl = entry_price - (latest_atr * atr_mult)
+        sl_price = entry_price - (latest_atr * atr_mult)
         tp = entry_price + (latest_atr * tp_mult)
 
         confidence, confidence_level = self.confidence_scorer.calculate_score(
@@ -166,7 +166,7 @@ class LiveSignalTracker:
         signal = {
             'timestamp': datetime.now().isoformat(),
             'entry': entry_price,
-            'sl': sl,
+            'sl_price': sl_price,
             'tp': tp,
             'atr': latest_atr,
             'adx': latest_adx,
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     if signal:
         print("\n✅ SIGNAL GENERATED:")
         print(f"   Entry: ${signal['entry']:,.2f}")
-        print(f"   SL: ${signal['sl']:,.2f}")
+        print(f"   SL: ${signal['sl_price']:,.2f}")
         print(f"   TP: ${signal['tp']:,.2f}")
         print(f"   Scenario: {signal['scenario']}")
         print(f"   MTF Score: {signal['mtf_score']}/3 ({signal['mtf_strength']})")

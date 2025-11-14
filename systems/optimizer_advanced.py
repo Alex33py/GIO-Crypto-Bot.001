@@ -98,7 +98,7 @@ class AdvancedOptimizer:
                         'entry_price': row['close'],
                         'entry_bar': i,
                         'tp': row['close'] + (atr_value * tp_mult),
-                        'sl': row['close'] - (atr_value * sl_mult),
+                        'sl_price': row['close'] - (atr_value * sl_mult),
                     }
 
                 except:
@@ -108,13 +108,13 @@ class AdvancedOptimizer:
             elif position is not None:
                 try:
                     tp = position['tp']
-                    sl = position['sl']
+                    sl_price = position['sl_price']
 
                     # Проверка TP/SL
                     if row['high'] >= tp:
                         exit_price = tp
-                    elif row['low'] <= sl:
-                        exit_price = sl
+                    elif row['low'] <= sl_price:
+                        exit_price = sl_price
                     else:
                         continue
 
@@ -197,11 +197,11 @@ class AdvancedOptimizer:
         print()
 
         tested = 0
-        for sl, tp, min_adx, max_adx, min_rsi, max_rsi, vol, ema in configs:
+        for sl_price, tp, min_adx, max_adx, min_rsi, max_rsi, vol, ema in configs:
             tested += 1
 
             result = self.backtest_config(
-                sl, tp, min_adx, max_adx,
+                sl_price, tp, min_adx, max_adx,
                 min_rsi, max_rsi, vol, ema
             )
 
@@ -210,7 +210,7 @@ class AdvancedOptimizer:
 
                 if result['pf'] >= 1.5:  # Показать только лучшие
                     print(f"[{tested:4d}] ✅ PF={result['pf']:.2f} WR={result['win_rate']:.1f}% "
-                          f"SL={sl}x TP={tp}x ADX={min_adx}-{max_adx} "
+                          f"SL={sl_price}x TP={tp}x ADX={min_adx}-{max_adx} "
                           f"RSI={min_rsi}-{max_rsi} Vol={vol}x EMA={ema}")
 
             if tested % 100 == 0:

@@ -747,14 +747,14 @@ class UnifiedScenarioMatcher:
             sl_percent = best_match.get("sl_percent", 1.5)
 
             if direction.upper() == "LONG":
-                tp1 = round(current_price * (1 + tp1_percent / 100), 2)
-                tp2 = round(current_price * (1 + tp2_percent / 100), 2)
-                tp3 = round(current_price * (1 + tp3_percent / 100), 2)
+                tp1_price = round(current_price * (1 + tp1_percent / 100), 2)
+                tp2_price = round(current_price * (1 + tp2_percent / 100), 2)
+                tp3_price = round(current_price * (1 + tp3_percent / 100), 2)
                 stop_loss = round(current_price * (1 - sl_percent / 100), 2)
             else:
-                tp1 = round(current_price * (1 - tp1_percent / 100), 2)
-                tp2 = round(current_price * (1 - tp2_percent / 100), 2)
-                tp3 = round(current_price * (1 - tp3_percent / 100), 2)
+                tp1_price = round(current_price * (1 - tp1_percent / 100), 2)
+                tp2_price = round(current_price * (1 - tp2_percent / 100), 2)
+                tp3_price = round(current_price * (1 - tp3_percent / 100), 2)
                 stop_loss = round(current_price * (1 + sl_percent / 100), 2)
 
             result = {
@@ -773,9 +773,9 @@ class UnifiedScenarioMatcher:
                 "conditions": best_match.get("conditions", {}),
                 "description": best_match.get("description", ""),
                 "timeframe": best_match.get("timeframe", "1H"),
-                "tp1": tp1,
-                "tp2": tp2,
-                "tp3": tp3,
+                "tp1_price": tp1_price,
+                "tp2_price": tp2_price,
+                "tp3_price": tp3_price,
                 "stop_loss": stop_loss,  # ✅ stop_loss (с underscore!)
                 "adx": adx_data,  # ✅ adx_data (с underscore!)
                 "mtf_alignment": mtf_result,  # ✅ mtf_result (с underscore!)

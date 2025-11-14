@@ -75,10 +75,10 @@ class ScenarioManager:
                         scenario_id TEXT NOT NULL,
                         status TEXT NOT NULL,
                         price_entry REAL NOT NULL,
-                        sl REAL NOT NULL,
-                        tp1 REAL NOT NULL,
-                        tp2 REAL,
-                        tp3 REAL,
+                        sl_price REAL NOT NULL,
+                        tp1_price REAL NOT NULL,
+                        tp2_price REAL,
+                        tp3_price REAL,
                         rr1 REAL NOT NULL,
                         rr2 REAL,
                         rr3 REAL,
@@ -392,7 +392,7 @@ class ScenarioManager:
                 await db.execute("""
                     INSERT OR REPLACE INTO trading_signals (
                         signal_id, symbol, side, scenario_id, status, price_entry,
-                        sl, tp1, tp2, tp3, rr1, rr2, rr3, confidence_score,
+                        sl_price, tp1_price, tp2_price, tp3_price, rr1, rr2, rr3, confidence_score,
                         reason, indicators, market_conditions, news_impact, timestamp
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
@@ -402,10 +402,10 @@ class ScenarioManager:
                     signal.scenario_id,
                     signal.status.value,
                     signal.price_entry,
-                    signal.sl,
-                    signal.tp1,
-                    signal.tp2,
-                    signal.tp3,
+                    signal.sl_price,
+                    signal.tp1_price,
+                    signal.tp2_price,
+                    signal.tp3_price,
                     signal.rr1,
                     signal.rr2,
                     signal.rr3,

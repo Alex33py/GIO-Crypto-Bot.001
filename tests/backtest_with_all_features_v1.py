@@ -316,15 +316,15 @@ class FullBacktestWithScenarios:
 
                     # TP/SL
                     tp = position['entry_price'] + atr * 4.0
-                    sl = position['entry_price'] - atr * 2.0
+                    sl_price = position['entry_price'] - atr * 2.0
 
                     # Trailing
                     price_gain = position['highest_price'] - position['entry_price']
                     if price_gain > atr * 1.5:
                         trailing_sl = position['highest_price'] - atr * 1.0
-                        sl = max(sl, trailing_sl)
+                        sl_price = max(sl_price, trailing_sl)
 
-                    should_close = (row['rsi'] > 75 or row['close'] >= tp or row['close'] <= sl)
+                    should_close = (row['rsi'] > 75 or row['close'] >= tp or row['close'] <= sl_price)
 
                 elif direction == 'SHORT':
                     # Обновить lowest price
@@ -333,15 +333,15 @@ class FullBacktestWithScenarios:
 
                     # TP/SL ДЛЯ SHORT
                     tp = position['entry_price'] - atr * 4.0
-                    sl = position['entry_price'] + atr * 2.0
+                    sl_price = position['entry_price'] + atr * 2.0
 
                     # Trailing ДЛЯ SHORT
                     price_loss = position['entry_price'] - position['lowest_price']
                     if price_loss > atr * 1.5:
                         trailing_sl = position['lowest_price'] + atr * 1.0
-                        sl = min(sl, trailing_sl)
+                        sl_price = min(sl_price, trailing_sl)
 
-                    should_close = (row['rsi'] < 25 or row['close'] <= tp or row['close'] >= sl)
+                    should_close = (row['rsi'] < 25 or row['close'] <= tp or row['close'] >= sl_price)
 
                 if should_close:
                     # PnL с учётом направления

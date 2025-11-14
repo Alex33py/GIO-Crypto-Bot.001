@@ -79,10 +79,10 @@ class PositionTracker:
             entry_price = safe_float(signal['price_entry'])
 
             # Уровни
-            sl = safe_float(signal['stop_loss'])
-            tp1 = safe_float(signal['take_profit_1'])
-            tp2 = safe_float(signal['take_profit_2'])
-            tp3 = safe_float(signal['take_profit_3'])
+            sl_price = safe_float(signal['stop_loss'])
+            tp1_price = safe_float(signal['take_profit_1'])
+            tp2_price = safe_float(signal['take_profit_2'])
+            tp3_price = safe_float(signal['take_profit_3'])
 
             # Флаги уже достигнутых уровней
             tp1_hit = signal['tp1_hit'] == 1
@@ -92,55 +92,55 @@ class PositionTracker:
 
             if side == "LONG":
                 # Проверка SL (приоритет)
-                if current_price <= sl and not sl_hit:
+                if current_price <= sl_price and not sl_hit:
                     pnl = ((current_price - entry_price) / entry_price) * 100
                     self.recorder.record_fill(signal_id, "SL", current_price, 100.0, pnl)
                     logger.warning(f"🛑 SL достигнут: Сигнал #{signal_id} @ {current_price} (P&L: {pnl:+.2f}%)")
                     return  # Позиция закрыта
 
                 # Проверка TP1 (25% позиции)
-                if current_price >= tp1 and not tp1_hit:
-                    pnl = ((tp1 - entry_price) / entry_price) * 100 * 0.25
-                    self.recorder.record_fill(signal_id, "TP1", tp1, 25.0, pnl)
-                    logger.info(f"🎯 TP1 достигнут: Сигнал #{signal_id} @ {tp1} (P&L: {pnl:+.2f}%)")
+                if current_price >= tp1_price and not tp1_hit:
+                    pnl = ((tp1_price - entry_price) / entry_price) * 100 * 0.25
+                    self.recorder.record_fill(signal_id, "TP1", tp1_price, 25.0, pnl)
+                    logger.info(f"🎯 TP1 достигнут: Сигнал #{signal_id} @ {tp1_price} (P&L: {pnl:+.2f}%)")
 
                 # Проверка TP2 (50% позиции)
-                if current_price >= tp2 and not tp2_hit and tp1_hit:
-                    pnl = ((tp2 - entry_price) / entry_price) * 100 * 0.50
-                    self.recorder.record_fill(signal_id, "TP2", tp2, 50.0, pnl)
-                    logger.info(f"🎯 TP2 достигнут: Сигнал #{signal_id} @ {tp2} (P&L: {pnl:+.2f}%)")
+                if current_price >= tp2_price and not tp2_hit and tp1_hit:
+                    pnl = ((tp2_price - entry_price) / entry_price) * 100 * 0.50
+                    self.recorder.record_fill(signal_id, "TP2", tp2_price, 50.0, pnl)
+                    logger.info(f"🎯 TP2 достигнут: Сигнал #{signal_id} @ {tp2_price} (P&L: {pnl:+.2f}%)")
 
                 # Проверка TP3 (25% позиции)
-                if current_price >= tp3 and not tp3_hit and tp2_hit:
-                    pnl = ((tp3 - entry_price) / entry_price) * 100 * 0.25
-                    self.recorder.record_fill(signal_id, "TP3", tp3, 25.0, pnl)
-                    logger.info(f"🎯 TP3 достигнут: Сигнал #{signal_id} @ {tp3} (P&L: {pnl:+.2f}%)")
+                if current_price >= tp3_price and not tp3_hit and tp2_hit:
+                    pnl = ((tp3_price - entry_price) / entry_price) * 100 * 0.25
+                    self.recorder.record_fill(signal_id, "TP3", tp3_price, 25.0, pnl)
+                    logger.info(f"🎯 TP3 достигнут: Сигнал #{signal_id} @ {tp3_price} (P&L: {pnl:+.2f}%)")
 
             else:  # SHORT
                 # Проверка SL
-                if current_price >= sl and not sl_hit:
+                if current_price >= sl_price and not sl_hit:
                     pnl = ((entry_price - current_price) / entry_price) * 100
                     self.recorder.record_fill(signal_id, "SL", current_price, 100.0, pnl)
                     logger.warning(f"🛑 SL достигнут: Сигнал #{signal_id} @ {current_price} (P&L: {pnl:+.2f}%)")
                     return
 
                 # TP1
-                if current_price <= tp1 and not tp1_hit:
-                    pnl = ((entry_price - tp1) / entry_price) * 100 * 0.25
-                    self.recorder.record_fill(signal_id, "TP1", tp1, 25.0, pnl)
-                    logger.info(f"🎯 TP1 достигнут: Сигнал #{signal_id} @ {tp1} (P&L: {pnl:+.2f}%)")
+                if current_price <= tp1_price and not tp1_hit:
+                    pnl = ((entry_price - tp1_price) / entry_price) * 100 * 0.25
+                    self.recorder.record_fill(signal_id, "TP1", tp1_price, 25.0, pnl)
+                    logger.info(f"🎯 TP1 достигнут: Сигнал #{signal_id} @ {tp1_price} (P&L: {pnl:+.2f}%)")
 
                 # TP2
-                if current_price <= tp2 and not tp2_hit and tp1_hit:
-                    pnl = ((entry_price - tp2) / entry_price) * 100 * 0.50
-                    self.recorder.record_fill(signal_id, "TP2", tp2, 50.0, pnl)
-                    logger.info(f"🎯 TP2 достигнут: Сигнал #{signal_id} @ {tp2} (P&L: {pnl:+.2f}%)")
+                if current_price <= tp2_price and not tp2_hit and tp1_hit:
+                    pnl = ((entry_price - tp2_price) / entry_price) * 100 * 0.50
+                    self.recorder.record_fill(signal_id, "TP2", tp2_price, 50.0, pnl)
+                    logger.info(f"🎯 TP2 достигнут: Сигнал #{signal_id} @ {tp2_price} (P&L: {pnl:+.2f}%)")
 
                 # TP3
-                if current_price <= tp3 and not tp3_hit and tp2_hit:
-                    pnl = ((entry_price - tp3) / entry_price) * 100 * 0.25
-                    self.recorder.record_fill(signal_id, "TP3", tp3, 25.0, pnl)
-                    logger.info(f"🎯 TP3 достигнут: Сигнал #{signal_id} @ {tp3} (P&L: {pnl:+.2f}%)")
+                if current_price <= tp3_price and not tp3_hit and tp2_hit:
+                    pnl = ((entry_price - tp3_price) / entry_price) * 100 * 0.25
+                    self.recorder.record_fill(signal_id, "TP3", tp3_price, 25.0, pnl)
+                    logger.info(f"🎯 TP3 достигнут: Сигнал #{signal_id} @ {tp3_price} (P&L: {pnl:+.2f}%)")
 
         except Exception as e:
             logger.error(f"❌ Ошибка проверки уровней: {e}")

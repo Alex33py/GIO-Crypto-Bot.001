@@ -31,9 +31,9 @@ class PositionNotifications:
         """
         self.telegram = telegram_handler
         self.notified_signals = {
-            'tp1': set(),  # ID сигналов, для которых отправлено уведомление TP1
-            'tp2': set(),  # ID сигналов, для которых отправлено уведомление TP2
-            'tp3': set(),  # ID сигналов, для которых отправлено уведомление TP3
+            'tp1_price': set(),  # ID сигналов, для которых отправлено уведомление TP1
+            'tp2_price': set(),  # ID сигналов, для которых отправлено уведомление TP2
+            'tp3_price': set(),  # ID сигналов, для которых отправлено уведомление TP3
             'stop': set(), # ID сигналов, для которых отправлено уведомление STOP
             'early_exit': set()  # ID сигналов с досрочным выходом
         }
@@ -52,9 +52,9 @@ class PositionNotifications:
             direction = signal.get('direction', 'N/A')
             entry_price = signal.get('entry_price', 0)
             current_price = signal.get('current_price', 0)
-            tp1 = signal.get('tp1', 0)
-            tp2 = signal.get('tp2', 0)
-            tp3 = signal.get('tp3', 0)
+            tp1_price = signal.get('tp1_price', 0)
+            tp2_price = signal.get('tp2_price', 0)
+            tp3_price = signal.get('tp3_price', 0)
             stop_loss = signal.get('stop_loss', 0)
             quality_score = signal.get('quality_score', 0)
 
@@ -62,19 +62,19 @@ class PositionNotifications:
             is_risky = quality_score < 50
 
             # Проверка достижения TP1
-            if self._check_tp_reached(current_price, tp1, direction) and signal_id not in self.notified_signals['tp1']:
+            if self._check_tp_reached(current_price, tp1_price, direction) and signal_id not in self.notified_signals['tp1_price']:
                 await self._send_tp1_notification(signal, is_risky)
-                self.notified_signals['tp1'].add(signal_id)
+                self.notified_signals['tp1_price'].add(signal_id)
 
             # Проверка достижения TP2
-            elif self._check_tp_reached(current_price, tp2, direction) and signal_id not in self.notified_signals['tp2']:
+            elif self._check_tp_reached(current_price, tp2_price, direction) and signal_id not in self.notified_signals['tp2_price']:
                 await self._send_tp2_notification(signal)
-                self.notified_signals['tp2'].add(signal_id)
+                self.notified_signals['tp2_price'].add(signal_id)
 
             # Проверка достижения TP3
-            elif self._check_tp_reached(current_price, tp3, direction) and signal_id not in self.notified_signals['tp3']:
+            elif self._check_tp_reached(current_price, tp3_price, direction) and signal_id not in self.notified_signals['tp3_price']:
                 await self._send_tp3_notification(signal)
-                self.notified_signals['tp3'].add(signal_id)
+                self.notified_signals['tp3_price'].add(signal_id)
 
             # Проверка активации стопа
             elif self._check_stop_hit(current_price, stop_loss, direction) and signal_id not in self.notified_signals['stop']:
@@ -133,7 +133,7 @@ class PositionNotifications:
             direction = signal.get('direction', 'N/A')
             entry_price = signal.get('entry_price', 0)
             current_price = signal.get('current_price', 0)
-            tp1 = signal.get('tp1', 0)
+            tp1_price = signal.get('tp1_price', 0)
             profit_percent = ((current_price - entry_price) / entry_price * 100) if direction == "LONG" else ((entry_price - current_price) / entry_price * 100)
 
             # Формируем сообщение
@@ -144,7 +144,7 @@ class PositionNotifications:
                     f"📊 {symbol} {direction}\n"
                     f"💰 Entry: ${entry_price:.2f}\n"
                     f"📈 Current: ${current_price:.2f}\n"
-                    f"🎯 TP1: ${tp1:.2f}\n"
+                    f"🎯 TP1: ${tp1_price:.2f}\n"
                     f"💵 Profit: {profit_percent:.2f}%\n\n"
                     f"✅ Рекомендация:\n"
                     f"   • Зафиксируй 50% позиции\n"
@@ -157,7 +157,7 @@ class PositionNotifications:
                     f"📊 {symbol} {direction}\n"
                     f"💰 Entry: ${entry_price:.2f}\n"
                     f"📈 Current: ${current_price:.2f}\n"
-                    f"🎯 TP1: ${tp1:.2f}\n"
+                    f"🎯 TP1: ${tp1_price:.2f}\n"
                     f"💵 Profit: {profit_percent:.2f}%\n\n"
                     f"✅ Рекомендация:\n"
                     f"   • Зафиксируй 25% позиции\n"
@@ -183,7 +183,7 @@ class PositionNotifications:
             direction = signal.get('direction', 'N/A')
             entry_price = signal.get('entry_price', 0)
             current_price = signal.get('current_price', 0)
-            tp2 = signal.get('tp2', 0)
+            tp2_price = signal.get('tp2_price', 0)
             profit_percent = ((current_price - entry_price) / entry_price * 100) if direction == "LONG" else ((entry_price - current_price) / entry_price * 100)
 
             message = (
@@ -191,7 +191,7 @@ class PositionNotifications:
                 f"📊 {symbol} {direction}\n"
                 f"💰 Entry: ${entry_price:.2f}\n"
                 f"📈 Current: ${current_price:.2f}\n"
-                f"🎯 TP2: ${tp2:.2f}\n"
+                f"🎯 TP2: ${tp2_price:.2f}\n"
                 f"💵 Profit: {profit_percent:.2f}%\n\n"
                 f"✅ Рекомендация:\n"
                 f"   • Зафиксируй 50% позиции\n"
@@ -217,7 +217,7 @@ class PositionNotifications:
             direction = signal.get('direction', 'N/A')
             entry_price = signal.get('entry_price', 0)
             current_price = signal.get('current_price', 0)
-            tp3 = signal.get('tp3', 0)
+            tp3_price = signal.get('tp3_price', 0)
             profit_percent = ((current_price - entry_price) / entry_price * 100) if direction == "LONG" else ((entry_price - current_price) / entry_price * 100)
 
             message = (
@@ -225,7 +225,7 @@ class PositionNotifications:
                 f"📊 {symbol} {direction}\n"
                 f"💰 Entry: ${entry_price:.2f}\n"
                 f"📈 Current: ${current_price:.2f}\n"
-                f"🎯 TP3: ${tp3:.2f}\n"
+                f"🎯 TP3: ${tp3_price:.2f}\n"
                 f"💵 Profit: {profit_percent:.2f}%\n\n"
                 f"✅ Рекомендация:\n"
                 f"   • Трейлим остаток (trailing stop)\n"
@@ -308,14 +308,14 @@ class PositionNotifications:
             direction = signal.get('direction', 'N/A')
             entry_price = signal.get('entry_price', 0)
             current_price = signal.get('current_price', 0)
-            tp2 = signal.get('tp2', 0)
+            tp2_price = signal.get('tp2_price', 0)
 
             message = (
                 f"⚠️ ДОСРОЧНЫЙ ВЫХОД ⚠️\n\n"
                 f"📊 {symbol} {direction}\n"
                 f"💰 Entry: ${entry_price:.2f}\n"
                 f"📈 Current: ${current_price:.2f}\n"
-                f"🎯 Рекомендуемый выход: ${tp2:.2f}\n\n"
+                f"🎯 Рекомендуемый выход: ${tp2_price:.2f}\n\n"
                 f"⚠️ Причина:\n"
                 f"   • Объёмы падают\n"
                 f"   • Подтверждения нет\n"

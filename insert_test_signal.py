@@ -10,7 +10,7 @@ def insert_test_signal():
     now_str = datetime.utcnow().isoformat()
 
     cursor.execute("""
-    INSERT INTO signals (symbol, direction, entry_price, tp1, tp2, tp3, stop_loss, status, timestamp)
+    INSERT INTO signals (symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, stop_loss, status, timestamp)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, ("ETHUSDT", "LONG", 3400.0, 3500.0, 3600.0, 3700.0, 3300.0, "active", now_str))
 

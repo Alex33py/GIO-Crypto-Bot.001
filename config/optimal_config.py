@@ -45,7 +45,7 @@ OPTIMAL_CONFIG = {
 GRID_SEARCH_TOP_5 = [
     {
         'rank': 1,
-        'sl': 1.2,
+        'sl_price': 1.2,
         'tp': 4.5,
         'rr': 3.75,
         'pf': 3.77,
@@ -55,7 +55,7 @@ GRID_SEARCH_TOP_5 = [
     },
     {
         'rank': 2,
-        'sl': 1.2,
+        'sl_price': 1.2,
         'tp': 4.0,
         'rr': 3.33,
         'pf': 3.35,
@@ -65,7 +65,7 @@ GRID_SEARCH_TOP_5 = [
     },
     {
         'rank': 3,
-        'sl': 1.5,
+        'sl_price': 1.5,
         'tp': 4.5,
         'rr': 3.0,
         'pf': 3.01,
@@ -75,7 +75,7 @@ GRID_SEARCH_TOP_5 = [
     },
     {
         'rank': 4,
-        'sl': 1.2,
+        'sl_price': 1.2,
         'tp': 3.5,
         'rr': 2.92,
         'pf': 2.93,
@@ -85,7 +85,7 @@ GRID_SEARCH_TOP_5 = [
     },
     {
         'rank': 5,
-        'sl': 1.5,
+        'sl_price': 1.5,
         'tp': 4.0,
         'rr': 2.67,
         'pf': 2.68,

@@ -65,10 +65,10 @@ class TradingSignal:
     status: SignalStatusEnum
     level: SignalLevelEnum
     price_entry: float
-    sl: float
-    tp1: float
-    tp2: float
-    tp3: float
+    sl_price: float
+    tp1_price: float
+    tp2_price: float
+    tp3_price: float
     rr1: float  # Risk/Reward ratio для TP1
     rr2: float  # Risk/Reward ratio для TP2
     rr3: float  # Risk/Reward ratio для TP3

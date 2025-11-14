@@ -1434,7 +1434,7 @@ class GIOCryptoBot:
 
             # Валидация
             if entry_price == 0 or sl_price == 0:
-                logger.error(f"❌ Невалидный сигнал для {symbol}: entry={entry_price}, sl={sl_price}")
+                logger.error(f"❌ Невалидный сигнал для {symbol}: entry={entry_price}, sl_price={sl_price}")
                 return None
 
             # ШАГ 5: ПОДГОТОВКА AI МЕТАДАННЫХ
@@ -1457,9 +1457,9 @@ class GIOCryptoBot:
                 "scenario_id": signal_data.get('scenario_id'),
                 "scenario_score": signal_data.get('quality_score', 0) * 100,
                 "confidence": signal_data.get('quality_score', 0) * 100,
-                "tp1_price": signal_data.get('tp1', 0),
-                "tp2_price": signal_data.get('tp2', 0),
-                "tp3_price": signal_data.get('tp3', 0),
+                "tp1_price": signal_data.get('tp1_price', 0),
+                "tp2_price": signal_data.get('tp2_price', 0),
+                "tp3_price": signal_data.get('tp3_price', 0),
                 "sl_price": sl_price,  # ← РАССЧИТАННЫЙ SL
                 "status": "ACTIVE"
             }
@@ -1484,14 +1484,14 @@ class GIOCryptoBot:
         """Расчёт Risk/Reward"""
         try:
             entry = float(signal.get('entry_price', 0))
-            sl = float(signal.get('stop_loss', 0))
-            tp2 = float(signal.get('tp2', 0))
+            sl_price = float(signal.get('stop_loss', 0))
+            tp2_price = float(signal.get('tp2_price', 0))
 
-            if entry == 0 or sl == 0 or tp2 == 0:
+            if entry == 0 or sl_price == 0 or tp2_price == 0:
                 return 0
 
-            risk = abs(entry - sl)
-            reward = abs(tp2 - entry)
+            risk = abs(entry - sl_price)
+            reward = abs(tp2_price - entry)
 
             if risk == 0:
                 return 0
@@ -1524,18 +1524,18 @@ class GIOCryptoBot:
         if not atr or atr <= 0:
             logger.warning(f"⚠️ Invalid ATR={atr}, using 2% fixed SL")
             if direction == "LONG":
-                sl = entry * 0.98  # -2%
+                sl_price = entry * 0.98  # -2%
             else:  # SHORT
-                sl = entry * 1.02  # +2%
-            return round(sl, 2)
+                sl_price = entry * 1.02  # +2%
+            return round(sl_price, 2)
 
         # Расчёт на основе ATR
         if direction == "LONG":
-            sl = entry - (atr * multiplier)
+            sl_price = entry - (atr * multiplier)
         else:  # SHORT
-            sl = entry + (atr * multiplier)
+            sl_price = entry + (atr * multiplier)
 
-        return round(sl, 2)
+        return round(sl_price, 2)
 
     def _prepare_ai_metadata(
         self,
@@ -1609,31 +1609,31 @@ class GIOCryptoBot:
         """Расчёт Risk/Reward с детальным логированием"""
         try:
             entry = float(signal.get('entry_price', 0))
-            sl = float(signal.get('stop_loss', 0))
-            tp2 = float(signal.get('tp2', 0))
+            sl_price = float(signal.get('stop_loss', 0))
+            tp2_price = float(signal.get('tp2_price', 0))
 
             # Валидация
             if entry == 0:
                 logger.warning(f"⚠️ RR calculation: Entry price = 0 for {signal.get('symbol', 'Unknown')}")
                 return 0
 
-            if sl == 0:
+            if sl_price == 0:
                 logger.warning(f"⚠️ RR calculation: Stop Loss = 0 for {signal.get('symbol', 'Unknown')}")
                 return 0
 
-            if tp2 == 0:
+            if tp2_price == 0:
                 logger.warning(f"⚠️ RR calculation: TP2 = 0 for {signal.get('symbol', 'Unknown')}")
                 return 0
 
-            risk = abs(entry - sl)
-            reward = abs(tp2 - entry)
+            risk = abs(entry - sl_price)
+            reward = abs(tp2_price - entry)
 
             if risk == 0:
-                logger.warning(f"⚠️ RR calculation: Risk = 0 (entry={entry}, sl={sl})")
+                logger.warning(f"⚠️ RR calculation: Risk = 0 (entry={entry}, sl_price={sl_price})")
                 return 0
 
             rr = reward / risk
-            logger.debug(f"📊 RR: Entry={entry:.2f}, SL={sl:.2f}, TP2={tp2:.2f} → Risk={risk:.2f}, Reward={reward:.2f}, RR=1:{rr:.2f}")
+            logger.debug(f"📊 RR: Entry={entry:.2f}, SL={sl_price:.2f}, TP2={tp2_price:.2f} → Risk={risk:.2f}, Reward={reward:.2f}, RR=1:{rr:.2f}")
 
             return rr
 
@@ -1701,9 +1701,9 @@ class GIOCryptoBot:
             text += f"  TP2: ${signal_data['tp2_price']:.2f}\n"
             text += f"  TP3: ${signal_data['tp3_price']:.2f}\n\n"
 
-            sl = signal_data.get('sl_price')
-            if sl:
-                text += f"🛑 Stop Loss: ${sl:.2f}\n\n"
+            sl_price = signal_data.get('sl_price')
+            if sl_price:
+                text += f"🛑 Stop Loss: ${sl_price:.2f}\n\n"
 
             if ai_metadata:
                 text += f"🤖 *AI Analysis:*\n"
@@ -2372,7 +2372,7 @@ class GIOCryptoBot:
 
         # ИСПРАВЛЕНО: Добавляем direction в запрос
         cursor.execute("""
-            SELECT id, symbol, direction, entry_price, tp1, tp2, tp3, sl, stop_loss, status
+            SELECT id, symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, sl_price, stop_loss, status
             FROM signals
             WHERE status='open'
         """)
@@ -2380,10 +2380,10 @@ class GIOCryptoBot:
         signals = cursor.fetchall()
 
         for sig in signals:
-            sig_id, symbol, direction, entry, tp1, tp2, tp3, sl, stop_loss, status = sig
+            sig_id, symbol, direction, entry, tp1_price, tp2_price, tp3_price, sl_price, stop_loss, status = sig
 
             # Используем любое доступное поле для SL
-            actual_sl = sl if sl and sl > 0 else stop_loss
+            actual_sl = sl_price if sl_price and sl_price > 0 else stop_loss
 
             price = current_prices.get(symbol)
             if price is None:
@@ -2401,42 +2401,42 @@ class GIOCryptoBot:
                         closed = True
                         close_reason = "stop_loss"
                         roi = ((price - entry) / entry) * 100 if entry else 0
-                        logger.info(f"🔴 LONG SL hit: {symbol} at {price:.2f} (entry={entry:.2f}, sl={actual_sl:.2f}, ROI={roi:.2f}%)")
+                        logger.info(f"🔴 LONG SL hit: {symbol} at {price:.2f} (entry={entry:.2f}, sl_price={actual_sl:.2f}, ROI={roi:.2f}%)")
                 else:  # SHORT
                     # SHORT: SL выше entry, цена выросла
                     if price >= actual_sl:
                         closed = True
                         close_reason = "stop_loss"
                         roi = ((entry - price) / entry) * 100 if entry else 0  # ← Инвертирован!
-                        logger.info(f"🔴 SHORT SL hit: {symbol} at {price:.2f} (entry={entry:.2f}, sl={actual_sl:.2f}, ROI={roi:.2f}%)")
+                        logger.info(f"🔴 SHORT SL hit: {symbol} at {price:.2f} (entry={entry:.2f}, sl_price={actual_sl:.2f}, ROI={roi:.2f}%)")
 
             # ✅ Проверка TP с учётом направления
             if not closed:
                 if direction == "LONG":
-                    if tp1 and price >= tp1:
+                    if tp1_price and price >= tp1_price:
                         closed = True
-                        close_reason = "tp1"
+                        close_reason = "tp1_price"
                         roi = ((price - entry) / entry) * 100 if entry else 0
-                    elif tp2 and price >= tp2:
+                    elif tp2_price and price >= tp2_price:
                         closed = True
-                        close_reason = "tp2"
+                        close_reason = "tp2_price"
                         roi = ((price - entry) / entry) * 100 if entry else 0
-                    elif tp3 and price >= tp3:
+                    elif tp3_price and price >= tp3_price:
                         closed = True
-                        close_reason = "tp3"
+                        close_reason = "tp3_price"
                         roi = ((price - entry) / entry) * 100 if entry else 0
                 else:  # SHORT
-                    if tp1 and price <= tp1:
+                    if tp1_price and price <= tp1_price:
                         closed = True
-                        close_reason = "tp1"
+                        close_reason = "tp1_price"
                         roi = ((entry - price) / entry) * 100 if entry else 0
-                    elif tp2 and price <= tp2:
+                    elif tp2_price and price <= tp2_price:
                         closed = True
-                        close_reason = "tp2"
+                        close_reason = "tp2_price"
                         roi = ((entry - price) / entry) * 100 if entry else 0
-                    elif tp3 and price <= tp3:
+                    elif tp3_price and price <= tp3_price:
                         closed = True
-                        close_reason = "tp3"
+                        close_reason = "tp3_price"
                         roi = ((entry - price) / entry) * 100 if entry else 0
 
             if closed:

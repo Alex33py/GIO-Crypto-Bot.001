@@ -33,9 +33,9 @@ class ROIMetrics:
     direction: str
     entry_price: float
     stop_loss: float
-    tp1: float
-    tp2: float
-    tp3: float
+    tp1_price: float
+    tp2_price: float
+    tp3_price: float
     tp1_hit: bool = False
     tp2_hit: bool = False
     tp3_hit: bool = False
@@ -276,10 +276,10 @@ class ROITracker:
             symbol=signal["symbol"],
             direction=signal["direction"],
             entry_price=signal["entry_price"],
-            stop_loss=signal.get("sl") or signal.get("stop_loss"),
-            tp1=signal.get("tp1", 0),
-            tp2=signal.get("tp2", 0),
-            tp3=signal.get("tp3", 0),
+            stop_loss=signal.get("sl_price") or signal.get("stop_loss"),
+            tp1_price=signal.get("tp1_price", 0),
+            tp2_price=signal.get("tp2_price", 0),
+            tp3_price=signal.get("tp3_price", 0),
             quality_score=signal.get("quality_score", 0),
         )
 
@@ -303,29 +303,29 @@ class ROITracker:
         direction = metrics.direction.lower()
 
         if direction == "long":
-            if not metrics.tp3_hit and current_price >= metrics.tp3:
+            if not metrics.tp3_hit and current_price >= metrics.tp3_price:
                 metrics.tp3_hit = True
-                event = await self._handle_tp_hit(metrics, "tp3", current_price)
-            elif not metrics.tp2_hit and current_price >= metrics.tp2:
+                event = await self._handle_tp_hit(metrics, "tp3_price", current_price)
+            elif not metrics.tp2_hit and current_price >= metrics.tp2_price:
                 metrics.tp2_hit = True
-                event = await self._handle_tp_hit(metrics, "tp2", current_price)
-            elif not metrics.tp1_hit and current_price >= metrics.tp1:
+                event = await self._handle_tp_hit(metrics, "tp2_price", current_price)
+            elif not metrics.tp1_hit and current_price >= metrics.tp1_price:
                 metrics.tp1_hit = True
-                event = await self._handle_tp_hit(metrics, "tp1", current_price)
+                event = await self._handle_tp_hit(metrics, "tp1_price", current_price)
             elif not metrics.sl_hit and current_price <= metrics.stop_loss:
                 metrics.sl_hit = True
                 event = await self._handle_sl_hit(metrics, current_price)
 
         elif direction == "short":
-            if not metrics.tp3_hit and current_price <= metrics.tp3:
+            if not metrics.tp3_hit and current_price <= metrics.tp3_price:
                 metrics.tp3_hit = True
-                event = await self._handle_tp_hit(metrics, "tp3", current_price)
-            elif not metrics.tp2_hit and current_price <= metrics.tp2:
+                event = await self._handle_tp_hit(metrics, "tp3_price", current_price)
+            elif not metrics.tp2_hit and current_price <= metrics.tp2_price:
                 metrics.tp2_hit = True
-                event = await self._handle_tp_hit(metrics, "tp2", current_price)
-            elif not metrics.tp1_hit and current_price <= metrics.tp1:
+                event = await self._handle_tp_hit(metrics, "tp2_price", current_price)
+            elif not metrics.tp1_hit and current_price <= metrics.tp1_price:
                 metrics.tp1_hit = True
-                event = await self._handle_tp_hit(metrics, "tp1", current_price)
+                event = await self._handle_tp_hit(metrics, "tp1_price", current_price)
             elif not metrics.sl_hit and current_price >= metrics.stop_loss:
                 metrics.sl_hit = True
                 event = await self._handle_sl_hit(metrics, current_price)
@@ -339,9 +339,9 @@ class ROITracker:
         self, metrics: ROIMetrics, tp_level: str, price: float
     ) -> Dict:
         """Обработка достижения Take Profit"""
-        if tp_level == "tp1":
+        if tp_level == "tp1_price":
             close_percent = self.tp1_percentage
-        elif tp_level == "tp2":
+        elif tp_level == "tp2_price":
             close_percent = self.tp2_percentage
         else:
             close_percent = self.tp3_percentage
@@ -381,7 +381,7 @@ class ROITracker:
 
         await self._send_tp_notification(metrics, tp_level, price, profit_percent)
 
-        if tp_level == "tp3" or (
+        if tp_level == "tp3_price" or (
             metrics.tp1_hit and metrics.tp2_hit and metrics.tp3_hit
         ):
             await self._close_signal(metrics, "completed")
@@ -459,7 +459,7 @@ class ROITracker:
         try:
             is_risky = metrics.quality_score < 50
 
-            if tp_level == "tp1":
+            if tp_level == "tp1_price":
                 if is_risky:
                     message = (
                         f"🎯 TP1 ДОСТИГНУТ (RISKY ENTRY) 🎯\n\n"
@@ -467,7 +467,7 @@ class ROITracker:
                         f"📊 {metrics.symbol} {metrics.direction.upper()}\n"
                         f"💰 Entry: ${metrics.entry_price:.2f}\n"
                         f"📈 Current: ${price:.2f}\n"
-                        f"🎯 TP1: ${metrics.tp1:.2f}\n"
+                        f"🎯 TP1: ${metrics.tp1_price:.2f}\n"
                         f"💵 Profit: {profit_percent:.2f}%\n\n"
                         f"✅ Рекомендация:\n"
                         f"   • Зафиксируй 50% позиции\n"
@@ -480,20 +480,20 @@ class ROITracker:
                         f"📊 {metrics.symbol} {metrics.direction.upper()}\n"
                         f"💰 Entry: ${metrics.entry_price:.2f}\n"
                         f"📈 Current: ${price:.2f}\n"
-                        f"🎯 TP1: ${metrics.tp1:.2f}\n"
+                        f"🎯 TP1: ${metrics.tp1_price:.2f}\n"
                         f"💵 Profit: {profit_percent:.2f}%\n\n"
                         f"✅ Рекомендация:\n"
                         f"   • Зафиксируй 25% позиции\n"
                         f"   • Переведи стоп в безубыток\n"
                         f"   • Остаток держим до TP2"
                     )
-            elif tp_level == "tp2":
+            elif tp_level == "tp2_price":
                 message = (
                     f"🎯 TP2 ДОСТИГНУТ 🎯\n\n"
                     f"📊 {metrics.symbol} {metrics.direction.upper()}\n"
                     f"💰 Entry: ${metrics.entry_price:.2f}\n"
                     f"📈 Current: ${price:.2f}\n"
-                    f"🎯 TP2: ${metrics.tp2:.2f}\n"
+                    f"🎯 TP2: ${metrics.tp2_price:.2f}\n"
                     f"💵 Profit: {profit_percent:.2f}%\n\n"
                     f"✅ Рекомендация:\n"
                     f"   • Зафиксируй 50% позиции\n"
@@ -506,7 +506,7 @@ class ROITracker:
                     f"📊 {metrics.symbol} {metrics.direction.upper()}\n"
                     f"💰 Entry: ${metrics.entry_price:.2f}\n"
                     f"📈 Current: ${price:.2f}\n"
-                    f"🎯 TP3: ${metrics.tp3:.2f}\n"
+                    f"🎯 TP3: ${metrics.tp3_price:.2f}\n"
                     f"💵 Profit: {profit_percent:.2f}%\n\n"
                     f"✅ Рекомендация:\n"
                     f"   • Трейлим остаток (trailing stop)\n"
@@ -649,8 +649,8 @@ class ROITracker:
                 await db.execute(
                     """
                     INSERT INTO signals (
-                        symbol, direction, entry_price, sl,
-                        tp1, tp2, tp3, status, timestamp
+                        symbol, direction, entry_price, sl_price,
+                        tp1_price, tp2_price, tp3_price, status, timestamp
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                     (
@@ -658,9 +658,9 @@ class ROITracker:
                         metrics.direction,
                         metrics.entry_price,
                         metrics.stop_loss,
-                        metrics.tp1,
-                        metrics.tp2,
-                        metrics.tp3,
+                        metrics.tp1_price,
+                        metrics.tp2_price,
+                        metrics.tp3_price,
                         metrics.status,
                         metrics.entry_time,
                     ),
@@ -816,8 +816,8 @@ class ROITracker:
             async with aiosqlite.connect(DATABASE_PATH) as db:
                 cursor = await db.execute(
                     """
-                    SELECT id, symbol, direction, entry_price, sl,
-                        tp1, tp2, tp3, status, timestamp
+                    SELECT id, symbol, direction, entry_price, sl_price,
+                        tp1_price, tp2_price, tp3_price, status, timestamp
                     FROM signals
                     WHERE status = 'active'
                     ORDER BY id DESC
@@ -841,9 +841,9 @@ class ROITracker:
                         direction=row[2],
                         entry_price=row[3],
                         stop_loss=row[4],
-                        tp1=row[5],
-                        tp2=row[6],
-                        tp3=row[7],
+                        tp1_price=row[5],
+                        tp2_price=row[6],
+                        tp3_price=row[7],
                         status=row[8],
                         entry_time=row[9] or datetime.now().isoformat(),
                     )

@@ -751,13 +751,13 @@ class EnhancedScenarioMatcher:
 
             if levels:
                 stop_loss = levels['sl_price']
-                tp1 = levels['tp_price']
+                tp1_price = levels['tp_price']
                 if direction == "long":
-                    tp2 = tp1 * 1.2
-                    tp3 = tp1 * 1.5
+                    tp2_price = tp1_price * 1.2
+                    tp3_price = tp1_price * 1.5
                 else:
-                    tp2 = tp1 * 0.85
-                    tp3 = tp1 * 0.70
+                    tp2_price = tp1_price * 0.85
+                    tp3_price = tp1_price * 0.70
             else:
                 levels = None
         else:
@@ -768,14 +768,14 @@ class EnhancedScenarioMatcher:
             sl_distance = price * 0.015
             if direction == "long":
                 stop_loss = entry_price - sl_distance
-                tp1 = entry_price * 1.015
-                tp2 = entry_price * 1.025
-                tp3 = entry_price * 1.04
+                tp1_price = entry_price * 1.015
+                tp2_price = entry_price * 1.025
+                tp3_price = entry_price * 1.04
             else:
                 stop_loss = entry_price + sl_distance
-                tp1 = entry_price * 0.985
-                tp2 = entry_price * 0.975
-                tp3 = entry_price * 0.96
+                tp1_price = entry_price * 0.985
+                tp2_price = entry_price * 0.975
+                tp3_price = entry_price * 0.96
 
         # Улучшить confidence через ConfidenceBooster
         base_confidence_str = confidence  # "low", "medium", "high"
@@ -812,9 +812,9 @@ class EnhancedScenarioMatcher:
 
             "entry_price": entry_price,
             "stop_loss": stop_loss,
-            "tp1": tp1,
-            "tp2": tp2,
-            "tp3": tp3,
+            "tp1_price": tp1_price,
+            "tp2_price": tp2_price,
+            "tp3_price": tp3_price,
 
             "confidence": final_confidence,
             "confidence_numeric": boosted_confidence,

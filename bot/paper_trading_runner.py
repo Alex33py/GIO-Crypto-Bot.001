@@ -62,7 +62,7 @@ class PaperTradingRunner:
                         'entry_bar': i,
                         'entry_time': current_bar['timestamp'],
                         'entry_price': signal['entry'],
-                        'sl': signal['sl'],
+                        'sl_price': signal['sl_price'],
                         'tp': signal['tp'],
                         'scenario': signal['scenario'],
                         'size_usd': position_size_usd,
@@ -70,7 +70,7 @@ class PaperTradingRunner:
                     }
 
                     logger.info(f"[{i:4d}] 🟢 ENTRY @ ${signal['entry']:,.2f} | {signal['scenario']}")
-                    logger.info(f"       SL: ${signal['sl']:,.2f} | TP: ${signal['tp']:,.2f}")
+                    logger.info(f"       SL: ${signal['sl_price']:,.2f} | TP: ${signal['tp']:,.2f}")
 
                     # Send telegram
                     try:
@@ -83,7 +83,7 @@ class PaperTradingRunner:
                 high = current_bar['high']
                 low = current_bar['low']
                 tp = self.position['tp']
-                sl = self.position['sl']
+                sl_price = self.position['sl_price']
 
                 exit_price = None
                 exit_reason = None
@@ -91,8 +91,8 @@ class PaperTradingRunner:
                 if high >= tp:
                     exit_price = tp
                     exit_reason = 'TP'
-                elif low <= sl:
-                    exit_price = sl
+                elif low <= sl_price:
+                    exit_price = sl_price
                     exit_reason = 'SL'
 
                 if exit_price:

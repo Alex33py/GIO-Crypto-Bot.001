@@ -18,10 +18,10 @@ def setup_database():
             symbol TEXT NOT NULL,
             direction TEXT NOT NULL,
             entry_price REAL NOT NULL,
-            tp1 REAL,
-            tp2 REAL,
-            tp3 REAL,
-            sl REAL,
+            tp1_price REAL,
+            tp2_price REAL,
+            tp3_price REAL,
+            sl_price REAL,
             status TEXT DEFAULT 'active',
             roi REAL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -42,7 +42,7 @@ def setup_database():
     ]
 
     cursor.executemany("""
-        INSERT INTO signals (symbol, direction, entry_price, tp1, tp2, tp3, sl, status, roi)
+        INSERT INTO signals (symbol, direction, entry_price, tp1_price, tp2_price, tp3_price, sl_price, status, roi)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, test_signals)
 

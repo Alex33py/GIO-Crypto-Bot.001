@@ -62,14 +62,14 @@ class GridSearchOptimizerDay5:
         disabled = grid['disabled_scenarios'][0]
 
         configs = []
-        for sl, tp, adx, rsi_min, rsi_max, vol in product(
+        for sl_price, tp, adx, rsi_min, rsi_max, vol in product(
             sl_mults, tp_mults, adx_vals, rsi_mins, rsi_maxs, vol_mults
         ):
             if rsi_min >= rsi_max:
                 continue
 
             configs.append({
-                'sl_multiplier': sl,
+                'sl_multiplier': sl_price,
                 'tp_multiplier': tp,
                 'min_adx': adx,
                 'rsi_min': rsi_min,

@@ -82,9 +82,9 @@ class ScenarioOptimizer:
                 entry = position['entry']
 
                 tp = entry + atr * tp_mult
-                sl = entry - atr * sl_mult
+                sl_price = entry - atr * sl_mult
 
-                if row['close'] >= tp or row['close'] <= sl:
+                if row['close'] >= tp or row['close'] <= sl_price:
                     pnl = row['close'] - entry
                     pnl_pct = (pnl / entry) * 100
 

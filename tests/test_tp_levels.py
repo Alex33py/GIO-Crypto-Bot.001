@@ -57,7 +57,7 @@ async def diagnose_and_fix_tp_levels():
             # Получить топ-10 прибыльных активных сигналов
             query = """
                 SELECT id, symbol, direction, entry_price, current_price,
-                       tp1, tp2, tp3, stop_loss,
+                       tp1_price, tp2_price, tp3_price, stop_loss,
                        COALESCE(roi, 0) as roi,
                        COALESCE(tp1_hit, 0) as tp1_hit,
                        COALESCE(tp2_hit, 0) as tp2_hit,
@@ -87,10 +87,10 @@ async def diagnose_and_fix_tp_levels():
                     direction,
                     entry,
                     current_price,
-                    tp1,
-                    tp2,
-                    tp3,
-                    sl,
+                    tp1_price,
+                    tp2_price,
+                    tp3_price,
+                    sl_price,
                     roi,
                     tp1_hit,
                     tp2_hit,
@@ -127,21 +127,21 @@ async def diagnose_and_fix_tp_levels():
 
                 print()
                 print(
-                    f"   TP1:           ${tp1:.4f} (hit: {'✅' if tp1_hit else '❌'})"
+                    f"   TP1:           ${tp1_price:.4f} (hit: {'✅' if tp1_hit else '❌'})"
                 )
                 print(
-                    f"   TP2:           ${tp2:.4f} (hit: {'✅' if tp2_hit else '❌'})"
+                    f"   TP2:           ${tp2_price:.4f} (hit: {'✅' if tp2_hit else '❌'})"
                 )
                 print(
-                    f"   TP3:           ${tp3:.4f} (hit: {'✅' if tp3_hit else '❌'})"
+                    f"   TP3:           ${tp3_price:.4f} (hit: {'✅' if tp3_hit else '❌'})"
                 )
-                print(f"   SL:            ${sl:.4f} (hit: {'✅' if sl_hit else '❌'})")
+                print(f"   SL:            ${sl_price:.4f} (hit: {'✅' if sl_hit else '❌'})")
                 print()
 
                 # === ДИАГНОСТИКА ===
 
                 # Проверка 1: TP = 0
-                if tp1 <= 0 or tp2 <= 0 or tp3 <= 0:
+                if tp1_price <= 0 or tp2_price <= 0 or tp3_price <= 0:
                     print(f"   ❌ ПРОБЛЕМА: TP не установлены")
                     issues_found += 1
 
@@ -163,7 +163,7 @@ async def diagnose_and_fix_tp_levels():
                     await db.execute(
                         """
                         UPDATE signals
-                        SET tp1 = ?, tp2 = ?, tp3 = ?, stop_loss = ?
+                        SET tp1_price = ?, tp2_price = ?, tp3_price = ?, stop_loss = ?
                         WHERE id = ?
                     """,
                         (new_tp1, new_tp2, new_tp3, new_sl, sig_id),
@@ -180,26 +180,26 @@ async def diagnose_and_fix_tp_levels():
                 # Проверка 2: Логика TP для SHORT
                 if direction.upper() == "SHORT":
                     # Для SHORT: TP ниже entry
-                    should_tp1 = current_price <= tp1
-                    should_tp2 = current_price <= tp2
-                    should_tp3 = current_price <= tp3
+                    should_tp1 = current_price <= tp1_price
+                    should_tp2 = current_price <= tp2_price
+                    should_tp3 = current_price <= tp3_price
 
                     print(f"   🎯 Анализ TP (SHORT):")
                     print(f"      Текущая цена: ${current_price:.4f}")
                     print(
-                        f"      TP1 @ ${tp1:.4f}: {'✅ ДА' if should_tp1 else '❌ НЕТ'} (цена {'≤' if should_tp1 else '>'} TP1)"
+                        f"      TP1 @ ${tp1_price:.4f}: {'✅ ДА' if should_tp1 else '❌ НЕТ'} (цена {'≤' if should_tp1 else '>'} TP1)"
                     )
                     print(
-                        f"      TP2 @ ${tp2:.4f}: {'✅ ДА' if should_tp2 else '❌ НЕТ'} (цена {'≤' if should_tp2 else '>'} TP2)"
+                        f"      TP2 @ ${tp2_price:.4f}: {'✅ ДА' if should_tp2 else '❌ НЕТ'} (цена {'≤' if should_tp2 else '>'} TP2)"
                     )
                     print(
-                        f"      TP3 @ ${tp3:.4f}: {'✅ ДА' if should_tp3 else '❌ НЕТ'} (цена {'≤' if should_tp3 else '>'} TP3)"
+                        f"      TP3 @ ${tp3_price:.4f}: {'✅ ДА' if should_tp3 else '❌ НЕТ'} (цена {'≤' if should_tp3 else '>'} TP3)"
                     )
                     print()
 
                     if should_tp1 and not tp1_hit:
                         print(f"   ⚠️ TP1 должен быть достигнут!")
-                        print(f"      ${current_price:.4f} <= ${tp1:.4f} = TRUE")
+                        print(f"      ${current_price:.4f} <= ${tp1_price:.4f} = TRUE")
                         issues_found += 1
 
                     if should_tp2 and not tp2_hit:
@@ -213,20 +213,20 @@ async def diagnose_and_fix_tp_levels():
                 # Проверка 3: Логика TP для LONG
                 elif direction.upper() == "LONG":
                     # Для LONG: TP выше entry
-                    should_tp1 = current_price >= tp1
-                    should_tp2 = current_price >= tp2
-                    should_tp3 = current_price >= tp3
+                    should_tp1 = current_price >= tp1_price
+                    should_tp2 = current_price >= tp2_price
+                    should_tp3 = current_price >= tp3_price
 
                     print(f"   🎯 Анализ TP (LONG):")
                     print(f"      Текущая цена: ${current_price:.4f}")
                     print(
-                        f"      TP1 @ ${tp1:.4f}: {'✅ ДА' if should_tp1 else '❌ НЕТ'} (цена {'≥' if should_tp1 else '<'} TP1)"
+                        f"      TP1 @ ${tp1_price:.4f}: {'✅ ДА' if should_tp1 else '❌ НЕТ'} (цена {'≥' if should_tp1 else '<'} TP1)"
                     )
                     print(
-                        f"      TP2 @ ${tp2:.4f}: {'✅ ДА' if should_tp2 else '❌ НЕТ'} (цена {'≥' if should_tp2 else '<'} TP2)"
+                        f"      TP2 @ ${tp2_price:.4f}: {'✅ ДА' if should_tp2 else '❌ НЕТ'} (цена {'≥' if should_tp2 else '<'} TP2)"
                     )
                     print(
-                        f"      TP3 @ ${tp3:.4f}: {'✅ ДА' if should_tp3 else '❌ НЕТ'} (цена {'≥' if should_tp3 else '<'} TP3)"
+                        f"      TP3 @ ${tp3_price:.4f}: {'✅ ДА' if should_tp3 else '❌ НЕТ'} (цена {'≥' if should_tp3 else '<'} TP3)"
                     )
                     print()
 

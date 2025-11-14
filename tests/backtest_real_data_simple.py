@@ -105,14 +105,14 @@ class SimpleRealDataBacktest:
                 # Простые TP/SL
                 if direction == "LONG":
                     tp = entry_price * 1.02
-                    sl = entry_price * 0.985
+                    sl_price = entry_price * 0.985
                 else:
                     tp = entry_price * 0.98
-                    sl = entry_price * 1.015
+                    sl_price = entry_price * 1.015
 
                 # Поиск exit
                 exit_price, exit_reason = self._find_exit(
-                    i, entry_price, tp, sl, direction
+                    i, entry_price, tp, sl_price, direction
                 )
 
                 # Расчёт PnL
@@ -141,7 +141,7 @@ class SimpleRealDataBacktest:
         print(f"\n✅ Всего сделок: {trades_count}")
         return True
 
-    def _find_exit(self, start_idx, entry, tp, sl, direction):
+    def _find_exit(self, start_idx, entry, tp, sl_price, direction):
         """Найти выход из сделки"""
         # Поиск TP/SL в следующих свечах
         for i in range(start_idx + 1, min(start_idx + 50, len(self.data_1h))):
@@ -150,13 +150,13 @@ class SimpleRealDataBacktest:
             if direction == "LONG":
                 if candle["high"] >= tp:
                     return tp, "TP"
-                if candle["low"] <= sl:
-                    return sl, "SL"
+                if candle["low"] <= sl_price:
+                    return sl_price, "SL"
             else:
                 if candle["low"] <= tp:
                     return tp, "TP"
-                if candle["high"] >= sl:
-                    return sl, "SL"
+                if candle["high"] >= sl_price:
+                    return sl_price, "SL"
 
         # Если не нашли - закрытие по текущей цене
         return self.data_1h.iloc[min(start_idx + 50, len(self.data_1h) - 1)]["close"], "TIMEOUT"
