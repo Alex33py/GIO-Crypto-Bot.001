@@ -1,14 +1,17 @@
 import sqlite3
 import os
 
-# Створити папку data якщо не існує
-os.makedirs("data", exist_ok=True)
+# ВАЖНО: Для Railway используем переменную окружения
+DB_PATH = os.getenv('DB_PATH', '/app/data/gio_crypto_bot.db')
 
-# Підключення до БД
-conn = sqlite3.connect("data/gio_cypto_bot.db")
+# Створити папку data якщо не існує
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+
+# Підключення до БД (ИСПРАВЛЕНО ИМЯFILE!)
+conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
-print("🔧 Створення таблиць...")
+print(f"🔧 Створення таблиць у {DB_PATH}...")
 
 # ============================================
 # ТАБЛИЦЯ 1: signals (торгові сигнали)
@@ -46,14 +49,12 @@ CREATE TABLE IF NOT EXISTS signals (
 cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_symbol ON signals(symbol)")
 cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_status ON signals(status)")
 cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_timestamp ON signals(timestamp)")
-cursor.execute(
-    "CREATE INDEX IF NOT EXISTS idx_signals_scenario ON signals(scenario_id)"
-)
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_signals_scenario ON signals(scenario_id)")
 
 print("✅ Таблиця 'signals' створена")
 
 # ============================================
-# ТАБЛИЦЯ 2: unified_signals (уніфіковані сигнали)
+# ТАБЛИЦЯ 2: unified_signals
 # ============================================
 cursor.execute(
     """
@@ -81,20 +82,14 @@ CREATE TABLE IF NOT EXISTS unified_signals (
 """
 )
 
-cursor.execute(
-    "CREATE INDEX IF NOT EXISTS idx_unified_signals_symbol ON unified_signals(symbol)"
-)
-cursor.execute(
-    "CREATE INDEX IF NOT EXISTS idx_unified_signals_status ON unified_signals(status)"
-)
-cursor.execute(
-    "CREATE INDEX IF NOT EXISTS idx_unified_signals_timestamp ON unified_signals(timestamp)"
-)
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_unified_signals_symbol ON unified_signals(symbol)")
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_unified_signals_status ON unified_signals(status)")
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_unified_signals_timestamp ON unified_signals(timestamp)")
 
 print("✅ Таблиця 'unified_signals' створена")
 
 # ============================================
-# ТАБЛИЦЯ 3: large_trades (сделки китів)
+# ТАБЛИЦЯ 3: large_trades
 # ============================================
 cursor.execute(
     """
@@ -110,12 +105,8 @@ CREATE TABLE IF NOT EXISTS large_trades (
 """
 )
 
-cursor.execute(
-    "CREATE INDEX IF NOT EXISTS idx_large_trades_symbol ON large_trades(symbol)"
-)
-cursor.execute(
-    "CREATE INDEX IF NOT EXISTS idx_large_trades_timestamp ON large_trades(timestamp)"
-)
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_large_trades_symbol ON large_trades(symbol)")
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_large_trades_timestamp ON large_trades(timestamp)")
 
 print("✅ Таблиця 'large_trades' створена")
 
@@ -133,33 +124,6 @@ tables = cursor.fetchall()
 print("\n📊 Таблиці в БД:")
 for t in tables:
     print(f"  - {t[0]}")
-
-# ============================================
-# ПЕРЕВІРКА КОЛОНОК ДЛЯ signals
-# ============================================
-cursor.execute("PRAGMA table_info(signals)")
-columns = cursor.fetchall()
-print('\n📋 Колонки в таблиці "signals":')
-for col in columns:
-    print(f"  - {col[1]} ({col[2]})")
-
-# ============================================
-# ПЕРЕВІРКА КОЛОНОК ДЛЯ unified_signals
-# ============================================
-cursor.execute("PRAGMA table_info(unified_signals)")
-columns = cursor.fetchall()
-print('\n📋 Колонки в таблиці "unified_signals":')
-for col in columns:
-    print(f"  - {col[1]} ({col[2]})")
-
-# ============================================
-# ПЕРЕВІРКА КОЛОНОК ДЛЯ large_trades
-# ============================================
-cursor.execute("PRAGMA table_info(large_trades)")
-columns = cursor.fetchall()
-print('\n📋 Колонки в таблиці "large_trades":')
-for col in columns:
-    print(f"  - {col[1]} ({col[2]})")
 
 conn.close()
 print("\n🎉 Ініціалізація БД завершена!")
