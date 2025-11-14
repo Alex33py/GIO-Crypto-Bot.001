@@ -225,6 +225,7 @@ def log_db_path_and_permissions(db_path):
 
 
 def log_table_schema(db_path):
+    conn = None
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
@@ -235,7 +236,8 @@ def log_table_schema(db_path):
     except Exception as e:
         logger.error(f"Ошибка чтения схемы таблицы: {e}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 async def main():
     DB_PATH = os.getenv('DB_PATH', '/app/data/gio_crypto_bot.db')

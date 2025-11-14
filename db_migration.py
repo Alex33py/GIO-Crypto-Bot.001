@@ -41,7 +41,7 @@ def migrate_database():
             "close_time": "TEXT",
             "entry": "REAL",
             "stop_loss": "REAL",
-            "sl": "REAL",
+            "sl_price": "REAL",
             "quality_score": "REAL DEFAULT 0",
             "risk_reward": "REAL DEFAULT 0",
             "strategy": "TEXT DEFAULT 'unknown'",
@@ -59,7 +59,11 @@ def migrate_database():
             "exit_price": "REAL",
             "profit_percent": "REAL",
             "updated_at": "TEXT",
+            "tp1_price": "REAL",
+            "tp2_price": "REAL",
+            "tp3_price": "REAL",
         }
+
 
         # Добавляем отсутствующие колонки
         for col_name, col_type in needed_columns.items():
