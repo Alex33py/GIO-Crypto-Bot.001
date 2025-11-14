@@ -13,6 +13,8 @@ from pathlib import Path
 from datetime import datetime
 from db_migration import migrate_database
 
+from data.init_db import init_database
+
 
 # === ФУНКЦИЯ ДЛЯ УДАЛЕНИЯ КАВЫЧЕК ИЗ ПЕРЕМЕННЫХ ===
 def get_env(key, default=None):
@@ -209,8 +211,11 @@ def print_banner():
 """
     print(banner)
 
-
 async def main():
+    logger.info("🔧 Инициализация базы данных...")
+    init_database()  # Создаёт таблицы, если их ещё нет
+    logger.info("✅ Инициализация БД завершена")
+    
     """Главная функция"""
     logger.info("🔧 Проверка необходимости миграции БД...")
     migrate_database()
