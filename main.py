@@ -13,7 +13,7 @@ from pathlib import Path
 from datetime import datetime
 from db_migration import migrate_database
 
-from data.init_db import init_database
+from init_db import init_database
 
 
 # === ФУНКЦИЯ ДЛЯ УДАЛЕНИЯ КАВЫЧЕК ИЗ ПЕРЕМЕННЫХ ===
